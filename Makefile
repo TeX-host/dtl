@@ -22,6 +22,7 @@ CP              = /bin/cp
 DITROFF		= ditroff
 DITROFF		= groff
 EXES 		= dt2dv dv2dt
+WIN_EXES	= dt2dv.exe dv2dt.exe
 LDFLAGS         = -s
 LDFLAGS         =
 MAN2PS		= ./man2ps
@@ -36,6 +37,8 @@ SRC		= Makefile dtl.h dt2dv.c dv2dt.c man2ps
 TESTS		= hello.tex example.tex tripvdu.tex edited.txt
 
 DTL_DBN		= $(DOCS) $(SRC) $(TESTS)
+
+EXEC_PATH = .
 
 #=======================================================================
 
@@ -64,8 +67,8 @@ dt2dv: dt2dv.c dtl.h
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $@.c
 
 hello:  hello.dtl $(EXES)
-	dt2dv hello.dtl hello2.dvi
-	dv2dt hello2.dvi hello2.dtl
+	$(EXEC_PATH)/dt2dv hello.dtl hello2.dvi
+	$(EXEC_PATH)/dv2dt hello2.dvi hello2.dtl
 	-@diff hello.dtl hello2.dtl > hello.dif
 	@if [ -s hello.dif ] ; \
 	then echo ERROR: differences in hello.dif ; \
@@ -74,11 +77,11 @@ hello:  hello.dtl $(EXES)
 
 hello.dtl:  hello.tex
 	tex hello
-	dv2dt hello.dvi hello.dtl
+	$(EXEC_PATH)/dv2dt hello.dvi hello.dtl
 
 example:  example.dtl $(EXES)
-	dt2dv example.dtl example2.dvi
-	dv2dt example2.dvi example2.dtl
+	$(EXEC_PATH)/dt2dv example.dtl example2.dvi
+	$(EXEC_PATH)/dv2dt example2.dvi example2.dtl
 	-@diff example.dtl example2.dtl > example.dif
 	@if [ -s example.dif ] ; \
 	then echo ERROR: differences in example.dif ; \
@@ -87,11 +90,11 @@ example:  example.dtl $(EXES)
 
 example.dtl:  example.tex
 	tex example
-	dv2dt example.dvi example.dtl
+	$(EXEC_PATH)/dv2dt example.dvi example.dtl
 
 tripvdu:  tripvdu.dtl $(EXES)
-	dt2dv tripvdu.dtl tripvdu2.dvi
-	dv2dt tripvdu2.dvi tripvdu2.dtl
+	$(EXEC_PATH)/dt2dv tripvdu.dtl tripvdu2.dvi
+	$(EXEC_PATH)/dv2dt tripvdu2.dvi tripvdu2.dtl
 	-@diff tripvdu.dtl tripvdu2.dtl > tripvdu.dif
 	@if [ -s tripvdu.dif ] ; \
 	then echo ERROR: differences in tripvdu.dif ; \
@@ -100,15 +103,15 @@ tripvdu:  tripvdu.dtl $(EXES)
 
 tripvdu.dtl:  tripvdu.tex
 	tex tripvdu
-	dv2dt tripvdu.dvi tripvdu.dtl
+	$(EXEC_PATH)/dv2dt tripvdu.dvi tripvdu.dtl
 
 # edited.txt is already a dtl file.
 
 edited:  edited.txt $(EXES)
-	dt2dv edited.txt edited.dvi
-	dv2dt edited.dvi edited2.dtl
-	dt2dv edited2.dtl edited2.dvi
-	dv2dt edited2.dvi edited3.dtl
+	$(EXEC_PATH)/dt2dv edited.txt edited.dvi
+	$(EXEC_PATH)/dv2dt edited.dvi edited2.dtl
+	$(EXEC_PATH)/dt2dv edited2.dtl edited2.dvi
+	$(EXEC_PATH)/dv2dt edited2.dvi edited3.dtl
 	@if [ -s edited.dif ] ; \
 	then echo ERROR : differences in edited.dif ; \
 	else $(RM) edited.dif ; \
@@ -118,7 +121,7 @@ clean mostlyclean:
 	-$(RM) $(OBJS)
 
 clobber: clean
-	-$(RM) $(EXES) *~ core *.log *.dvi *.dtl *.dif
+	-$(RM) $(EXES) $(WIN_EXES) *~ core *.log *.dvi *.dtl *.dif
 
 distclean realclean: clobber
 	-$(RM) dt2dv.hlp dv2dt.hlp dt2dv.ps dv2dt.ps

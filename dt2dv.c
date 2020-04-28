@@ -2573,7 +2573,7 @@ fontdef
 #ifdef HEX_CHECKSUM
   /* c[4] : (hexadecimal) checksum : I (gt) would prefer this */
   xfer_hex (4, dtl, dvi);
-#else /NOT HEX_CHECKSUM */
+#else /* NOT HEX_CHECKSUM */
   /* c[4] : checksum (octal, for comparison with tftopl's .pl file) */
   xfer_oct (4, dtl, dvi);
 #endif
