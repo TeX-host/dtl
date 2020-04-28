@@ -120,8 +120,14 @@ edited:  edited.txt $(EXES)
 	else $(RM) edited.dif ; \
 	fi
 
+codecov:dtl tests
+	- gcov dt2dv.c
+	- gcov dv2dt.c
 
 #==== others
+
+cleancov:
+	-$(RM) *.gcov *.gcda *.gcno
 
 clean mostlyclean:
 	-$(RM) $(OBJS)
@@ -129,7 +135,7 @@ clean mostlyclean:
 clobber: clean
 	-$(RM) $(EXES) $(WIN_EXES) *~ core *.log *.dvi *.dtl *.dif
 
-distclean realclean: clobber
+distclean realclean: clobber cleancov
 	-$(RM) dt2dv.hlp dv2dt.hlp dt2dv.ps dv2dt.ps
 
 install:	dtl

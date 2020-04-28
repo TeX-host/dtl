@@ -11,3 +11,6 @@ dt2dv
 # temp
 *.dtl
 *.dif
+*.gcov
+*.gcda
+*.gcno
