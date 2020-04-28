@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/TeX-host/dtl.svg?branch=master)](https://travis-ci.org/TeX-host/dtl)
+[![codecov](https://codecov.io/gh/TeX-host/dtl/branch/master/graph/badge.svg)](https://codecov.io/gh/TeX-host/dtl)
 [![License: CC0-1.0](https://img.shields.io/badge/License-CC0%201.0-lightgrey.svg)](http://creativecommons.org/publicdomain/zero/1.0/)
 
 > This file is public domain.
