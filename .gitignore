@@ -1,0 +1,12 @@
+# tex
+*.log
+*.dvi
+*.pdf
+
+# exe
+*.exe
+dv2dt
+dt2dv
+
+# temp
+*.dtl

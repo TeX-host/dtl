@@ -57,11 +57,11 @@ dtl:  $(EXES)
 
 check tests:  hello example tripvdu edited
 
-dv2dt: dv2dt.o dtl.h
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $@.o
+dv2dt: dv2dt.c dtl.h
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $@.c
 
-dt2dv: dt2dv.o dtl.h
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $@.o
+dt2dv: dt2dv.c dtl.h
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $@.c
 
 hello:  hello.dtl $(EXES)
 	dt2dv hello.dtl hello2.dvi
