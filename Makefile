@@ -10,39 +10,39 @@
 # Nelson H. F. Beebe
 #=======================================================================
 
-BINDIR          = /usr/local/bin
-CATDIR		= $(MANDIR)/../cat$(MANEXT)
-CC              = gcc
-CFLAGS          = -O2 -Wall
-# Some compilers don't optimise correctly; for those, don't use `-O2' :
-# CFLAGS          = -Wall
-CHMOD           = /bin/chmod
-COL		= col -b
-CP              = /bin/cp
-DITROFF		= ditroff
-DITROFF		= groff
-EXES 		= dt2dv dv2dt
-WIN_EXES	= dt2dv.exe dv2dt.exe
-LDFLAGS         = -s
-LDFLAGS         =
-MAN2PS		= ./man2ps
-MANDIR		= /usr/local/man/man$(MANEXT)
-MANEXT		= 1
-OBJS            = dt2dv.o dv2dt.o
-RM              = /bin/rm -f
-SHELL           = /bin/sh
+BINDIR      = /usr/local/bin
+CATDIR      = $(MANDIR)/../cat$(MANEXT)
+CC          = gcc
+CFLAGS      = -O2 -Wall
+## Some compilers don't optimise correctly; for those, don't use `-O2' :
+# CFLAGS    = -Wall
+CHMOD       = /bin/chmod
+COL         = col -b
+CP          = /bin/cp
+DITROFF     = ditroff
+DITROFF     = groff
+EXES        = dt2dv dv2dt
+WIN_EXES    = dt2dv.exe dv2dt.exe
+# LDFLAGS   = -s
+LDFLAGS     =
+MAN2PS      = ./man2ps
+MANDIR      = /usr/local/man/man$(MANEXT)
+MANEXT      = 1
+OBJS        = dt2dv.o dv2dt.o
+RM          = /bin/rm -f
+SHELL       = /bin/sh
 
-DOCS		= README dtl.doc dvi.doc dt2dv.man dv2dt.man
-SRC		= Makefile dtl.h dt2dv.c dv2dt.c man2ps
-TESTS		= hello.tex example.tex tripvdu.tex edited.txt
+DOCS        = README dtl.doc dvi.doc dt2dv.man dv2dt.man
+SRC         = Makefile dtl.h dt2dv.c dv2dt.c man2ps
+TESTS       = hello.tex example.tex tripvdu.tex edited.txt
 
-DTL_DBN		= $(DOCS) $(SRC) $(TESTS)
+DTL_DBN     = $(DOCS) $(SRC) $(TESTS)
 
-EXEC_PATH = .
+EXEC_PATH   = .
 
 #=======================================================================
 
-.SUFFIXES:	.hlp .ps .man
+.SUFFIXES:  .hlp .ps .man
 
 .man.hlp:
 	$(DITROFF) -man -Tascii $< | $(COL) >$@
@@ -65,6 +65,9 @@ dv2dt: dv2dt.c dtl.h
 
 dt2dv: dt2dv.c dtl.h
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $@.c
+
+
+#==== test set
 
 hello:  hello.dtl $(EXES)
 	$(EXEC_PATH)/dt2dv hello.dtl hello2.dvi
@@ -105,7 +108,7 @@ tripvdu.dtl:  tripvdu.tex
 	tex tripvdu
 	$(EXEC_PATH)/dv2dt tripvdu.dvi tripvdu.dtl
 
-# edited.txt is already a dtl file.
+## edited.txt is already a dtl file.
 
 edited:  edited.txt $(EXES)
 	$(EXEC_PATH)/dt2dv edited.txt edited.dvi
@@ -116,6 +119,9 @@ edited:  edited.txt $(EXES)
 	then echo ERROR : differences in edited.dif ; \
 	else $(RM) edited.dif ; \
 	fi
+
+
+#==== others
 
 clean mostlyclean:
 	-$(RM) $(OBJS)
