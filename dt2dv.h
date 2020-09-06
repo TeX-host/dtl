@@ -31,6 +31,36 @@
 #include "dtl.h"
 
 
+/** Set command-line options.
+ *
+ */
+
+/// command line options.
+typedef struct _Options {
+    const char* keyword; /* command line option keyword */
+    int* p_var;          /* pointer to option variable */
+    const char* desc;    /* description of keyword and value */
+    void (*p_fn)(void);  /* pointer to function called when option is set */
+} Options;
+
+/* by default, read and write regular files */
+int rd_stdin = 0;
+int wr_stdout = 0;
+
+void no_op(void);
+void dtl_stdin(void);
+void dvi_stdout(void);
+
+Options opts[] = {
+    {"-debug", &debug, "detailed debugging", no_op},
+    {"-group", &group, "each DTL command is in parentheses", no_op},
+    {"-si", &rd_stdin, "read all DTL commands from standard input", dtl_stdin},
+    {"-so", &wr_stdout, "write all DVI commands to standard output",
+     dvi_stdout},
+    {NULL, NULL, NULL, NULL}
+}; /* opts[] */
+
+
 /* Size typically used in this program for LString variables */
 #define LSTR_SIZE 1024
 
@@ -193,26 +223,6 @@ op_info fnt_n[] = {{235, FONT1, 1, "1"},
 op_table fnt = {FONT, 235, 238, fnt_n};
 
 
-typedef struct {
-    char* keyword;      /* command line option keyword */
-    int* p_var;         /* pointer to option variable */
-    char* desc;         /* description of keyword and value */
-    void (*p_fn)(void); /* pointer to function called when option is set */
-} Options;
-
-/* by default, read and write regular files */
-int rd_stdin = 0;
-int wr_stdout = 0;
-
-Options opts[] = {
-    {"-debug", &debug, "detailed debugging", no_op},
-    {"-group", &group, "each DTL command is in parentheses", no_op},
-    {"-si", &rd_stdin, "read all DTL commands from standard input", dtl_stdin},
-    {"-so", &wr_stdout, "write all DVI commands to standard output",
-     dvi_stdout},
-    {NULL, NULL, NULL, NULL}};
-/* opts[] */
-
 char* progname = ""; /* intended for name of this program */
 int nfile = 0;       /* number of filename arguments on the command line */
 
@@ -240,10 +250,6 @@ void mem_viol(int sig);
 void give_help(void);
 int parse(char* s);
 void process(char* s);
-
-void no_op(void);
-void dtl_stdin(void);
-void dvi_stdout(void);
 
 int open_dtl(char* dtl_file, FILE** pdtl);
 int open_dvi(char* dvi_file, FILE** pdvi);
