@@ -53,8 +53,6 @@ typedef long int word_t;
 #define MAXSTRLEN 256
 typedef char String[MAXSTRLEN+1];
 
-/* string s of length l and maximum length m */
-typedef struct {int l; int m; char * s;} Lstring;
 
 int debug = 0;  /* normally, debugging is off */
 

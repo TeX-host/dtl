@@ -394,7 +394,7 @@ int dt2dv(FILE* dtl, FILE* dvi) {
     return 1; /* OK */
 } /* dt2dv */
 
-
+/// used by: cons_cmds[2], init_lstr[1], alloc_lstr[1].
 void* gmalloc(size_t size) {
     void* p = NULL;
 
@@ -722,12 +722,9 @@ COUNT read_token(FILE* dtl, char* token) {
 }
 /* read_token */
 
-#define CHAR_OK 1
-#define CHAR_FAIL 0
-#define CHAR_EOS (-1)
 
-int read_string_char(FILE* fp, int* ch) {
-    int status = CHAR_OK; /* OK so far */
+CharStatus read_string_char(FILE* fp, int* ch) {
+    CharStatus status = CHAR_OK; /* OK so far */
     int c;
 
     if (read_char(fp, &c) == 0) status = CHAR_FAIL; /* fail */
@@ -1203,79 +1200,91 @@ int check_emes(FILE* dtl) {
 }
 /* check_emes */
 
-/* Size typically used in this program for Lstring variables */
-#define LSIZE 1024
 
-void init_Lstring(Lstring* lsp, size_t n) {
+/** LString Fucntions.
+ * 
+ */
+
+/// used in: xfer_len_string, fontdef.
+void init_lstr(LStringPtr lsp, size_t n) {
     lsp->l = 0;
     lsp->m = n;
     lsp->s = (char*)gmalloc(n);
-} /* init_Lstring */
+} /* init_lstr */
 
-void de_init_Lstring(Lstring* lsp) {
+/// used in: xfer_len_string, fontdef.
+void clear_lstr(LStringPtr lsp) {
     lsp->l = 0;
     lsp->m = 0;
     free(lsp->s);
     lsp->s = NULL; /* to be sure */
-}
-/* de_init_Lstring */
+} /* clear_lstr */
 
-/// [NOT_USE]
-Lstring* alloc_Lstring(size_t n) {
-    Lstring* lsp;
-    lsp = (Lstring*)gmalloc(sizeof(Lstring));
-    init_Lstring(lsp, n);
-    return (lsp);
-} /* alloc_Lstring */
+/// [NOT_USED]
+LStringPtr alloc_lstr(size_t n) {
+    LStringPtr lsp;
 
-void free_Lstring(Lstring* lstr) {
-    free(lstr->s);
-    free(lstr);
-}
-/* free_Lstring */
+    lsp = (LStringPtr)gmalloc(sizeof(LString));
+    init_lstr(lsp, n);
 
-/* write byte ch into Lstring *lstr */
-void ls_putb(int ch, Lstring* lstr) {
-    if (lstr->l >= lstr->m) {
+    return lsp;
+} /* alloc_lstr */
+
+/// [NOT_USED]
+void free_lstr(LStringPtr lsp) {
+    clear_lstr(lsp);
+    free(lsp);
+} /* free_lstr */
+
+
+/** write byte ch into LStringPtr lsp.
+ *
+ * used in: get_lstr
+ */
+void putch_lstr(int ch, LStringPtr lsp) {
+    if (lsp->l >= lsp->m) {
         PRINT_PROGNAME;
-        fprintf(stderr, "(ls_putb) : ERROR : No more room in Lstring.\n");
+        fprintf(stderr, "(putch_lstr) : ERROR : No more room in LString.\n");
         dexit(1);
     } else {
-        lstr->s[(lstr->l)++] = ch;
+        lsp->s[(lsp->l)++] = ch;
     }
-}
-/* ls_putb */
+} /* putch_lstr */
 
-/* get a string from dtl file, store as an Lstring in *lstr. */
-/* lstr must already be allocated and initialised. */
-/* return length of Lstring *lstr */
-long int get_Lstring(FILE* dtl, Lstring* lstr) {
+/** get a string from dtl file, store as an LString in *lsp.
+ *
+ * lsp must already be allocated and initialised.
+ * return length of LStringPtr lsp
+ *
+ * used in: xfer_len_string, fontdef.
+ */
+size_t get_lstr(FILE* dtl, LStringPtr lsp) {
     U4 nch;
-    int char_status = CHAR_OK; /* OK so far */
+    CharStatus char_status = CHAR_OK; /* OK so far */
+
 
     if (debug) {
         PRINT_PROGNAME;
-        fprintf(stderr, "(get_Lstring) : entering get_Lstring.\n");
-    }
+        fprintf(stderr, "(get_lstr) : entering get_lstr.\n");
+    } /* if (debug) */
 
     check_bmes(dtl);
 
     if (debug) {
         PRINT_PROGNAME;
-        fprintf(stderr, "(get_Lstring) : string is: \"");
-    }
+        fprintf(stderr, "(get_lstr) : string is: \"");
+    } /* if (debug) */
 
-    for (nch = 0;; nch++) {
+    for (nch = 0; /***/; nch++) {
         int ch;
 
         char_status = read_string_char(dtl, &ch);
-
         if (char_status == CHAR_FAIL) {
             /* end of dtl file, or reading error */
             fprintf(stderr, "\n");
             PRINT_PROGNAME;
             fprintf(stderr,
-                    "(get_Lstring) : DTL FILE ERROR (%s) : ", dtl_filename);
+                    "(get_lstr) : DTL FILE ERROR (%s) : ", dtl_filename);
             fprintf(stderr, "cannot read string[");
             fprintf(stderr, UF4, nch);
             fprintf(stderr, "] from dtl file.\n");
@@ -1284,12 +1293,12 @@ long int get_Lstring(FILE* dtl, Lstring* lstr) {
 
         if (debug) {
             fprintf(stderr, "%c", ch);
-        }
+        } /* if (debug) */
 
         if (char_status == CHAR_EOS) {
             if (ch != EMES_CHAR) {
                 PRINT_PROGNAME;
-                fprintf(stderr, "(get_Lstring) : INTERNAL ERROR : ");
+                fprintf(stderr, "(get_lstr) : INTERNAL ERROR : ");
                 fprintf(stderr, "char_status = CHAR_FAIL,\n");
                 fprintf(
                     stderr,
@@ -1300,74 +1309,69 @@ long int get_Lstring(FILE* dtl, Lstring* lstr) {
             (void)unread_char();
             break; /* end of string */
         } else if (char_status == CHAR_OK) {
-            ls_putb(ch, lstr);
+            putch_lstr(ch, lsp);
         } else {
             PRINT_PROGNAME;
-            fprintf(stderr, "(get_Lstring) : INTERNAL ERROR : ");
+            fprintf(stderr, "(get_lstr) : INTERNAL ERROR : ");
             fprintf(stderr, "char_status = %d is unfamiliar!\n", char_status);
             dexit(1);
-        }
-    }
-    /* end for */
+        } // end if (char_status <=>)
+    } /* end for (nch = 0 ;; nch++) */
 
     if (debug) {
         fprintf(stderr, "\".\n");
-    }
+    } /* if (debug) */
 
     check_emes(dtl);
 
     if (debug) {
         PRINT_PROGNAME;
-        fprintf(stderr, "(get_Lstring) : leaving get_Lstring.\n");
-    }
+        fprintf(stderr, "(get_lstr) : leaving get_lstr.\n");
+    } /* if (debug) */
 
-    return (lstr->l);
-}
-/* get_Lstring */
+    return lsp->l;
+} /* get_lstr */
 
-void put_Lstring(const Lstring* lstr, FILE* dvi) {
-    size_t fwret;
-    fwret = fwrite((lstr->s), sizeof(char), (size_t)(lstr->l), dvi);
+/// used in: xfer_len_string, fontdef.
+void put_lstr(LStringPtr lsp, FILE* dvi) {
+    size_t fw_ret;
 
-    dvi_written += fwret;
+    fw_ret = fwrite(lsp->s, sizeof(char), lsp->l, dvi);
+    dvi_written += fw_ret;
 
-    if (fwret < lstr->l) {
+    if (fw_ret < lsp->l) {
         PRINT_PROGNAME;
         fprintf(stderr,
-                "(put_Lstring) : DVI File ERROR : not all bytes written ");
-        fprintf(stderr, "(%ld of %ld).\n", (long int)fwret,
-                (long int)(lstr->l));
+                "(put_lstr) : DVI File ERROR : not all bytes written ");
+        fprintf(stderr, "(%zd of %zd).\n", fw_ret, lsp->l);
         dexit(1);
     }
-}
-/* put_Lstring */
+} /* put_lstr */
 
-/* transfer (length and) quoted string from dtl to dvi file, */
-/* return number of bytes written to dvi file. */
+/** transfer (length and) quoted string from dtl to dvi file,
+ * return number of bytes written to dvi file.
+ */
 U4 xfer_len_string(int n, FILE* dtl, FILE* dvi) {
     U4 k, k2;
-    Lstring lstr;
+    LString lstr;
 
     if (debug) {
         PRINT_PROGNAME;
         fprintf(stderr, "(xfer_len_string) : entering xfer_len_string.\n");
-    }
+    } /* if (debug) */
 
-    init_Lstring(&lstr, LSIZE);
+    init_lstr(&lstr, LSTR_SIZE);
 
     /* k[n] : length of special string */
-
     k = get_unsigned(dtl);
-
     if (debug) {
         PRINT_PROGNAME;
         fprintf(stderr, "(xfer_len_string) : string's nominal length k = ");
         fprintf(stderr, UF4, k);
         fprintf(stderr, " characters.\n");
-    }
+    } /* if (debug) */
 
-    k2 = get_Lstring(dtl, &lstr);
-
+    k2 = get_lstr(dtl, &lstr);
     if (k2 != k) {
         PRINT_PROGNAME;
         fprintf(stderr, "(xfer_len_string) : WARNING : string length (");
@@ -1379,19 +1383,16 @@ U4 xfer_len_string(int n, FILE* dtl, FILE* dvi) {
     }
 
     put_unsigned(n, k2, dvi);
+    put_lstr(&lstr, dvi);
 
-    put_Lstring(&lstr, dvi);
-
+    clear_lstr(&lstr);
     if (debug) {
         PRINT_PROGNAME;
         fprintf(stderr, "(xfer_len_string) : leaving xfer_len_string.\n");
-    }
-
-    de_init_Lstring(&lstr);
+    } /* if (debug) */
 
     return (n + k2);
-}
-/* xfer_len_string */
+} /* xfer_len_string */
 
 /* translate signed 4-byte bop address from dtl to dvi file. */
 /* return value of bop address written to DVI file */
@@ -1578,7 +1579,7 @@ U4 special(FILE* dtl, FILE* dvi, int n) {
 int fontdef(FILE* dtl, FILE* dvi, int suffix) {
     U4 a, l, a2, l2;
     U4 k;
-    Lstring lstr1, lstr2;
+    LString lstr1, lstr2;
 
     if (debug) {
         PRINT_PROGNAME;
@@ -1592,8 +1593,8 @@ int fontdef(FILE* dtl, FILE* dvi, int suffix) {
         dexit(1);
     }
 
-    init_Lstring(&lstr1, LSIZE);
-    init_Lstring(&lstr2, LSIZE);
+    init_lstr(&lstr1, LSTR_SIZE);
+    init_lstr(&lstr2, LSTR_SIZE);
 
     if (debug) {
         PRINT_PROGNAME;
@@ -1636,9 +1637,7 @@ int fontdef(FILE* dtl, FILE* dvi, int suffix) {
     l = get_unsigned(dtl);
 
     /* n[a+l] : font pathname string <= area + font */
-
-    a2 = get_Lstring(dtl, &lstr1);
-
+    a2 = get_lstr(dtl, &lstr1);
     if (a2 != a) {
         PRINT_PROGNAME;
         fprintf(stderr, "(fontdef) : WARNING : font area string's length (");
@@ -1651,8 +1650,7 @@ int fontdef(FILE* dtl, FILE* dvi, int suffix) {
 
     put_unsigned(1, a2, dvi);
 
-    l2 = get_Lstring(dtl, &lstr2);
-
+    l2 = get_lstr(dtl, &lstr2);
     if (l2 != l) {
         PRINT_PROGNAME;
         fprintf(stderr, "(fontdef) : WARNING : font string's length (");
@@ -1665,11 +1663,11 @@ int fontdef(FILE* dtl, FILE* dvi, int suffix) {
 
     put_unsigned(1, l2, dvi);
 
-    put_Lstring(&lstr1, dvi);
-    put_Lstring(&lstr2, dvi);
+    put_lstr(&lstr1, dvi);
+    put_lstr(&lstr2, dvi);
 
-    de_init_Lstring(&lstr2);
-    de_init_Lstring(&lstr1);
+    clear_lstr(&lstr1);
+    clear_lstr(&lstr2);
 
     if (debug) {
         PRINT_PROGNAME;
@@ -1677,8 +1675,8 @@ int fontdef(FILE* dtl, FILE* dvi, int suffix) {
     }
 
     return (suffix + 4 * 4 + 2 * 1 + a2 + l2);
-}
-/* fontdef */
+} /* fontdef */
+
 
 /* read preamble from dtl, and write in dvi */
 /* return number of bytes written */

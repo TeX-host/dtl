@@ -30,6 +30,25 @@
 
 #include "dtl.h"
 
+/* Size typically used in this program for LString variables */
+#define LSTR_SIZE 1024
+
+/* string s of length l and maximum length m */
+typedef struct _LString {
+    size_t l; ///< string length.
+    size_t m; ///< string maximum length.
+    char* s;  ///< string.
+} LString;
+typedef LString* LStringPtr;
+
+
+typedef enum _CharStatus {
+    CHAR_EOS = -1, ///< end of LString.
+    CHAR_FAIL,
+    CHAR_OK,
+} CharStatus;
+
+
 /* by default, read and write regular files */
 int rd_stdin = 0;
 int wr_stdout = 0;
@@ -204,7 +223,7 @@ int get_line(FILE* fp, Line* line, int max);
 int read_line_char(FILE* fp, int* ch);
 int read_char(FILE* fp, int* ch);
 int unread_char(void);
-int read_string_char(FILE* fp, int* ch);
+CharStatus read_string_char(FILE* fp, int* ch);
 
 COUNT read_variety(FILE* dtl);
 COUNT read_token(FILE* dtl, char* token);
@@ -228,14 +247,14 @@ S4 xfer_signed(int n, FILE* dtl, FILE* dvi);
 int check_bmes(FILE* dtl);
 int check_emes(FILE* dtl);
 
-void init_Lstring(Lstring* lsp, size_t n);
-void de_init_Lstring(Lstring* lsp);
-Lstring* alloc_Lstring(size_t n);
-void free_Lstring(Lstring* lstr);
-void ls_putb(int ch, Lstring* lstr);
+void init_lstr(LStringPtr lsp, size_t n);
+void clear_lstr(LStringPtr lsp);
+LStringPtr alloc_lstr(size_t n);
+void free_lstr(LStringPtr lsp);
 
-S4 get_Lstring(FILE* dtl, Lstring* lstr);
-void put_Lstring(const Lstring* lstr, FILE* dvi);
+void putch_lstr(int ch, LStringPtr lsp);
+size_t get_lstr(FILE* dtl, LStringPtr lsp);
+void put_lstr(LStringPtr lsp, FILE* dvi);
 U4 xfer_len_string(int n, FILE* dtl, FILE* dvi);
 
 U4 get_unsigned(FILE* dtl);
