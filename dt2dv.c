@@ -237,6 +237,7 @@ COUNT com_read = 0; /* bytes read in current (command and arguments), */
 /* write byte into dvi file */
 int put_byte(int byte, FILE* dvi) {
     check_byte(byte);
+
     /*  if (fprintf (dvi, "%c", byte) != 1) */
     if (fprintf(dvi, "%c", byte) < 0) {
         PRINT_PROGNAME;
@@ -247,9 +248,9 @@ int put_byte(int byte, FILE* dvi) {
         dexit(1);
     }
     ++dvi_written;
+
     return 1; /* OK */
-}
-/* put_byte */
+} /* put_byte */
 
 
 int dt2dv(FILE* dtl, FILE* dvi) {
@@ -260,7 +261,6 @@ int dt2dv(FILE* dtl, FILE* dvi) {
     nprefixes = sizeof(cmd_prefixes) / sizeof(CmdPrefix);
 
     /* Construct array of all NCMDS == 256 DTL commands */
-
     (void)cons_cmds(nprefixes, cmd_prefixes, cmd_table);
 
     /* DTL commands have the form "[ ]*command arg ... arg[ ]*", */
@@ -270,17 +270,14 @@ int dt2dv(FILE* dtl, FILE* dvi) {
     /* with optional spaces after the BCOM and before the ECOM, if any. */
 
     /* dt2dv is now at the very start of the DTL file */
-
     dtl_line.num = 0;
     dtl_read = 0;
 
     /* The very first thing should be the "variety" signature */
-
     nread = read_variety(dtl);
 
     /* while not end of dtl file or reading error, */
     /*   read, interpret, and write commands */
-
     while (!feof(dtl)) {
         int opcode;
 
@@ -392,10 +389,11 @@ int dt2dv(FILE* dtl, FILE* dvi) {
     fprintf(stderr, " DVI command%s.\n", (ncom == 1 ? "" : "s"));
     fprintf(stderr, "\n");
 
-    (void)free_cmds(cmd_table);
+    free_cmds(cmd_table);
 
     return 1; /* OK */
 } /* dt2dv */
+
 
 void* gmalloc(size_t size) {
     void* p = NULL;
@@ -417,6 +415,7 @@ void* gmalloc(size_t size) {
     return (p);
 } /* gmalloc */
 
+
 void dinfo(void) {
     PRINT_PROGNAME;
     fprintf(stderr, "(dinfo) : ");
@@ -436,6 +435,7 @@ void dinfo(void) {
     fprintf(stderr, " DVI command%s.\n", (ncom == 1 ? "" : "s"));
 } /* dinfo */
 
+
 void dexit(int n) {
     dinfo();
     PRINT_PROGNAME;
@@ -443,7 +443,8 @@ void dexit(int n) {
     exit(n);
 } /* dexit */
 
-int cons_cmds(int nprefixes, CmdPrefix* prefix, CmdTable cmds) {
+
+int cons_cmds(int nprefixes, CmdPrefix prefix[], CmdTable cmds) {
     int code;        /* first opcode for a given command prefix */
     int opcode;      /* command's opcode */
     int nsuffixes;   /* number of commands with a given prefix */
@@ -465,6 +466,7 @@ int cons_cmds(int nprefixes, CmdPrefix* prefix, CmdTable cmds) {
                 code);
             dexit(1);
         }
+
         if (prefix->has_suffix) {
             plen = strlen(prefix->name);
             /**** Suffixes in DTL are Integers, in Sequence */
@@ -475,16 +477,15 @@ int cons_cmds(int nprefixes, CmdPrefix* prefix, CmdTable cmds) {
                         prefix->last_suffix, prefix->first_suffix);
                 dexit(1);
             }
+
             nsuffixes = prefix->last_suffix - prefix->first_suffix + 1;
             opcode = prefix->first_code;
             for (j = 0; j < nsuffixes; j++, opcode++) {
                 isuffix = prefix->first_suffix + j;
-                if (0 <= code && code <= 127) /* SETCHAR */
-                {
+                if (0 <= code && code <= 127) { /* SETCHAR */
                     /* SETCHAR's suffix is written in uppercase hexadecimal */
                     sprintf(suffix, "%02X", isuffix);
-                } else /* 128 <= code && code <= 255 */ /* other DTL commands */
-                {
+                } else { /* 128 <= code && code <= 255; other DTL commands */
                     /* other commands' suffices are written in decimal */
                     sprintf(suffix, "%d", isuffix);
                 }
@@ -494,8 +495,8 @@ int cons_cmds(int nprefixes, CmdPrefix* prefix, CmdTable cmds) {
                 strcpy(cmds[opcode], prefix->name);
                 strcat(cmds[opcode], suffix);
             }
-        } else /* command name = prefix */
-        {
+        } else {
+            /* command name = prefix */
             plen = strlen(prefix->name);
             clen = plen;
             opcode = prefix->first_code;
@@ -505,15 +506,13 @@ int cons_cmds(int nprefixes, CmdPrefix* prefix, CmdTable cmds) {
     }
 
     return 1; /* OK */
-}
-/* cons_cmds */
+} /* cons_cmds */
 
 void free_cmds(CmdTable cmd_table) {
-    int i;
-    for (i = 0; i < NCMDS; i++)
+    for (int i = 0; i < NCMDS; i++){ 
         gfree(cmd_table[i]);
-}
-/* free_cmds */
+    }
+} /* free_cmds */
 
 /* read a (Line *) line from fp, return length */
 /* adapted from K&R (second, alias ANSI C, edition, 1988), page 165 */
@@ -851,8 +850,7 @@ int check_byte(int byte) {
         dexit(1);
     }
     return 1; /* OK */
-}
-/* check_byte */
+} /* check_byte */
 
 int xfer_args(FILE* dtl, FILE* dvi, int opcode) {
     int n;

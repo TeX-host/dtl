@@ -197,7 +197,7 @@ void* gmalloc(size_t size);
 void dinfo(void);
 void dexit(int n);
 
-int cons_cmds(int nprefixes, CmdPrefix* prefix, CmdTable cmds);
+int cons_cmds(int nprefixes, CmdPrefix prefix[], CmdTable cmds);
 void free_cmds(CmdTable cmd_table);
 
 int get_line(FILE* fp, Line* line, int max);
