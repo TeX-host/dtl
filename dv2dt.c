@@ -1,9 +1,11 @@
 /* dv2dt - convert DVI file to human-readable "DTL" format.
-   
+
    This file is public domain.
    Originally written 1995, Geoffrey Tobin.
-   The author has expressed the hope that any modification will retain enough content to remain useful. He would also appreciate being acknowledged as the original author in the documentation.
-   This declaration added 2008/11/14 by Clea F. Rees with the permission of Geoffrey Tobin.
+   The author has expressed the hope that any modification will retain enough
+   content to remain useful. He would also appreciate being acknowledged as the
+   original author in the documentation. This declaration added 2008/11/14 by
+   Clea F. Rees with the permission of Geoffrey Tobin.
 
    - (ANSI C) version 0.6.0 - 17:54 GMT +11  Wed 8 March 1995
    - author:  Geoffrey Tobin    ecsgrt@luxor.latrobe.edu.au
@@ -16,195 +18,149 @@
 #include "dv2dt.h"
 
 
-int
-main
+int main
 #ifdef STDC
-  (int argc,  char * argv[])
+    (int argc, char* argv[])
 #else
-  (argc, argv)
-  int argc;
-  char * argv[];
+    (argc, argv) int argc;
+char* argv[];
 #endif
 {
-  FILE * dvi = stdin;
-  FILE * dtl = stdout;
+    FILE* dvi = stdin;
+    FILE* dtl = stdout;
 
-  /* Watch out:  C's standard library's string functions are dicey */
-  strncpy (program, argv[0], MAXSTRLEN);
+    /* Watch out:  C's standard library's string functions are dicey */
+    strncpy(program, argv[0], MAXSTRLEN);
 
-  if (argc > 1)
-    open_dvi (argv[1], &dvi);
+    if (argc > 1) open_dvi(argv[1], &dvi);
 
-  if (argc > 2)
-    open_dtl (argv[2], &dtl);
+    if (argc > 2) open_dtl(argv[2], &dtl);
 
-  dv2dt (dvi, dtl);
+    dv2dt(dvi, dtl);
 
-  return 0;  /* OK */
+    return 0; /* OK */
 }
 /* end main */
 
-int
-open_dvi
+int open_dvi
 #ifdef STDC
-  (char * dvi_file, FILE ** pdvi)
+    (char* dvi_file, FILE** pdvi)
 #else
-  (dvi_file, pdvi)
-  char * dvi_file;
-  FILE ** pdvi;
+    (dvi_file, pdvi) char* dvi_file;
+FILE** pdvi;
 #endif
 /* I:  dvi_file;  I:  pdvi;  O:  *pdvi. */
 {
-  if (pdvi == NULL)
-  {
-    fprintf (stderr, "%s:  address of dvi variable is NULL.\n", program);
-    exit (1);
-  }
+    if (pdvi == NULL) {
+        fprintf(stderr, "%s:  address of dvi variable is NULL.\n", program);
+        exit(1);
+    }
 
-  *pdvi = fopen (dvi_file, "rb");
+    *pdvi = fopen(dvi_file, "rb");
 
-  if (*pdvi == NULL)
-  {
-    fprintf (stderr, "%s:  Cannot open \"%s\" for binary reading.\n",
-      program, dvi_file);
-    exit (1);
-  }
+    if (*pdvi == NULL) {
+        fprintf(stderr, "%s:  Cannot open \"%s\" for binary reading.\n",
+                program, dvi_file);
+        exit(1);
+    }
 
-  return 1;  /* OK */
+    return 1; /* OK */
 }
 /* open_dvi */
 
-int
-open_dtl
+int open_dtl
 #ifdef STDC
-  (char * dtl_file, FILE ** pdtl)
+    (char* dtl_file, FILE** pdtl)
 #else
-  (dtl_file, pdtl)
-  char * dtl_file;
-  FILE ** pdtl;
+    (dtl_file, pdtl) char* dtl_file;
+FILE** pdtl;
 #endif
 /* I:  dtl_file;  I:  pdtl;  O:  *pdtl. */
 {
-  if (pdtl == NULL)
-  {
-    fprintf (stderr, "%s:  address of dtl variable is NULL.\n", program);
-    exit (1);
-  }
+    if (pdtl == NULL) {
+        fprintf(stderr, "%s:  address of dtl variable is NULL.\n", program);
+        exit(1);
+    }
 
-  *pdtl = fopen (dtl_file, "w");
+    *pdtl = fopen(dtl_file, "w");
 
-  if (*pdtl == NULL)
-  {
-    fprintf (stderr, "%s:  Cannot open \"%s\" for text writing.\n",
-      program, dtl_file);
-    exit (1);
-  }
+    if (*pdtl == NULL) {
+        fprintf(stderr, "%s:  Cannot open \"%s\" for text writing.\n", program,
+                dtl_file);
+        exit(1);
+    }
 
-  return 1;  /* OK */
+    return 1; /* OK */
 }
 /* open_dtl */
 
-int
-dv2dt
+int dv2dt
 #ifdef STDC
-  (FILE * dvi, FILE * dtl)
+    (FILE* dvi, FILE* dtl)
 #else
-  (dvi, dtl)
-  FILE * dvi;
-  FILE * dtl;
+    (dvi, dtl) FILE* dvi;
+FILE* dtl;
 #endif
 {
-  int opcode;
-  COUNT count;  /* intended to count bytes to DVI file; as yet unused. */
+    int opcode;
+    COUNT count; /* intended to count bytes to DVI file; as yet unused. */
 
-  PRINT_BCOM;
-  fprintf (dtl, "variety ");
-/*  fprintf (dtl, BMES); */
-  fprintf (dtl, VARIETY);
-/*  fprintf (dtl, EMES); */
-  PRINT_ECOM;
-  fprintf (dtl, "\n");
+    PRINT_BCOM;
+    fprintf(dtl, "variety ");
+    /*  fprintf (dtl, BMES); */
+    fprintf(dtl, VARIETY);
+    /*  fprintf (dtl, EMES); */
+    PRINT_ECOM;
+    fprintf(dtl, "\n");
 
-  /* start counting DVI bytes */
-  count = 0;
-  while ((opcode = fgetc (dvi)) != EOF)
-  {
-    PRINT_BCOM;  /* start of command and parameters */
-    if (opcode < 0 || opcode > 255)
-    {
-      count += 1;
-      fprintf (stderr, "%s:  Non-byte from \"fgetc()\"!\n", program);
-      exit (1);
-    }
-    else if (opcode <= 127)
-    {
-      /* setchar commands */
-      /* count += 1; */
-      /* fprintf (dtl, "%s%d", SETCHAR, opcode); */
-      count +=
-      setseq (opcode, dvi, dtl);
-    }
-    else if (opcode >= 128 && opcode <= 170)
-    {
-      count +=
-      wtable (op_128_170, opcode, dvi, dtl);
-    }
-    else if (opcode >= 171 && opcode <= 234)
-    {
-      count += 1;
-      fprintf (dtl, "%s%d", FONTNUM, opcode - 171);
-    }
-    else if (opcode >= 235 && opcode <= 238)
-    {
-      count +=
-      wtable (fnt, opcode, dvi, dtl);
-    }
-    else if (opcode >= 239 && opcode <= 242)
-    {
-      count +=
-      special (dvi, dtl, opcode - 238);
-    }
-    else if (opcode >= 243 && opcode <= 246)
-    {
-      count +=
-      fontdef (dvi, dtl, opcode - 242);
-    }
-    else if (opcode == 247)
-    {
-      count +=
-      preamble (dvi, dtl);
-    }
-    else if (opcode == 248)
-    {
-      count +=
-      postamble (dvi, dtl);
-    }
-    else if (opcode == 249)
-    {
-      count +=
-      postpost (dvi, dtl);
-    }
-    else if (opcode >= 250 && opcode <= 255)
-    {
-      count += 1;
-      fprintf (dtl, "opcode%d", opcode);
-    }
-    else
-    {
-      count += 1;
-      fprintf (stderr, "%s:  unknown byte.\n", program);
-      exit (1);
-    }
-    PRINT_ECOM;  /* end of command and parameters */
-    fprintf (dtl, "\n");
-    if (fflush (dtl) == EOF)
-    {
-      fprintf (stderr, "%s:  fflush on dtl file gave write error!\n", program);
-      exit (1);
-    }
-  } /* end while */
+    /* start counting DVI bytes */
+    count = 0;
+    while ((opcode = fgetc(dvi)) != EOF) {
+        PRINT_BCOM; /* start of command and parameters */
+        if (opcode < 0 || opcode > 255) {
+            count += 1;
+            fprintf(stderr, "%s:  Non-byte from \"fgetc()\"!\n", program);
+            exit(1);
+        } else if (opcode <= 127) {
+            /* setchar commands */
+            /* count += 1; */
+            /* fprintf (dtl, "%s%d", SETCHAR, opcode); */
+            count += setseq(opcode, dvi, dtl);
+        } else if (opcode >= 128 && opcode <= 170) {
+            count += wtable(op_128_170, opcode, dvi, dtl);
+        } else if (opcode >= 171 && opcode <= 234) {
+            count += 1;
+            fprintf(dtl, "%s%d", FONTNUM, opcode - 171);
+        } else if (opcode >= 235 && opcode <= 238) {
+            count += wtable(fnt, opcode, dvi, dtl);
+        } else if (opcode >= 239 && opcode <= 242) {
+            count += special(dvi, dtl, opcode - 238);
+        } else if (opcode >= 243 && opcode <= 246) {
+            count += fontdef(dvi, dtl, opcode - 242);
+        } else if (opcode == 247) {
+            count += preamble(dvi, dtl);
+        } else if (opcode == 248) {
+            count += postamble(dvi, dtl);
+        } else if (opcode == 249) {
+            count += postpost(dvi, dtl);
+        } else if (opcode >= 250 && opcode <= 255) {
+            count += 1;
+            fprintf(dtl, "opcode%d", opcode);
+        } else {
+            count += 1;
+            fprintf(stderr, "%s:  unknown byte.\n", program);
+            exit(1);
+        }
+        PRINT_ECOM; /* end of command and parameters */
+        fprintf(dtl, "\n");
+        if (fflush(dtl) == EOF) {
+            fprintf(stderr, "%s:  fflush on dtl file gave write error!\n",
+                    program);
+            exit(1);
+        }
+    } /* end while */
 
-  return 1;  /* OK */
+    return 1; /* OK */
 }
 /* dv2dt */
 
@@ -212,592 +168,545 @@ dv2dt
 COUNT
 wunsigned
 #ifdef STDC
-  (int n, FILE * dvi, FILE * dtl)
+    (int n, FILE* dvi, FILE* dtl)
 #else
-  (n, dvi, dtl)
-  int n;
-  FILE * dvi;
-  FILE * dtl;
+    (n, dvi, dtl) int n;
+FILE* dvi;
+FILE* dtl;
 #endif
 {
-  U4 unum;
+    U4 unum;
 
-  fprintf (dtl, " ");
-  unum = runsigned (n, dvi);
-  fprintf (dtl, UF4, unum);
-  return n;
+    fprintf(dtl, " ");
+    unum = runsigned(n, dvi);
+    fprintf(dtl, UF4, unum);
+    return n;
 }
 /* end wunsigned */
 
 COUNT
 wsigned
 #ifdef STDC
-  (int n, FILE * dvi, FILE * dtl)
+    (int n, FILE* dvi, FILE* dtl)
 #else
-  (n, dvi, dtl)
-  int n;
-  FILE * dvi;
-  FILE * dtl;
+    (n, dvi, dtl) int n;
+FILE* dvi;
+FILE* dtl;
 #endif
 {
-  S4 snum;
+    S4 snum;
 
-  fprintf (dtl, " ");
-  snum = rsigned (n, dvi);
-  fprintf (dtl, SF4, snum);
-  return n;
+    fprintf(dtl, " ");
+    snum = rsigned(n, dvi);
+    fprintf(dtl, SF4, snum);
+    return n;
 }
 /* end wsigned */
 
-U4
-runsigned
+U4 runsigned
 #ifdef STDC
-  (int n,  FILE * dvi)
+    (int n, FILE* dvi)
 #else
-  (n, dvi)
-  int n;
-  FILE * dvi;
+    (n, dvi) int n;
+FILE* dvi;
 #endif
 /* read 1 <= n <= 4 bytes for an unsigned integer from dvi file */
 /* DVI format uses Big-endian storage of numbers. */
 {
-  U4 integer;
-  int ibyte = 0;
-  int i;
+    U4 integer;
+    int ibyte = 0;
+    int i;
 
-  if (n < 1 || n > 4)
-  {
-    fprintf (stderr,
-      "%s:  runsigned() asked for %d bytes.  Must be 1 to 4.\n", program, n);
-    exit (1);
-  }
+    if (n < 1 || n > 4) {
+        fprintf(stderr,
+                "%s:  runsigned() asked for %d bytes.  Must be 1 to 4.\n",
+                program, n);
+        exit(1);
+    }
 
-  /* Following calculation works iff storage is big-endian. */
-  integer = 0;
-  for (i = 0; i < n; i++)
-  {
-    integer *= 256;
-    ibyte = fgetc (dvi);
-    integer += ibyte;
-  }
+    /* Following calculation works iff storage is big-endian. */
+    integer = 0;
+    for (i = 0; i < n; i++) {
+        integer *= 256;
+        ibyte = fgetc(dvi);
+        integer += ibyte;
+    }
 
-  return integer;
+    return integer;
 }
 /* end runsigned */
 
-S4
-rsigned
+S4 rsigned
 #ifdef STDC
-  (int n,  FILE * dvi)
+    (int n, FILE* dvi)
 #else
-  (n, dvi)
-  int n;
-  FILE * dvi;
+    (n, dvi) int n;
+FILE* dvi;
 #endif
 /* read 1 <= n <= 4 bytes for a signed integer from dvi file */
 /* DVI format uses Big-endian storage of numbers. */
 {
-  S4 integer;
-  int ibyte = 0;
-  int i;
+    S4 integer;
+    int ibyte = 0;
+    int i;
 
-  if (n < 1 || n > 4)
-  {
-    fprintf (stderr,
-      "%s:  rsigned() asked for %d bytes.  Must be 1 to 4.\n", program, n);
-    exit (1);
-  }
-
-  /* Following calculation works iff storage is big-endian. */
-  integer = 0;
-  for (i = 0; i < n; i++)
-  {
-    integer *= 256;
-    ibyte = fgetc (dvi);
-    /* Big-endian implies sign byte is first byte. */
-    if (i == 0 && ibyte >= 128)
-    {
-      ibyte -= 256;
+    if (n < 1 || n > 4) {
+        fprintf(stderr, "%s:  rsigned() asked for %d bytes.  Must be 1 to 4.\n",
+                program, n);
+        exit(1);
     }
-    integer += ibyte;
-  }
 
-  return integer;
+    /* Following calculation works iff storage is big-endian. */
+    integer = 0;
+    for (i = 0; i < n; i++) {
+        integer *= 256;
+        ibyte = fgetc(dvi);
+        /* Big-endian implies sign byte is first byte. */
+        if (i == 0 && ibyte >= 128) {
+            ibyte -= 256;
+        }
+        integer += ibyte;
+    }
+
+    return integer;
 }
 /* end rsigned */
 
 COUNT
 wtable
 #ifdef STDC
-  (op_table table, int opcode, FILE * dvi, FILE * dtl)
+    (op_table table, int opcode, FILE* dvi, FILE* dtl)
 #else
-  (table, opcode, dvi, dtl)
-  op_table table;
-  int opcode;
-  FILE * dvi;
-  FILE * dtl;
+    (table, opcode, dvi, dtl) op_table table;
+int opcode;
+FILE* dvi;
+FILE* dtl;
 #endif
 /* write command with given opcode in given table */
 /* return number of DVI bytes in this command */
 {
-  op_info op;  /* pointer into table of operations and arguments */
-  COUNT bcount = 0;  /* number of bytes in arguments of this opcode */
-  String args;  /* arguments string */
-  int i;  /* count of arguments read from args */
-  int pos;  /* position in args */
+    op_info op;       /* pointer into table of operations and arguments */
+    COUNT bcount = 0; /* number of bytes in arguments of this opcode */
+    String args;      /* arguments string */
+    int i;            /* count of arguments read from args */
+    int pos;          /* position in args */
 
-  /* Defensive programming. */
-  if (opcode < table.first || opcode > table.last)
-  {
-    fprintf (stderr,
-      "%s: opcode %d is outside table %s [ %d to %d ] !\n",
-      program, opcode, table.name, table.first, table.last);
-    exit (1);
-  }
-
-  op = table.list [opcode - table.first];
-
-  /* Further defensive programming. */
-  if (op.code != opcode)
-  {
-    fprintf (stderr, "%s: internal table %s wrong!\n", program, table.name);
-    exit (1);
-  }
-
-  bcount = 1;
-  fprintf (dtl, "%s", op.name);
-
-  /* NB:  sscanf does an ungetc, */
-  /*      so args must be writable. */
-
-  strncpy (args, op.args, MAXSTRLEN);
-
-  pos = 0;
-  for (i = 0; i < op.nargs; i++)
-  {
-    int argtype;  /* sign and number of bytes in current argument */
-    int nconv;  /* number of successful conversions from args */
-    int nread;  /* number of bytes read from args */
-
-    nconv = sscanf (args + pos, "%d%n", &argtype, &nread);
-
-    /* internal consistency checks */
-    if (nconv != 1 || nread <= 0)
-    {
-      fprintf (stderr,
-        "%s: internal read of table %s failed!\n", program, table.name);
-      exit (1);
+    /* Defensive programming. */
+    if (opcode < table.first || opcode > table.last) {
+        fprintf(stderr, "%s: opcode %d is outside table %s [ %d to %d ] !\n",
+                program, opcode, table.name, table.first, table.last);
+        exit(1);
     }
 
-    pos += nread;
+    op = table.list[opcode - table.first];
 
-    bcount += ( argtype < 0 ?
-               wsigned  (-argtype, dvi, dtl) :
-               wunsigned (argtype, dvi, dtl)  ) ;
-  } /* end for */
+    /* Further defensive programming. */
+    if (op.code != opcode) {
+        fprintf(stderr, "%s: internal table %s wrong!\n", program, table.name);
+        exit(1);
+    }
 
-  return bcount;
+    bcount = 1;
+    fprintf(dtl, "%s", op.name);
 
+    /* NB:  sscanf does an ungetc, */
+    /*      so args must be writable. */
+
+    strncpy(args, op.args, MAXSTRLEN);
+
+    pos = 0;
+    for (i = 0; i < op.nargs; i++) {
+        int argtype; /* sign and number of bytes in current argument */
+        int nconv;   /* number of successful conversions from args */
+        int nread;   /* number of bytes read from args */
+
+        nconv = sscanf(args + pos, "%d%n", &argtype, &nread);
+
+        /* internal consistency checks */
+        if (nconv != 1 || nread <= 0) {
+            fprintf(stderr, "%s: internal read of table %s failed!\n", program,
+                    table.name);
+            exit(1);
+        }
+
+        pos += nread;
+
+        bcount += (argtype < 0 ? wsigned(-argtype, dvi, dtl)
+                               : wunsigned(argtype, dvi, dtl));
+    } /* end for */
+
+    return bcount;
 }
 /* wtable */
 
 COUNT
 setseq
 #ifdef STDC
-  (int opcode, FILE * dvi, FILE * dtl)
+    (int opcode, FILE* dvi, FILE* dtl)
 #else
-  (opcode, dvi, dtl)
-  int opcode;
-  FILE * dvi;
-  FILE * dtl;
+    (opcode, dvi, dtl) int opcode;
+FILE* dvi;
+FILE* dtl;
 #endif
 /* write a sequence of setchar commands */
 /* return count of DVI bytes interpreted into DTL */
 {
-  int charcode = opcode;  /* fortuitous */
-  int ccount = 0;
+    int charcode = opcode; /* fortuitous */
+    int ccount = 0;
 
-  if (!isprint (charcode))
-  {
-    ccount = 1;
-    fprintf (dtl, "%s%02X", SETCHAR, opcode);
-  }
-  else
-  {
-    /* start of sequence of font characters */
-    fprintf (dtl, BSEQ);
+    if (!isprint(charcode)) {
+        ccount = 1;
+        fprintf(dtl, "%s%02X", SETCHAR, opcode);
+    } else {
+        /* start of sequence of font characters */
+        fprintf(dtl, BSEQ);
 
-    /* first character */
-    ccount = 1;
-    setpchar (charcode, dtl);
+        /* first character */
+        ccount = 1;
+        setpchar(charcode, dtl);
 
-    /* subsequent characters */
-    while ((opcode = fgetc (dvi)) != EOF)
-    {
-      if (opcode < 0 || opcode > 127)
-      {
-        break;  /* not a setchar command, so sequence has ended */
-      }
-      charcode = opcode;  /* fortuitous */
-      if (!isprint (charcode))  /* not printable ascii */
-      {
-        break;  /* end of font character sequence, as for other commands */
-      }
-      else  /* printable ASCII */
-      {
-        ccount += 1;
-        setpchar (charcode, dtl);
-      }
-    }  /* end for loop */
+        /* subsequent characters */
+        while ((opcode = fgetc(dvi)) != EOF) {
+            if (opcode < 0 || opcode > 127) {
+                break; /* not a setchar command, so sequence has ended */
+            }
+            charcode = opcode;      /* fortuitous */
+            if (!isprint(charcode)) /* not printable ascii */
+            {
+                break; /* end of font character sequence, as for other commands
+                        */
+            } else     /* printable ASCII */
+            {
+                ccount += 1;
+                setpchar(charcode, dtl);
+            }
+        } /* end for loop */
 
-    /* prepare to reread opcode of next DVI command */
-    if (ungetc (opcode, dvi) == EOF)
-    {
-      fprintf (stderr, "setseq:  cannot push back a byte\n");
-      exit (1);
+        /* prepare to reread opcode of next DVI command */
+        if (ungetc(opcode, dvi) == EOF) {
+            fprintf(stderr, "setseq:  cannot push back a byte\n");
+            exit(1);
+        }
+
+        /* end of sequence of font characters */
+        fprintf(dtl, ESEQ);
     }
-
-    /* end of sequence of font characters */
-    fprintf (dtl, ESEQ);
-  }
-  return ccount;
+    return ccount;
 }
 /* setseq */
 
-Void
-setpchar
+Void setpchar
 #ifdef STDC
-  (int charcode, FILE * dtl)
+    (int charcode, FILE* dtl)
 #else
-  (charcode, dtl)
-  int charcode;
-  FILE * dtl;
+    (charcode, dtl) int charcode;
+FILE* dtl;
 #endif
 /* set printable character */
 {
-  switch (charcode)
-  {
-    case ESC_CHAR:
-      fprintf (dtl, "%c", ESC_CHAR);
-      fprintf (dtl, "%c", ESC_CHAR);
-      break;
-    case QUOTE_CHAR:
-      fprintf (dtl, "%c", ESC_CHAR);
-      fprintf (dtl, "%c", QUOTE_CHAR);
-      break;
-    case BSEQ_CHAR:
-      fprintf (dtl, "%c", ESC_CHAR);
-      fprintf (dtl, "%c", BSEQ_CHAR);
-      break;
-    case ESEQ_CHAR:
-      fprintf (dtl, "%c", ESC_CHAR);
-      fprintf (dtl, "%c", ESEQ_CHAR);
-      break;
-    default:
-      fprintf (dtl, "%c", charcode);
-      break;
-  }
+    switch (charcode) {
+        case ESC_CHAR:
+            fprintf(dtl, "%c", ESC_CHAR);
+            fprintf(dtl, "%c", ESC_CHAR);
+            break;
+        case QUOTE_CHAR:
+            fprintf(dtl, "%c", ESC_CHAR);
+            fprintf(dtl, "%c", QUOTE_CHAR);
+            break;
+        case BSEQ_CHAR:
+            fprintf(dtl, "%c", ESC_CHAR);
+            fprintf(dtl, "%c", BSEQ_CHAR);
+            break;
+        case ESEQ_CHAR:
+            fprintf(dtl, "%c", ESC_CHAR);
+            fprintf(dtl, "%c", ESEQ_CHAR);
+            break;
+        default: fprintf(dtl, "%c", charcode); break;
+    }
 }
 /* setpchar */
 
-Void
-xferstring
+Void xferstring
 #ifdef STDC
-  (int k, FILE * dvi, FILE * dtl)
+    (int k, FILE* dvi, FILE* dtl)
 #else
-  (k, dvi, dtl)
-  int k;
-  FILE * dvi;
-  FILE * dtl;
+    (k, dvi, dtl) int k;
+FILE* dvi;
+FILE* dtl;
 #endif
 /* copy string of k characters from dvi file to dtl file */
 {
-  int i;
-  int ch;
+    int i;
+    int ch;
 
-  fprintf (dtl, " ");
-  fprintf (dtl, "'");
-  for (i=0; i < k; i++)
-  {
-    ch = fgetc (dvi);
-    if (ch == ESC_CHAR || ch == EMES_CHAR)
-    {
-      fprintf (dtl, "%c", ESC_CHAR);
+    fprintf(dtl, " ");
+    fprintf(dtl, "'");
+    for (i = 0; i < k; i++) {
+        ch = fgetc(dvi);
+        if (ch == ESC_CHAR || ch == EMES_CHAR) {
+            fprintf(dtl, "%c", ESC_CHAR);
+        }
+        fprintf(dtl, "%c", ch);
     }
-    fprintf (dtl, "%c", ch);
-  }
-  fprintf (dtl, "'");
+    fprintf(dtl, "'");
 }
 /* xferstring */
 
 COUNT
 special
 #ifdef STDC
-  (FILE * dvi,  FILE * dtl,  int n)
+    (FILE* dvi, FILE* dtl, int n)
 #else
-  (dvi, dtl, n)
-  FILE * dvi;
-  FILE * dtl;
-  int n;
+    (dvi, dtl, n) FILE* dvi;
+FILE* dtl;
+int n;
 #endif
 /* read special 1 .. 4 from dvi and write in dtl */
 /* return number of DVI bytes interpreted into DTL */
 {
-  U4  k;
+    U4 k;
 
-  if (n < 1 || n > 4)
-  {
-    fprintf (stderr, "%s:  special %d, range is 1 to 4.\n", program, n);
-    exit (1);
-  }
+    if (n < 1 || n > 4) {
+        fprintf(stderr, "%s:  special %d, range is 1 to 4.\n", program, n);
+        exit(1);
+    }
 
-  fprintf (dtl, "%s%d", SPECIAL, n);
+    fprintf(dtl, "%s%d", SPECIAL, n);
 
-  /* k[n] = length of special string */
-  fprintf (dtl, " ");
-  k = runsigned (n, dvi);
-  fprintf (dtl, UF4, k);
+    /* k[n] = length of special string */
+    fprintf(dtl, " ");
+    k = runsigned(n, dvi);
+    fprintf(dtl, UF4, k);
 
-  /* x[k] = special string */
-  xferstring (k, dvi, dtl);
+    /* x[k] = special string */
+    xferstring(k, dvi, dtl);
 
-  return (1 + n + k);
+    return (1 + n + k);
 }
 /* end special */
 
 COUNT
 fontdef
 #ifdef STDC
-  (FILE * dvi,  FILE * dtl,  int n)
+    (FILE* dvi, FILE* dtl, int n)
 #else
-  (dvi,  dtl,  n)
-  FILE * dvi;
-  FILE * dtl;
-  int n;
+    (dvi, dtl, n) FILE* dvi;
+FILE* dtl;
+int n;
 #endif
 /* read fontdef 1 .. 4 from dvi and write in dtl */
 /* return number of DVI bytes interpreted into DTL */
 {
-  U4 ku, c, s, d, a, l;
-  S4 ks;
+    U4 ku, c, s, d, a, l;
+    S4 ks;
 
-  if (n < 1 || n > 4)
-  {
-    fprintf (stderr, "%s:  font def %d, range is 1 to 4.\n", program, n);
-    exit (1);
-  }
+    if (n < 1 || n > 4) {
+        fprintf(stderr, "%s:  font def %d, range is 1 to 4.\n", program, n);
+        exit(1);
+    }
 
-  fprintf (dtl, "%s%d", FONTDEF, n);
+    fprintf(dtl, "%s%d", FONTDEF, n);
 
-  /* k[n] = font number */
-  fprintf (dtl, " ");
-  if (n == 4)
-  {
-    ks = rsigned (n, dvi);
-    fprintf (dtl, SF4, ks);
-  }
-  else
-  {
-    ku = runsigned (n, dvi);
-    fprintf (dtl, UF4, ku);
-  }
+    /* k[n] = font number */
+    fprintf(dtl, " ");
+    if (n == 4) {
+        ks = rsigned(n, dvi);
+        fprintf(dtl, SF4, ks);
+    } else {
+        ku = runsigned(n, dvi);
+        fprintf(dtl, UF4, ku);
+    }
 
-  /* c[4] = checksum */
-  fprintf (dtl, " ");
-  c = runsigned (4, dvi);
+    /* c[4] = checksum */
+    fprintf(dtl, " ");
+    c = runsigned(4, dvi);
 #ifdef HEX_CHECKSUM
-  fprintf (dtl, XF4, c);
+    fprintf(dtl, XF4, c);
 #else /* NOT HEX_CHECKSUM */
-  /* write in octal, to allow quick comparison with tftopl's output */
-  fprintf (dtl, OF4, c);
+    /* write in octal, to allow quick comparison with tftopl's output */
+    fprintf(dtl, OF4, c);
 #endif
 
-  /* s[4] = scale factor */
-  fprintf (dtl, " ");
-  s = runsigned (4, dvi);
-  fprintf (dtl, UF4, s);
+    /* s[4] = scale factor */
+    fprintf(dtl, " ");
+    s = runsigned(4, dvi);
+    fprintf(dtl, UF4, s);
 
-  /* d[4] = design size */
-  fprintf (dtl, " ");
-  d = runsigned (4, dvi);
-  fprintf (dtl, UF4, d);
+    /* d[4] = design size */
+    fprintf(dtl, " ");
+    d = runsigned(4, dvi);
+    fprintf(dtl, UF4, d);
 
-  /* a[1] = length of area (directory) name */
-  a = runsigned (1, dvi);
-  fprintf (dtl, " ");
-  fprintf (dtl, UF4, a);
+    /* a[1] = length of area (directory) name */
+    a = runsigned(1, dvi);
+    fprintf(dtl, " ");
+    fprintf(dtl, UF4, a);
 
-  /* l[1] = length of font name */
-  l = runsigned (1, dvi);
-  fprintf (dtl, " ");
-  fprintf (dtl, UF4, l);
+    /* l[1] = length of font name */
+    l = runsigned(1, dvi);
+    fprintf(dtl, " ");
+    fprintf(dtl, UF4, l);
 
-  /* n[a+l] = font pathname string => area (directory) + font */
-  xferstring (a, dvi, dtl);
-  xferstring (l, dvi, dtl);
+    /* n[a+l] = font pathname string => area (directory) + font */
+    xferstring(a, dvi, dtl);
+    xferstring(l, dvi, dtl);
 
-  return (1 + n + 4 + 4 + 4 + 1 + 1 + a + l);
+    return (1 + n + 4 + 4 + 4 + 1 + 1 + a + l);
 }
 /* end fontdef */
 
 COUNT
 preamble
 #ifdef STDC
-  (FILE * dvi,  FILE * dtl)
+    (FILE* dvi, FILE* dtl)
 #else
-  (dvi,  dtl)
-  FILE * dvi;
-  FILE * dtl;
+    (dvi, dtl) FILE* dvi;
+FILE* dtl;
 #endif
 /* read preamble from dvi and write in dtl */
 /* return number of DVI bytes interpreted into DTL */
 {
-  U4 id, num, den, mag, k;
+    U4 id, num, den, mag, k;
 
-  fprintf (dtl, "pre");
+    fprintf(dtl, "pre");
 
-  /* i[1] = DVI format identification */
-  fprintf (dtl, " ");
-  id = runsigned (1, dvi);
-  fprintf (dtl, UF4, id);
+    /* i[1] = DVI format identification */
+    fprintf(dtl, " ");
+    id = runsigned(1, dvi);
+    fprintf(dtl, UF4, id);
 
-  /* num[4] = numerator of DVI unit */
-  fprintf (dtl, " ");
-  num = runsigned (4, dvi);
-  fprintf (dtl, UF4, num);
+    /* num[4] = numerator of DVI unit */
+    fprintf(dtl, " ");
+    num = runsigned(4, dvi);
+    fprintf(dtl, UF4, num);
 
-  /* den[4] = denominator of DVI unit */
-  fprintf (dtl, " ");
-  den = runsigned (4, dvi);
-  fprintf (dtl, UF4, den);
+    /* den[4] = denominator of DVI unit */
+    fprintf(dtl, " ");
+    den = runsigned(4, dvi);
+    fprintf(dtl, UF4, den);
 
-  /* mag[4] = 1000 x magnification */
-  fprintf (dtl, " ");
-  mag = runsigned (4, dvi);
-  fprintf (dtl, UF4, mag);
+    /* mag[4] = 1000 x magnification */
+    fprintf(dtl, " ");
+    mag = runsigned(4, dvi);
+    fprintf(dtl, UF4, mag);
 
-  /* k[1] = length of comment */
-  fprintf (dtl, " ");
-  k = runsigned (1, dvi);
-  fprintf (dtl, UF4, k);
+    /* k[1] = length of comment */
+    fprintf(dtl, " ");
+    k = runsigned(1, dvi);
+    fprintf(dtl, UF4, k);
 
-  /* x[k] = comment string */
-  xferstring (k, dvi, dtl);
+    /* x[k] = comment string */
+    xferstring(k, dvi, dtl);
 
-  return (1 + 1 + 4 + 4 + 4 + 1 + k);
+    return (1 + 1 + 4 + 4 + 4 + 1 + k);
 }
 /* end preamble */
 
 COUNT
 postamble
 #ifdef STDC
-  (FILE * dvi,  FILE * dtl)
+    (FILE* dvi, FILE* dtl)
 #else
-  (dvi,  dtl)
-  FILE * dvi;
-  FILE * dtl;
+    (dvi, dtl) FILE* dvi;
+FILE* dtl;
 #endif
 /* read postamble from dvi and write in dtl */
 /* return number of bytes */
 {
-  U4 p, num, den, mag, l, u, s, t;
+    U4 p, num, den, mag, l, u, s, t;
 
-  fprintf (dtl, "post");
+    fprintf(dtl, "post");
 
-  /* p[4] = pointer to final bop */
-  fprintf (dtl, " ");
-  p = runsigned (4, dvi);
-  fprintf (dtl, UF4, p);
+    /* p[4] = pointer to final bop */
+    fprintf(dtl, " ");
+    p = runsigned(4, dvi);
+    fprintf(dtl, UF4, p);
 
-  /* num[4] = numerator of DVI unit */
-  fprintf (dtl, " ");
-  num = runsigned (4, dvi);
-  fprintf (dtl, UF4, num);
+    /* num[4] = numerator of DVI unit */
+    fprintf(dtl, " ");
+    num = runsigned(4, dvi);
+    fprintf(dtl, UF4, num);
 
-  /* den[4] = denominator of DVI unit */
-  fprintf (dtl, " ");
-  den = runsigned (4, dvi);
-  fprintf (dtl, UF4, den);
+    /* den[4] = denominator of DVI unit */
+    fprintf(dtl, " ");
+    den = runsigned(4, dvi);
+    fprintf(dtl, UF4, den);
 
-  /* mag[4] = 1000 x magnification */
-  fprintf (dtl, " ");
-  mag = runsigned (4, dvi);
-  fprintf (dtl, UF4, mag);
+    /* mag[4] = 1000 x magnification */
+    fprintf(dtl, " ");
+    mag = runsigned(4, dvi);
+    fprintf(dtl, UF4, mag);
 
-  /* l[4] = height + depth of tallest page */
-  fprintf (dtl, " ");
-  l = runsigned (4, dvi);
-  fprintf (dtl, UF4, l);
+    /* l[4] = height + depth of tallest page */
+    fprintf(dtl, " ");
+    l = runsigned(4, dvi);
+    fprintf(dtl, UF4, l);
 
-  /* u[4] = width of widest page */
-  fprintf (dtl, " ");
-  u = runsigned (4, dvi);
-  fprintf (dtl, UF4, u);
+    /* u[4] = width of widest page */
+    fprintf(dtl, " ");
+    u = runsigned(4, dvi);
+    fprintf(dtl, UF4, u);
 
-  /* s[2] = maximum stack depth */
-  fprintf (dtl, " ");
-  s = runsigned (2, dvi);
-  fprintf (dtl, UF4, s);
+    /* s[2] = maximum stack depth */
+    fprintf(dtl, " ");
+    s = runsigned(2, dvi);
+    fprintf(dtl, UF4, s);
 
-  /* t[2] = total number of pages (bop commands) */
-  fprintf (dtl, " ");
-  t = runsigned (2, dvi);
-  fprintf (dtl, UF4, t);
+    /* t[2] = total number of pages (bop commands) */
+    fprintf(dtl, " ");
+    t = runsigned(2, dvi);
+    fprintf(dtl, UF4, t);
 
-/*  return (29);  */
-  return (1 + 4 + 4 + 4 + 4 + 4 + 4 + 2 + 2);
+    /*  return (29);  */
+    return (1 + 4 + 4 + 4 + 4 + 4 + 4 + 2 + 2);
 }
 /* end postamble */
 
 COUNT
 postpost
 #ifdef STDC
-  (FILE * dvi,  FILE * dtl)
+    (FILE* dvi, FILE* dtl)
 #else
-  (dvi,  dtl)
-  FILE * dvi;
-  FILE * dtl;
+    (dvi, dtl) FILE* dvi;
+FILE* dtl;
 #endif
 /* read post_post from dvi and write in dtl */
 /* return number of bytes */
 {
-  U4 q, id;
-  int b223;  /* hope this is 8-bit clean */
-  int n223;  /* number of "223" bytes in final padding */
+    U4 q, id;
+    int b223; /* hope this is 8-bit clean */
+    int n223; /* number of "223" bytes in final padding */
 
-  fprintf (dtl, "post_post");
+    fprintf(dtl, "post_post");
 
-  /* q[4] = pointer to post command */
-  fprintf (dtl, " ");
-  q = runsigned (4, dvi);
-  fprintf (dtl, UF4, q);
+    /* q[4] = pointer to post command */
+    fprintf(dtl, " ");
+    q = runsigned(4, dvi);
+    fprintf(dtl, UF4, q);
 
-  /* i[1] = DVI identification byte */
-  fprintf (dtl, " ");
-  id = runsigned (1, dvi);
-  fprintf (dtl, UF4, id);
+    /* i[1] = DVI identification byte */
+    fprintf(dtl, " ");
+    id = runsigned(1, dvi);
+    fprintf(dtl, UF4, id);
 
-  /* final padding by "223" bytes */
-  /* hope this way of obtaining b223 is 8-bit clean */
-  for (n223 = 0; (b223 = fgetc (dvi)) == 223; n223++)
-  {
-    fprintf (dtl, " ");
-    fprintf (dtl, "%d", 223);
-  }
-  if (n223 < 4)
-  {
-    fprintf (stderr,
-      "%s:  bad post_post:  fewer than four \"223\" bytes.\n", program);
-    exit (1);
-  }
-  if (b223 != EOF)
-  {
-    fprintf (stderr,
-      "%s:  bad post_post:  doesn't end with a \"223\".\n", program);
-    exit (1);
-  }
+    /* final padding by "223" bytes */
+    /* hope this way of obtaining b223 is 8-bit clean */
+    for (n223 = 0; (b223 = fgetc(dvi)) == 223; n223++) {
+        fprintf(dtl, " ");
+        fprintf(dtl, "%d", 223);
+    }
+    if (n223 < 4) {
+        fprintf(stderr, "%s:  bad post_post:  fewer than four \"223\" bytes.\n",
+                program);
+        exit(1);
+    }
+    if (b223 != EOF) {
+        fprintf(stderr, "%s:  bad post_post:  doesn't end with a \"223\".\n",
+                program);
+        exit(1);
+    }
 
-  return (1 + 4 + 1 + n223);
+    return (1 + 4 + 1 + n223);
 }
 /* end postpost */
 
