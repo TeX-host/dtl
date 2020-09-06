@@ -1,3 +1,4 @@
+#ifndef INC_DTL_H
 /* dtl.h
    
    This file is public domain.
@@ -14,9 +15,10 @@
                  by  The TUG DVI Driver Standards Committee.
                  Appendix A, "Device-Independent File Format".
 */
+#define INC_DTL_H
 
 /* variety of DTL produced */
-#define  VARIETY  "sequences-6"
+#define VARIETY "sequences-6"
 
 /* version of DTL programs */
 #define VERSION "0.6.0"
@@ -76,18 +78,21 @@ typedef struct {int l; int m; char * s;} Lstring;
 
 int debug = 0;  /* normally, debugging is off */
 
+
 /* Is each DTL command parenthesised by a BCOM and an ECOM? */
 
 int group = 0;  /* by default, no grouping */
 
+
 /* signals of beginning and end of a command and its arguments */
 /* these apply only if group is nonzero */
 
-# define  BCOM  "{"
-# define  ECOM  "}"
+#define BCOM "{"
+#define ECOM "}"
 
-# define BCOM_CHAR '{'
-# define ECOM_CHAR '}'
+#define BCOM_CHAR '{'
+#define ECOM_CHAR '}'
+
 
 /* beginning and end of a message string */
 
@@ -97,6 +102,7 @@ int group = 0;  /* by default, no grouping */
 #define  BMES_CHAR  '\''
 #define  EMES_CHAR  BMES_CHAR
 
+
 /* beginning and end of sequence of font characters */
 
 #define  BSEQ  "("
@@ -105,10 +111,12 @@ int group = 0;  /* by default, no grouping */
 #define  BSEQ_CHAR  '('
 #define  ESEQ_CHAR  ')'
 
+
 /* escape and quote characters */
 
 #define  ESC_CHAR  '\\'
 #define  QUOTE_CHAR  '\"'
+
 
 /* command names in DTL */
 
@@ -177,4 +185,5 @@ int group = 0;  /* by default, no grouping */
 #define  POSTPOST "post_post"
 #define  OPCODE   "opcode"
 
-/* end dtl.h */
+
+#endif /* INC_DTL_H */
