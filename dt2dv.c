@@ -27,19 +27,15 @@ int main(int argc, char* argv[]) {
     progname = argv[0]; /* name of this program */
 
     /* memory violation signal handler */
-
     handler = (void (*)(int))signal(SIGSEGV, mem_viol);
 
     /* message about program and compiler */
     /* NB:  LTU EE's Sun/OS library is BSD, even though gcc 2.2.2 is ANSI */
-
     fprintf(stderr, "\n");
-    fprintf(stderr,
-            "Program \"%s\" version %s compiled %s %s in standard C.\n",
+    fprintf(stderr, "Program \"%s\" version %s compiled %s %s in standard C.\n",
             progname, VERSION, __DATE__, __TIME__);
 
     /* interpret command line arguments */
-
     nfile = 0;
     dtl_fp = dvi_fp = NULL;
     dtl_filename = dvi_filename = "";
@@ -49,15 +45,17 @@ int main(int argc, char* argv[]) {
         parse(argv[i]);
     }
 
-    if (nfile != 2) /* not exactly two files specified, so give help */
+    if (nfile != 2) {
+        /* not exactly two files specified, so give help */
         give_help();
-    else
+    } else {
         /* the real works */
         dt2dv(dtl_fp, dvi_fp);
+    }
 
     return 0; /* OK */
-}
-/* end main */
+} /* end main */
+
 
 void mem_viol(int sig) {
     void (*handler)(int);
@@ -78,10 +76,12 @@ void mem_viol(int sig) {
 void give_help(void) {
     int i;
     char* keyword;
+
     fprintf(stderr, "usage:   ");
     PRINT_PROGNAME;
     fprintf(stderr, "[options]  dtl_file  dvi_file");
     fprintf(stderr, "\n");
+
     for (i = 0; (keyword = opts[i].keyword) != NULL; i++) {
         fprintf(stderr, "    ");
         fprintf(stderr, "[%s]", keyword);
@@ -89,9 +89,9 @@ void give_help(void) {
         fprintf(stderr, "%s", opts[i].desc);
         fprintf(stderr, "\n");
     }
+
     fprintf(stderr, "Messages, like this one, go to stderr.\n");
-}
-/* give_help */
+} /* give_help */
 
 void no_op(void) { /* do nothing */
 }
@@ -115,24 +115,30 @@ void dvi_stdout(void) {
     ++nfile;
 }
 
+
 /* parse one command-line argument, `s' */
 int parse(char* s) {
     int i;
     char* keyword;
+
     for (i = 0; (keyword = opts[i].keyword) != NULL; i++) {
         if (strncmp(s, keyword, strlen(keyword)) == 0) {
             void (*pfn)(void);
+
             (*(opts[i].p_var)) = 1; /* turn option on */
-            if ((pfn = opts[i].p_fn) != NULL)
+            if ((pfn = opts[i].p_fn) != NULL) {
                 (*pfn)(); /* call option function */
+            }
             return i;
         }
     }
+
     /* reached here, so not an option: assume it's a filename */
     process(s);
+
     return i;
-}
-/* parse */
+} /* parse */
+
 
 /* I:  dtl_file;  I:  pdtl;  O:  *pdtl. */
 int open_dtl(char* dtl_file, FILE** pdtl) {
@@ -393,27 +399,27 @@ int dt2dv(FILE* dtl, FILE* dvi) {
     (void)free_cmds(cmd_table);
 
     return 1; /* OK */
-}
-/* dt2dv */
+} /* dt2dv */
 
-void* gmalloc(long int size) {
+void* gmalloc(size_t size) {
     void* p = NULL;
+
     if (size < 1) {
         PRINT_PROGNAME;
         fprintf(stderr, "(gmalloc) : INTERNAL ERROR : ");
-        fprintf(stderr, "unreasonable request to malloc %ld bytes\n", size);
+        fprintf(stderr, "unreasonable request to malloc %zd bytes\n", size);
         dexit(1);
     }
-    p = (void*)malloc((size_t)size);
+
+    p = malloc(size);
     if (p == NULL) {
         PRINT_PROGNAME;
         fprintf(stderr, "(gmalloc) : MEMORY ALLOCATION ERROR : ");
-        fprintf(stderr, "operating system failed to malloc %ld bytes\n", size);
+        fprintf(stderr, "operating system failed to malloc %zd bytes\n", size);
         dexit(1);
     }
     return (p);
-}
-/* gmalloc */
+} /* gmalloc */
 
 void dinfo(void) {
     PRINT_PROGNAME;
@@ -1208,12 +1214,11 @@ int check_emes(FILE* dtl) {
 /* Size typically used in this program for Lstring variables */
 #define LSIZE 1024
 
-void init_Lstring(Lstring* lsp, long int n) {
+void init_Lstring(Lstring* lsp, size_t n) {
     lsp->l = 0;
     lsp->m = n;
     lsp->s = (char*)gmalloc(n);
-}
-/* init_Lstring */
+} /* init_Lstring */
 
 void de_init_Lstring(Lstring* lsp) {
     lsp->l = 0;
@@ -1223,13 +1228,13 @@ void de_init_Lstring(Lstring* lsp) {
 }
 /* de_init_Lstring */
 
-Lstring* alloc_Lstring(long int n) {
+/// [NOT_USE]
+Lstring* alloc_Lstring(size_t n) {
     Lstring* lsp;
     lsp = (Lstring*)gmalloc(sizeof(Lstring));
     init_Lstring(lsp, n);
     return (lsp);
-}
-/* alloc_Lstring */
+} /* alloc_Lstring */
 
 void free_Lstring(Lstring* lstr) {
     free(lstr->s);

@@ -192,7 +192,7 @@ int open_dvi(char* dvi_file, FILE** pdvi);
 
 int dt2dv(FILE* dtl, FILE* dvi);
 
-void* gmalloc(long int size);
+void* gmalloc(size_t size);
 
 void dinfo(void);
 void dexit(int n);
@@ -228,9 +228,9 @@ S4 xfer_signed(int n, FILE* dtl, FILE* dvi);
 int check_bmes(FILE* dtl);
 int check_emes(FILE* dtl);
 
-void init_Lstring(Lstring* lsp, long int n);
+void init_Lstring(Lstring* lsp, size_t n);
 void de_init_Lstring(Lstring* lsp);
-Lstring* alloc_Lstring(long int n);
+Lstring* alloc_Lstring(size_t n);
 void free_Lstring(Lstring* lstr);
 void ls_putb(int ch, Lstring* lstr);
 
