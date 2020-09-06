@@ -30,6 +30,7 @@
 
 #include "dtl.h"
 
+
 /* Size typically used in this program for LString variables */
 #define LSTR_SIZE 1024
 
@@ -49,15 +50,11 @@ typedef enum _CharStatus {
 } CharStatus;
 
 
-/* by default, read and write regular files */
-int rd_stdin = 0;
-int wr_stdout = 0;
-
 /* maximum number of characters in a DTL input line */
-#define MAXLINE 1024
+#define MAX_LINE 1024
 
 /* input line */
-typedef struct {
+typedef struct _Line {
     COUNT num;   /* current line number */
     size_t max;  /* capacity of buf */
     S4 wrote;    /* number of characters written into buf */
@@ -65,9 +62,9 @@ typedef struct {
     char* buf;   /* line buffer */
 } Line;
 
-char linebuf[MAXLINE + 1];
+char linebuf[MAX_LINE + 1];
+Line dtl_line = {0, 0, 0, MAX_LINE, linebuf};
 
-Line dtl_line = {0, 0, 0, MAXLINE, linebuf};
 
 /* a DTL token either is:
      a quoted string (admitting an escape character),
@@ -195,6 +192,48 @@ op_info fnt_n[] = {{235, FONT1, 1, "1"},
 
 op_table fnt = {FONT, 235, 238, fnt_n};
 
+
+typedef struct {
+    char* keyword;      /* command line option keyword */
+    int* p_var;         /* pointer to option variable */
+    char* desc;         /* description of keyword and value */
+    void (*p_fn)(void); /* pointer to function called when option is set */
+} Options;
+
+/* by default, read and write regular files */
+int rd_stdin = 0;
+int wr_stdout = 0;
+
+Options opts[] = {
+    {"-debug", &debug, "detailed debugging", no_op},
+    {"-group", &group, "each DTL command is in parentheses", no_op},
+    {"-si", &rd_stdin, "read all DTL commands from standard input", dtl_stdin},
+    {"-so", &wr_stdout, "write all DVI commands to standard output",
+     dvi_stdout},
+    {NULL, NULL, NULL, NULL}};
+/* opts[] */
+
+char* progname = ""; /* intended for name of this program */
+int nfile = 0;       /* number of filename arguments on the command line */
+
+#define PRINT_PROGNAME fprintf(stderr, "%s ", progname)
+
+
+FILE* dtl_fp = NULL;
+FILE* dvi_fp = NULL;
+
+char* dtl_filename = "";
+char* dvi_filename = "";
+
+COUNT dtl_read = 0;            /* bytes read from dtl file */
+COUNT dvi_written = 0;         /* bytes written to dvi file */
+word_t last_bop_address = -1;  /* byte address of last bop; first bop uses -1 */
+word_t postamble_address = -1; /* byte address of postamble */
+COUNT ncom = 0; /* commands successfully read and interpreted from dtl file */
+COUNT com_read = 0; /* bytes read in current (command and arguments), */
+                    /* since and including the opening BCOM_CHAR, if any */
+
+
 /* Function prototypes */
 
 void mem_viol(int sig);
@@ -274,33 +313,5 @@ int fontdef(FILE* dtl, FILE* dvi, int n);
 U4 preamble(FILE* dtl, FILE* dvi);
 int postamble(FILE* dtl, FILE* dvi);
 int post_post(FILE* dtl, FILE* dvi);
-
-typedef struct {
-    char* keyword;      /* command line option keyword */
-    int* p_var;         /* pointer to option variable */
-    char* desc;         /* description of keyword and value */
-    void (*p_fn)(void); /* pointer to function called when option is set */
-} Options;
-
-Options opts[] = {
-    {"-debug", &debug, "detailed debugging", no_op},
-    {"-group", &group, "each DTL command is in parentheses", no_op},
-    {"-si", &rd_stdin, "read all DTL commands from standard input", dtl_stdin},
-    {"-so", &wr_stdout, "write all DVI commands to standard output",
-     dvi_stdout},
-    {NULL, NULL, NULL, NULL}};
-/* opts[] */
-
-char* progname = ""; /* intended for name of this program */
-int nfile = 0;       /* number of filename arguments on the command line */
-
-#define PRINT_PROGNAME fprintf(stderr, "%s ", progname)
-
-
-FILE* dtl_fp = NULL;
-FILE* dvi_fp = NULL;
-
-char* dtl_filename = "";
-char* dvi_filename = "";
 
 #endif /* INC_DT2DV_H */

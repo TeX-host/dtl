@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
     return 0; /* OK */
 } /* end main */
 
-
+/// global var: dtl_line.
 void mem_viol(int sig) {
     void (*handler)(int);
     handler = (void (*)(int))signal(SIGSEGV, mem_viol);
@@ -70,8 +70,7 @@ void mem_viol(int sig) {
     fprintf(stderr, WF, dtl_line.num);
     fprintf(stderr, "\n");
     dexit(1);
-}
-/* mem_viol */
+} /* mem_viol */
 
 void give_help(void) {
     int i;
@@ -226,13 +225,7 @@ void process(char* s) {
     ++nfile;
 } /* process */
 
-COUNT dtl_read = 0;            /* bytes read from dtl file */
-COUNT dvi_written = 0;         /* bytes written to dvi file */
-word_t last_bop_address = -1;  /* byte address of last bop; first bop uses -1 */
-word_t postamble_address = -1; /* byte address of postamble */
-COUNT ncom = 0; /* commands successfully read and interpreted from dtl file */
-COUNT com_read = 0; /* bytes read in current (command and arguments), */
-                    /* since and including the opening BCOM_CHAR, if any */
+
 
 /* write byte into dvi file */
 int put_byte(int byte, FILE* dvi) {
@@ -252,7 +245,11 @@ int put_byte(int byte, FILE* dvi) {
     return 1; /* OK */
 } /* put_byte */
 
-
+/**
+ *
+ * ## global var
+ *  + dtl_line
+ */
 int dt2dv(FILE* dtl, FILE* dvi) {
     int nprefixes = 0;         /* number of prefixes in cmd_prefixes[] list. */
     static Token dtl_cmd = ""; /* DTL command name */
@@ -528,15 +525,18 @@ int get_line(FILE* fp, Line* line, int max) {
 }
 /* get_line */
 
-/* read one character from dtl_line if possible, */
-/* otherwise read another dtl_line from fp */
-/* return 1 if a character is read, 0 if at end of fp file */
+/** read one character from dtl_line if possible,
+ * otherwise read another dtl_line from fp
+ * return 1 if a character is read, 0 if at end of fp file.
+ *
+ * ## global var
+ *  + dtl_line
+ */
 int read_line_char(FILE* fp, int* ch) {
-    extern Line dtl_line;
     if (dtl_line.wrote == 0 || dtl_line.read >= dtl_line.wrote) {
         int line_status;
         /* refill line buffer */
-        line_status = get_line(fp, &dtl_line, MAXLINE);
+        line_status = get_line(fp, &dtl_line, MAX_LINE);
         if (line_status == 0) {
             /* at end of DTL file */
             if (debug) {
@@ -554,9 +554,11 @@ int read_line_char(FILE* fp, int* ch) {
             }
         }
     }
+
     *ch = dtl_line.buf[dtl_line.read++];
     ++dtl_read;
     ++com_read; /* count another DTL command character */
+
     return 1;
 }
 /* read_line_char */
@@ -636,10 +638,14 @@ COUNT read_variety(FILE* dtl) {
 }
 /* read_variety */
 
-/* Skip whitespace characters in file fp. */
-/* Write in *ch the last character read from fp, */
-/*   or < 0 if fp could not be read. */
-/* Return number of characters read from fp. */
+/** Skip whitespace characters in file fp.
+ * Write in *ch the last character read from fp,
+ *  or < 0 if fp could not be read.
+ * Return number of characters read from fp.
+ *
+ * ## global var
+ *  + dtl_line
+ */
 COUNT skip_space(FILE* fp, int* ch) {
     int c;       /* character read (if any) */
     COUNT count; /* number (0 or more) of whitespace characters read */
@@ -666,8 +672,7 @@ COUNT skip_space(FILE* fp, int* ch) {
 
     *ch = c; /* c will be < 0 if read_char could not read fp */
     return (count + nchar);
-}
-/* skip_space */
+} /* skip_space */
 
 /* read next token from dtl file. */
 /* return number of DTL bytes read. */
@@ -803,23 +808,30 @@ COUNT read_mes(FILE* fp, char* token) {
 }
 /* read_mes */
 
-/* wind input back, to allow rereading of one character */
-/* return 1 if this works, 0 on error */
+/** wind input back, to allow rereading of one character.
+ * return 1 if this works, 0 on error.
+ *
+ * ## global var
+ *  + dtl_line
+ *  + dtl_read
+ *  + com_read
+ */
 int unread_char(void) {
-    extern Line dtl_line;
     int status;
+
     if (dtl_line.read > 0) {
         --dtl_line.read; /* back up one character in dtl_line */
         --dtl_read;      /* correct the count of DTL characters */
         --com_read;      /* count another DTL command character */
-        status = 1;      /* OK */
-    } else               /* current DTL line is empty */
-    {
+
+        status = 1; /* OK */
+    } else {
+        /* current DTL line is empty */
         status = 0; /* error */
     }
+
     return status;
-}
-/* unread_char */
+} /* unread_char */
 
 int find_command(char* command, int* opcode) {
     int found;
