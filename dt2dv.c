@@ -438,16 +438,14 @@ void dinfo(void) {
     fprintf(stderr, "Successfully interpreted ");
     fprintf(stderr, WF, ncom);
     fprintf(stderr, " DVI command%s.\n", (ncom == 1 ? "" : "s"));
-}
-/* dinfo */
+} /* dinfo */
 
 void dexit(int n) {
     dinfo();
     PRINT_PROGNAME;
     fprintf(stderr, "(dexit) : exiting with status %d.\n", n);
     exit(n);
-}
-/* dexit */
+} /* dexit */
 
 int cons_cmds(int nprefixes, CmdPrefix* prefix, CmdTable cmds) {
     int code;        /* first opcode for a given command prefix */
