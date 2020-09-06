@@ -13,7 +13,7 @@
 BINDIR      = /usr/local/bin
 CATDIR      = $(MANDIR)/../cat$(MANEXT)
 CC          = gcc
-CFLAGS      = -O2 -Wall
+CFLAGS      = -O2 -Wall -std=c99
 ## Some compilers don't optimise correctly; for those, don't use `-O2' :
 # CFLAGS    = -Wall
 CHMOD       = /bin/chmod

@@ -123,26 +123,26 @@ op_table fnt = {"f", 235, 238, fnt_n};
 
 /* function prototypes */
 
-int open_dvi ARGS((char* dvi_file, FILE** dvi));
-int open_dtl ARGS((char* dtl_file, FILE** dtl));
-int dv2dt ARGS((FILE * dvi, FILE* dtl));
+int open_dvi(char* dvi_file, FILE** dvi);
+int open_dtl(char* dtl_file, FILE** dtl);
+int dv2dt(FILE* dvi, FILE* dtl);
 
-COUNT wunsigned ARGS((int n, FILE* dvi, FILE* dtl));
-COUNT wsigned ARGS((int n, FILE* dvi, FILE* dtl));
-S4 rsigned ARGS((int n, FILE* dvi));
-U4 runsigned ARGS((int n, FILE* dvi));
+COUNT wunsigned(int n, FILE* dvi, FILE* dtl);
+COUNT wsigned(int n, FILE* dvi, FILE* dtl);
+S4 rsigned(int n, FILE* dvi);
+U4 runsigned(int n, FILE* dvi);
 
-COUNT wtable ARGS((op_table table, int opcode, FILE* dvi, FILE* dtl));
+COUNT wtable(op_table table, int opcode, FILE* dvi, FILE* dtl);
 
-COUNT setseq ARGS((int opcode, FILE* dvi, FILE* dtl));
-Void setpchar ARGS((int charcode, FILE* dtl));
-Void xferstring ARGS((int k, FILE* dvi, FILE* dtl));
+COUNT setseq(int opcode, FILE* dvi, FILE* dtl);
+void setpchar(int charcode, FILE* dtl);
+void xferstring(int k, FILE* dvi, FILE* dtl);
 
-COUNT special ARGS((FILE * dvi, FILE* dtl, int n));
-COUNT fontdef ARGS((FILE * dvi, FILE* dtl, int n));
-COUNT preamble ARGS((FILE * dvi, FILE* dtl));
-COUNT postamble ARGS((FILE * dvi, FILE* dtl));
-COUNT postpost ARGS((FILE * dvi, FILE* dtl));
+COUNT special(FILE* dvi, FILE* dtl, int n);
+COUNT fontdef(FILE* dvi, FILE* dtl, int n);
+COUNT preamble(FILE* dvi, FILE* dtl);
+COUNT postamble(FILE* dvi, FILE* dtl);
+COUNT postpost(FILE* dvi, FILE* dtl);
 
 String program; /* name of dv2dt program */
 

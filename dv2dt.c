@@ -18,14 +18,7 @@
 #include "dv2dt.h"
 
 
-int main
-#ifdef STDC
-    (int argc, char* argv[])
-#else
-    (argc, argv) int argc;
-char* argv[];
-#endif
-{
+int main(int argc, char* argv[]) {
     FILE* dvi = stdin;
     FILE* dtl = stdout;
 
@@ -42,15 +35,8 @@ char* argv[];
 }
 /* end main */
 
-int open_dvi
-#ifdef STDC
-    (char* dvi_file, FILE** pdvi)
-#else
-    (dvi_file, pdvi) char* dvi_file;
-FILE** pdvi;
-#endif
 /* I:  dvi_file;  I:  pdvi;  O:  *pdvi. */
-{
+int open_dvi(char* dvi_file, FILE** pdvi) {
     if (pdvi == NULL) {
         fprintf(stderr, "%s:  address of dvi variable is NULL.\n", program);
         exit(1);
@@ -68,15 +54,8 @@ FILE** pdvi;
 }
 /* open_dvi */
 
-int open_dtl
-#ifdef STDC
-    (char* dtl_file, FILE** pdtl)
-#else
-    (dtl_file, pdtl) char* dtl_file;
-FILE** pdtl;
-#endif
 /* I:  dtl_file;  I:  pdtl;  O:  *pdtl. */
-{
+int open_dtl(char* dtl_file, FILE** pdtl) {
     if (pdtl == NULL) {
         fprintf(stderr, "%s:  address of dtl variable is NULL.\n", program);
         exit(1);
@@ -94,14 +73,7 @@ FILE** pdtl;
 }
 /* open_dtl */
 
-int dv2dt
-#ifdef STDC
-    (FILE* dvi, FILE* dtl)
-#else
-    (dvi, dtl) FILE* dvi;
-FILE* dtl;
-#endif
-{
+int dv2dt(FILE* dvi, FILE* dtl) {
     int opcode;
     COUNT count; /* intended to count bytes to DVI file; as yet unused. */
 
@@ -165,16 +137,7 @@ FILE* dtl;
 /* dv2dt */
 
 
-COUNT
-wunsigned
-#ifdef STDC
-    (int n, FILE* dvi, FILE* dtl)
-#else
-    (n, dvi, dtl) int n;
-FILE* dvi;
-FILE* dtl;
-#endif
-{
+COUNT wunsigned(int n, FILE* dvi, FILE* dtl) {
     U4 unum;
 
     fprintf(dtl, " ");
@@ -184,16 +147,7 @@ FILE* dtl;
 }
 /* end wunsigned */
 
-COUNT
-wsigned
-#ifdef STDC
-    (int n, FILE* dvi, FILE* dtl)
-#else
-    (n, dvi, dtl) int n;
-FILE* dvi;
-FILE* dtl;
-#endif
-{
+COUNT wsigned(int n, FILE* dvi, FILE* dtl) {
     S4 snum;
 
     fprintf(dtl, " ");
@@ -203,16 +157,9 @@ FILE* dtl;
 }
 /* end wsigned */
 
-U4 runsigned
-#ifdef STDC
-    (int n, FILE* dvi)
-#else
-    (n, dvi) int n;
-FILE* dvi;
-#endif
 /* read 1 <= n <= 4 bytes for an unsigned integer from dvi file */
 /* DVI format uses Big-endian storage of numbers. */
-{
+U4 runsigned(int n, FILE* dvi) {
     U4 integer;
     int ibyte = 0;
     int i;
@@ -236,16 +183,9 @@ FILE* dvi;
 }
 /* end runsigned */
 
-S4 rsigned
-#ifdef STDC
-    (int n, FILE* dvi)
-#else
-    (n, dvi) int n;
-FILE* dvi;
-#endif
 /* read 1 <= n <= 4 bytes for a signed integer from dvi file */
 /* DVI format uses Big-endian storage of numbers. */
-{
+S4 rsigned(int n, FILE* dvi) {
     S4 integer;
     int ibyte = 0;
     int i;
@@ -272,19 +212,9 @@ FILE* dvi;
 }
 /* end rsigned */
 
-COUNT
-wtable
-#ifdef STDC
-    (op_table table, int opcode, FILE* dvi, FILE* dtl)
-#else
-    (table, opcode, dvi, dtl) op_table table;
-int opcode;
-FILE* dvi;
-FILE* dtl;
-#endif
 /* write command with given opcode in given table */
 /* return number of DVI bytes in this command */
-{
+COUNT wtable(op_table table, int opcode, FILE* dvi, FILE* dtl) {
     op_info op;       /* pointer into table of operations and arguments */
     COUNT bcount = 0; /* number of bytes in arguments of this opcode */
     String args;      /* arguments string */
@@ -339,18 +269,9 @@ FILE* dtl;
 }
 /* wtable */
 
-COUNT
-setseq
-#ifdef STDC
-    (int opcode, FILE* dvi, FILE* dtl)
-#else
-    (opcode, dvi, dtl) int opcode;
-FILE* dvi;
-FILE* dtl;
-#endif
 /* write a sequence of setchar commands */
 /* return count of DVI bytes interpreted into DTL */
-{
+COUNT setseq(int opcode, FILE* dvi, FILE* dtl) {
     int charcode = opcode; /* fortuitous */
     int ccount = 0;
 
@@ -395,15 +316,8 @@ FILE* dtl;
 }
 /* setseq */
 
-Void setpchar
-#ifdef STDC
-    (int charcode, FILE* dtl)
-#else
-    (charcode, dtl) int charcode;
-FILE* dtl;
-#endif
 /* set printable character */
-{
+void setpchar(int charcode, FILE* dtl) {
     switch (charcode) {
         case ESC_CHAR:
             fprintf(dtl, "%c", ESC_CHAR);
@@ -426,16 +340,8 @@ FILE* dtl;
 }
 /* setpchar */
 
-Void xferstring
-#ifdef STDC
-    (int k, FILE* dvi, FILE* dtl)
-#else
-    (k, dvi, dtl) int k;
-FILE* dvi;
-FILE* dtl;
-#endif
 /* copy string of k characters from dvi file to dtl file */
-{
+void xferstring(int k, FILE* dvi, FILE* dtl) {
     int i;
     int ch;
 
@@ -452,18 +358,9 @@ FILE* dtl;
 }
 /* xferstring */
 
-COUNT
-special
-#ifdef STDC
-    (FILE* dvi, FILE* dtl, int n)
-#else
-    (dvi, dtl, n) FILE* dvi;
-FILE* dtl;
-int n;
-#endif
 /* read special 1 .. 4 from dvi and write in dtl */
 /* return number of DVI bytes interpreted into DTL */
-{
+COUNT special(FILE* dvi, FILE* dtl, int n) {
     U4 k;
 
     if (n < 1 || n > 4) {
@@ -485,18 +382,9 @@ int n;
 }
 /* end special */
 
-COUNT
-fontdef
-#ifdef STDC
-    (FILE* dvi, FILE* dtl, int n)
-#else
-    (dvi, dtl, n) FILE* dvi;
-FILE* dtl;
-int n;
-#endif
 /* read fontdef 1 .. 4 from dvi and write in dtl */
 /* return number of DVI bytes interpreted into DTL */
-{
+COUNT fontdef(FILE* dvi, FILE* dtl, int n) {
     U4 ku, c, s, d, a, l;
     S4 ks;
 
@@ -555,17 +443,9 @@ int n;
 }
 /* end fontdef */
 
-COUNT
-preamble
-#ifdef STDC
-    (FILE* dvi, FILE* dtl)
-#else
-    (dvi, dtl) FILE* dvi;
-FILE* dtl;
-#endif
 /* read preamble from dvi and write in dtl */
 /* return number of DVI bytes interpreted into DTL */
-{
+COUNT preamble(FILE* dvi, FILE* dtl) {
     U4 id, num, den, mag, k;
 
     fprintf(dtl, "pre");
@@ -602,17 +482,9 @@ FILE* dtl;
 }
 /* end preamble */
 
-COUNT
-postamble
-#ifdef STDC
-    (FILE* dvi, FILE* dtl)
-#else
-    (dvi, dtl) FILE* dvi;
-FILE* dtl;
-#endif
 /* read postamble from dvi and write in dtl */
 /* return number of bytes */
-{
+COUNT postamble(FILE* dvi, FILE* dtl) {
     U4 p, num, den, mag, l, u, s, t;
 
     fprintf(dtl, "post");
@@ -662,17 +534,9 @@ FILE* dtl;
 }
 /* end postamble */
 
-COUNT
-postpost
-#ifdef STDC
-    (FILE* dvi, FILE* dtl)
-#else
-    (dvi, dtl) FILE* dvi;
-FILE* dtl;
-#endif
 /* read post_post from dvi and write in dtl */
 /* return number of bytes */
-{
+COUNT postpost(FILE* dvi, FILE* dtl) {
     U4 q, id;
     int b223; /* hope this is 8-bit clean */
     int n223; /* number of "223" bytes in final padding */

@@ -19,22 +19,16 @@
 
 #include "dt2dv.h"
 
-int main
-#ifdef STDC
-    (int argc, char* argv[])
-#else
-    (argc, argv) int argc;
-char* argv[];
-#endif
-{
-    Void(*handler) ARGS((int)); /* Previous signal handler */
+
+int main(int argc, char* argv[]) {
+    void (*handler)(int); /* Previous signal handler */
     int i;
 
     progname = argv[0]; /* name of this program */
 
     /* memory violation signal handler */
 
-    handler = (Void(*) ARGS((int)))signal(SIGSEGV, mem_viol);
+    handler = (void (*)(int))signal(SIGSEGV, mem_viol);
 
 #ifndef __DATE__
 #define __DATE__ ""
@@ -79,15 +73,9 @@ char* argv[];
 }
 /* end main */
 
-Void mem_viol
-#ifdef STDC
-    (int sig)
-#else
-    (sig) int sig;
-#endif
-{
-    Void(*handler) ARGS((int));
-    handler = (Void(*) ARGS((int)))signal(SIGSEGV, mem_viol);
+void mem_viol(int sig) {
+    void (*handler)(int);
+    handler = (void (*)(int))signal(SIGSEGV, mem_viol);
     if (sig != SIGSEGV) {
         PRINT_PROGNAME;
         fprintf(stderr, "(mem_viol) : called with wrong signal!\n");
@@ -101,7 +89,7 @@ Void mem_viol
 }
 /* mem_viol */
 
-Void give_help(VOID) {
+void give_help(void) {
     int i;
     char* keyword;
     fprintf(stderr, "usage:   ");
@@ -119,11 +107,10 @@ Void give_help(VOID) {
 }
 /* give_help */
 
-Void no_op(VOID)
-/* do nothing */
-{}
+void no_op(void) { /* do nothing */
+}
 
-Void dtl_stdin(VOID) {
+void dtl_stdin(void) {
     extern FILE* dtl_fp;
     extern int nfile;
 
@@ -132,7 +119,7 @@ Void dtl_stdin(VOID) {
     ++nfile;
 }
 
-Void dvi_stdout(VOID) {
+void dvi_stdout(void) {
     extern FILE* dvi_fp;
     extern int nfile;
 
@@ -142,19 +129,13 @@ Void dvi_stdout(VOID) {
     ++nfile;
 }
 
-int parse
-#ifdef STDC
-    (char* s)
-#else
-    (s) char* s;
-#endif
 /* parse one command-line argument, `s' */
-{
+int parse(char* s) {
     int i;
     char* keyword;
     for (i = 0; (keyword = opts[i].keyword) != NULL; i++) {
         if (strncmp(s, keyword, strlen(keyword)) == 0) {
-            Void (*pfn)(VOID);
+            void (*pfn)(void);
             (*(opts[i].p_var)) = 1; /* turn option on */
             if ((pfn = opts[i].p_fn) != NULL)
                 (*pfn)(); /* call option function */
@@ -167,15 +148,8 @@ int parse
 }
 /* parse */
 
-int open_dtl
-#ifdef STDC
-    (char* dtl_file, FILE** pdtl)
-#else
-    (dtl_file, pdtl) char* dtl_file;
-FILE** pdtl;
-#endif
 /* I:  dtl_file;  I:  pdtl;  O:  *pdtl. */
-{
+int open_dtl(char* dtl_file, FILE** pdtl) {
     extern char* dtl_filename;
 
     dtl_filename = dtl_file;
@@ -210,15 +184,8 @@ FILE** pdtl;
 }
 /* open_dtl */
 
-int open_dvi
-#ifdef STDC
-    (char* dvi_file, FILE** pdvi)
-#else
-    (dvi_file, pdvi) char* dvi_file;
-FILE** pdvi;
-#endif
 /* I:  dvi_file;  I:  pdvi;  O:  *pdvi. */
-{
+int open_dvi(char* dvi_file, FILE** pdvi) {
     extern char* dvi_filename;
 
     dvi_filename = dvi_file;
@@ -253,13 +220,7 @@ FILE** pdvi;
 }
 /* open_dvi */
 
-Void process
-#ifdef STDC
-    (char* s)
-#else
-    (s) char* s;
-#endif
-{
+void process(char* s) {
     extern FILE *dtl_fp, *dvi_fp;
     extern int nfile;
     if (dtl_fp == NULL) /* first filename assumed to be DTL input */
@@ -285,15 +246,8 @@ COUNT ncom = 0; /* commands successfully read and interpreted from dtl file */
 COUNT com_read = 0; /* bytes read in current (command and arguments), */
                     /* since and including the opening BCOM_CHAR, if any */
 
-int put_byte
-#ifdef STDC
-    (int byte, FILE* dvi)
-#else
-    (byte, dvi) int byte;
-FILE* dvi;
-#endif
 /* write byte into dvi file */
-{
+int put_byte(int byte, FILE* dvi) {
     check_byte(byte);
     /*  if (fprintf (dvi, "%c", byte) != 1) */
     if (fprintf(dvi, "%c", byte) < 0) {
@@ -309,14 +263,8 @@ FILE* dvi;
 }
 /* put_byte */
 
-int dt2dv
-#ifdef STDC
-    (FILE* dtl, FILE* dvi)
-#else
-    (dtl, dvi) FILE* dtl;
-FILE* dvi;
-#endif
-{
+
+int dt2dv(FILE* dtl, FILE* dvi) {
     int nprefixes = 0;         /* number of prefixes in cmd_prefixes[] list. */
     static Token dtl_cmd = ""; /* DTL command name */
     COUNT nread = 0; /* number of bytes read by a function from dtl file. */
@@ -325,7 +273,7 @@ FILE* dvi;
 
     /* Construct array of all NCMDS == 256 DTL commands */
 
-    (Void) cons_cmds(nprefixes, cmd_prefixes, cmd_table);
+    (void)cons_cmds(nprefixes, cmd_prefixes, cmd_table);
 
     /* DTL commands have the form "[ ]*command arg ... arg[ ]*", */
     /* possibly enclosed in a BCOM, ECOM pair, */
@@ -456,27 +404,21 @@ FILE* dvi;
     fprintf(stderr, " DVI command%s.\n", (ncom == 1 ? "" : "s"));
     fprintf(stderr, "\n");
 
-    (Void) free_cmds(cmd_table);
+    (void)free_cmds(cmd_table);
 
     return 1; /* OK */
 }
 /* dt2dv */
 
-Void* gmalloc
-#ifdef STDC
-    (long int size)
-#else
-    (size) long int size;
-#endif
-{
-    Void* p = NULL;
+void* gmalloc(long int size) {
+    void* p = NULL;
     if (size < 1) {
         PRINT_PROGNAME;
         fprintf(stderr, "(gmalloc) : INTERNAL ERROR : ");
         fprintf(stderr, "unreasonable request to malloc %ld bytes\n", size);
         dexit(1);
     }
-    p = (Void*)malloc((size_t)size);
+    p = (void*)malloc((size_t)size);
     if (p == NULL) {
         PRINT_PROGNAME;
         fprintf(stderr, "(gmalloc) : MEMORY ALLOCATION ERROR : ");
@@ -487,7 +429,7 @@ Void* gmalloc
 }
 /* gmalloc */
 
-Void dinfo(VOID) {
+void dinfo(void) {
     PRINT_PROGNAME;
     fprintf(stderr, "(dinfo) : ");
     fprintf(stderr, "Current DTL input line ");
@@ -507,13 +449,7 @@ Void dinfo(VOID) {
 }
 /* dinfo */
 
-Void dexit
-#ifdef STDC
-    (int n)
-#else
-    (n) int n;
-#endif
-{
+void dexit(int n) {
     dinfo();
     PRINT_PROGNAME;
     fprintf(stderr, "(dexit) : exiting with status %d.\n", n);
@@ -521,15 +457,7 @@ Void dexit
 }
 /* dexit */
 
-int cons_cmds
-#ifdef STDC
-    (int nprefixes, CmdPrefix* prefix, CmdTable cmds)
-#else
-    (nprefixes, prefix, cmds) int nprefixes;
-CmdPrefix* prefix;
-CmdTable cmds;
-#endif
-{
+int cons_cmds(int nprefixes, CmdPrefix* prefix, CmdTable cmds) {
     int code;        /* first opcode for a given command prefix */
     int opcode;      /* command's opcode */
     int nsuffixes;   /* number of commands with a given prefix */
@@ -594,30 +522,16 @@ CmdTable cmds;
 }
 /* cons_cmds */
 
-Void free_cmds
-#ifdef STDC
-    (CmdTable cmd_table)
-#else
-    (cmd_table) CmdTable cmd_table;
-#endif
-{
+void free_cmds(CmdTable cmd_table) {
     int i;
     for (i = 0; i < NCMDS; i++)
         gfree(cmd_table[i]);
 }
 /* free_cmds */
 
-int get_line
-#ifdef STDC
-    (FILE* fp, Line* line, int max)
-#else
-    (fp, line, max) FILE* fp;
-Line* line;
-int max;
-#endif
 /* read a (Line *) line from fp, return length */
 /* adapted from K&R (second, alias ANSI C, edition, 1988), page 165 */
-{
+int get_line(FILE* fp, Line* line, int max) {
     if (fgets(line->buf, max, fp) == NULL)
         return 0;
     else {
@@ -629,17 +543,10 @@ int max;
 }
 /* get_line */
 
-int read_line_char
-#ifdef STDC
-    (FILE* fp, int* ch)
-#else
-    (fp, ch) FILE* fp;
-int* ch;
-#endif
 /* read one character from dtl_line if possible, */
 /* otherwise read another dtl_line from fp */
 /* return 1 if a character is read, 0 if at end of fp file */
-{
+int read_line_char(FILE* fp, int* ch) {
     extern Line dtl_line;
     if (dtl_line.wrote == 0 || dtl_line.read >= dtl_line.wrote) {
         int line_status;
@@ -669,18 +576,11 @@ int* ch;
 }
 /* read_line_char */
 
-int read_char
-#ifdef STDC
-    (FILE* fp, int* ch)
-#else
-    (fp, ch) FILE* fp;
-int* ch;
-#endif
 /* Read next character, if any, from file fp. */
 /* Write it into *ch. */
 /* If no character is read, then *ch value < 0. */
 /* Return 1 if OK, 0 if EOF or error. */
-{
+int read_char(FILE* fp, int* ch) {
     int status = 1;
     int c; /* in case ch points awry, we still have something in c. */
 
@@ -709,18 +609,11 @@ int* ch;
 }
 /* read_char */
 
-COUNT
-read_variety
-#ifdef STDC
-    (FILE* dtl)
-#else
-    (dtl) FILE* dtl;
-#endif
 /* read and check DTL variety signature */
 /* return number of DTL bytes written */
 /* DTL variety is _NEVER_ grouped by BCOM and ECOM. */
 /* Uniformity here enables the program easily to modify its behavior. */
-{
+COUNT read_variety(FILE* dtl) {
     COUNT vread = 0; /* number of DTL bytes read by read_variety */
     COUNT nread = 0; /* number of DTL bytes read by read_token */
     static Token token = "";
@@ -758,19 +651,11 @@ read_variety
 }
 /* read_variety */
 
-COUNT
-skip_space
-#ifdef STDC
-    (FILE* fp, int* ch)
-#else
-    (fp, ch) FILE* fp;
-int* ch;
-#endif
 /* Skip whitespace characters in file fp. */
 /* Write in *ch the last character read from fp, */
 /*   or < 0 if fp could not be read. */
 /* Return number of characters read from fp. */
-{
+COUNT skip_space(FILE* fp, int* ch) {
     int c;       /* character read (if any) */
     COUNT count; /* number (0 or more) of whitespace characters read */
     int nchar;   /* number (0 or 1) of characters read by read_char */
@@ -799,14 +684,6 @@ int* ch;
 }
 /* skip_space */
 
-COUNT
-read_token
-#ifdef STDC
-    (FILE* dtl, char* token)
-#else
-    (dtl, token) FILE* dtl;
-char* token;
-#endif
 /* read next token from dtl file. */
 /* return number of DTL bytes read. */
 /* A token is one of:
@@ -815,7 +692,7 @@ char* token;
      BSEQ or ESEQ;
      any other sequence of non-whitespace characters.
 */
-{
+COUNT read_token(FILE* dtl, char* token) {
     COUNT nread; /* number of DTL bytes read by read_token */
     int ch;      /* most recent character read */
 
@@ -864,14 +741,7 @@ char* token;
 #define CHAR_FAIL 0
 #define CHAR_EOS (-1)
 
-int read_string_char
-#ifdef STDC
-    (FILE* fp, int* ch)
-#else
-    (fp, ch) FILE* fp;
-int* ch;
-#endif
-{
+int read_string_char(FILE* fp, int* ch) {
     int status = CHAR_OK; /* OK so far */
     int c;
 
@@ -891,22 +761,14 @@ int* ch;
 }
 /* read_string_char */
 
-COUNT
-read_misc
-#ifdef STDC
-    (FILE* fp, Token token)
-#else
-    (fp, token) FILE* fp;
-Token token;
-#endif
-{
+COUNT read_misc(FILE* fp, Token token) {
     int c;
     int count;
     /* loop ends at:  end of fp file, or reading error, or a space */
     for (count = 0; count <= MAXTOKLEN; ++count) {
         if (read_char(fp, &c) == 0 || isspace(c)) break;
         if (group && c == ECOM_CHAR) {
-            (Void) unread_char();
+            (void)unread_char();
             break;
         }
 
@@ -917,20 +779,12 @@ Token token;
 }
 /* read_misc */
 
-COUNT
-read_mes
-#ifdef STDC
-    (FILE* fp, char* token)
-#else
-    (fp, token) FILE* fp;
-char* token;
-#endif
 /* called **AFTER** a BMES_CHAR has been read */
 /* read file fp for characters up to next unescaped EMES_CHAR */
 /* this is called a "string token" */
 /* write string, including EMES_CHAR, into token[] */
 /* return number of characters read from fp */
-{
+COUNT read_mes(FILE* fp, char* token) {
     COUNT dtl_count; /* number of DTL characters read by read_mes from fp */
     int more;        /* flag more == 0 to terminate loop */
     int escape;      /* flag escape == 1 if previous character was ESC_CHAR */
@@ -967,10 +821,9 @@ char* token;
 }
 /* read_mes */
 
-int unread_char(VOID)
 /* wind input back, to allow rereading of one character */
 /* return 1 if this works, 0 on error */
-{
+int unread_char(void) {
     extern Line dtl_line;
     int status;
     if (dtl_line.read > 0) {
@@ -986,14 +839,7 @@ int unread_char(VOID)
 }
 /* unread_char */
 
-int find_command
-#ifdef STDC
-    (char* command, int* opcode)
-#else
-    (command, opcode) char* command;
-int* opcode;
-#endif
-{
+int find_command(char* command, int* opcode) {
     int found;
     int i;
 
@@ -1011,13 +857,7 @@ int* opcode;
 }
 /* find_command */
 
-int check_byte
-#ifdef STDC
-    (int byte)
-#else
-    (byte) int byte;
-#endif
-{
+int check_byte(int byte) {
     if (byte < 0 || byte > 255) {
         PRINT_PROGNAME;
         fprintf(stderr, "(check_byte) : INTERNAL ERROR : ");
@@ -1028,15 +868,7 @@ int check_byte
 }
 /* check_byte */
 
-int xfer_args
-#ifdef STDC
-    (FILE* dtl, FILE* dvi, int opcode)
-#else
-    (dtl, dvi, opcode) FILE* dtl;
-FILE* dvi;
-int opcode;
-#endif
-{
+int xfer_args(FILE* dtl, FILE* dvi, int opcode) {
     int n;
 
     if (opcode >= 0 && opcode <= 127)
@@ -1081,13 +913,6 @@ int opcode;
 }
 /* xfer_args */
 
-int set_seq
-#ifdef STDC
-    (FILE* dtl, FILE* dvi)
-#else
-    (dtl, dvi) FILE* dtl;
-FILE* dvi;
-#endif
 /* Called _after_ a BSEQ_CHAR command */
 /* Read bytes from dtl file, */
 /* writing corresponding SETCHAR or SET1 commands to DVI file, */
@@ -1095,7 +920,7 @@ FILE* dvi;
 /* Return 1 if OK, 0 on error */
 /****  dt2dv assumes 8 bit characters,      ****/
 /****  but some day one might change that.  ****/
-{
+int set_seq(FILE* dtl, FILE* dvi) {
     int status = 1; /* status = 1 if OK, 0 if error */
     int more;       /* sequence of font characters continuing? */
     int escape = 0; /* flag set if previous character was an escape */
@@ -1103,7 +928,7 @@ FILE* dvi;
     more = 1;
     while (more) {
         /* ignore read_char status, to allow unprintable characters */
-        (Void) read_char(dtl, &ch);
+        (void)read_char(dtl, &ch);
         /* but check for end of dtl file, or serious file reading error */
         if (ch < 0) {
             PRINT_PROGNAME;
@@ -1149,17 +974,9 @@ FILE* dvi;
 }
 /* set_seq */
 
-U4 xfer_hex
-#ifdef STDC
-    (int n, FILE* dtl, FILE* dvi)
-#else
-    (n, dtl, dvi) int n;
-FILE* dtl;
-FILE* dvi;
-#endif
 /* translate unsigned n-byte hexadecimal number from dtl to dvi file. */
 /* return value of hexadecimal number */
-{
+U4 xfer_hex(int n, FILE* dtl, FILE* dvi) {
     U4 unum = 0;             /* at most this space needed */
     COUNT nread = 0;         /* number of DTL bytes read by read_token */
     int nconv = 0;           /* number of arguments converted by sscanf */
@@ -1191,17 +1008,9 @@ FILE* dvi;
 }
 /* xfer_hex */
 
-U4 xfer_oct
-#ifdef STDC
-    (int n, FILE* dtl, FILE* dvi)
-#else
-    (n, dtl, dvi) int n;
-FILE* dtl;
-FILE* dvi;
-#endif
 /* translate unsigned n-byte octal number from dtl to dvi file. */
 /* return value of octal number */
-{
+U4 xfer_oct(int n, FILE* dtl, FILE* dvi) {
     U4 unum = 0;             /* at most this space needed */
     COUNT nread = 0;         /* number of DTL bytes read by read_token */
     int nconv = 0;           /* number of arguments converted by sscanf */
@@ -1233,17 +1042,9 @@ FILE* dvi;
 }
 /* xfer_oct */
 
-U4 xfer_unsigned
-#ifdef STDC
-    (int n, FILE* dtl, FILE* dvi)
-#else
-    (n, dtl, dvi) int n;
-FILE* dtl;
-FILE* dvi;
-#endif
 /* translate unsigned n-byte number from dtl to dvi file. */
 /* return value of unsigned number */
-{
+U4 xfer_unsigned(int n, FILE* dtl, FILE* dvi) {
     U4 unum = 0; /* at most this space needed */
 
     unum = get_unsigned(dtl);
@@ -1253,17 +1054,9 @@ FILE* dvi;
 }
 /* xfer_unsigned */
 
-S4 xfer_signed
-#ifdef STDC
-    (int n, FILE* dtl, FILE* dvi)
-#else
-    (n, dtl, dvi) int n;
-FILE* dtl;
-FILE* dvi;
-#endif
 /* translate signed n-byte number from dtl to dvi file. */
 /* return value of signed number */
-{
+S4 xfer_signed(int n, FILE* dtl, FILE* dvi) {
     S4 snum = 0;
 
     snum = get_signed(dtl);
@@ -1273,15 +1066,9 @@ FILE* dvi;
 }
 /* xfer_signed */
 
-U4 get_unsigned
-#ifdef STDC
-    (FILE* dtl)
-#else
-    (dtl) FILE* dtl;
-#endif
 /* read unsigned number from dtl file. */
 /* return value of unsigned number */
-{
+U4 get_unsigned(FILE* dtl) {
     U4 unum = 0;             /* at most this space needed */
     COUNT nread = 0;         /* number of DTL bytes read by read_token */
     int nconv = 0;           /* number of arguments converted by sscanf */
@@ -1302,15 +1089,9 @@ U4 get_unsigned
 }
 /* get_unsigned */
 
-S4 get_signed
-#ifdef STDC
-    (FILE* dtl)
-#else
-    (dtl) FILE* dtl;
-#endif
 /* read signed number from dtl file. */
 /* return value of signed number */
-{
+S4 get_signed(FILE* dtl) {
     S4 snum = 0;
     COUNT nread = 0; /* number of DTL bytes read by read_token */
     int nconv = 0;   /* number of sscanf arguments converted and assigned */
@@ -1331,19 +1112,11 @@ S4 get_signed
 }
 /* get_signed */
 
-int put_unsigned
-#ifdef STDC
-    (int n, U4 unum, FILE* dvi)
-#else
-    (n, unum, dvi) int n;
-U4 unum;
-FILE* dvi;
-#endif
 /* put unsigned in-byte integer to dvi file */
 /* DVI format uses Big-endian storage of numbers: */
 /* most significant byte is first. */
 /* return number of bytes written. */
-{
+int put_unsigned(int n, U4 unum, FILE* dvi) {
     Byte ubyte[4]; /* at most 4 bytes needed in DVI format */
     int i;
 
@@ -1370,19 +1143,11 @@ FILE* dvi;
 }
 /* put_unsigned */
 
-int put_signed
-#ifdef STDC
-    (int n, S4 snum, FILE* dvi)
-#else
-    (n, snum, dvi) int n;
-S4 snum;
-FILE* dvi;
-#endif
 /* put signed in-byte integer to dvi file */
 /* DVI format uses 2's complement Big-endian storage of signed numbers: */
 /* most significant byte is first. */
 /* return number of bytes written. */
-{
+int put_signed(int n, S4 snum, FILE* dvi) {
     /* Will this deal properly with the sign? */
 
     if (n < 1 || n > 4) {
@@ -1405,18 +1170,12 @@ FILE* dvi;
 }
 /* put_signed */
 
-int check_bmes
-#ifdef STDC
-    (FILE* dtl)
-#else
-    (dtl) FILE* dtl;
-#endif
 /* check that a BMES_CHAR is the next non-whitespace character in dtl */
-{
+int check_bmes(FILE* dtl) {
     int ch; /* next non-whitespace character in dtl */
 
-    /* `(Void)' because we ignore the number of spaces skipped */
-    (Void) skip_space(dtl, &ch);
+    /* `(void)' because we ignore the number of spaces skipped */
+    (void)skip_space(dtl, &ch);
 
     if (ch < 0) {
         PRINT_PROGNAME;
@@ -1437,14 +1196,8 @@ int check_bmes
 }
 /* check_bmes */
 
-int check_emes
-#ifdef STDC
-    (FILE* dtl)
-#else
-    (dtl) FILE* dtl;
-#endif
 /* check that an EMES_CHAR is the next character in dtl */
-{
+int check_emes(FILE* dtl) {
     int ch; /* dtl character */
 
     if (read_char(dtl, &ch) == 0) {
@@ -1469,27 +1222,14 @@ int check_emes
 /* Size typically used in this program for Lstring variables */
 #define LSIZE 1024
 
-Void init_Lstring
-#ifdef STDC
-    (Lstring* lsp, long int n)
-#else
-    (lsp, n) Lstring* lsp;
-long int n;
-#endif
-{
+void init_Lstring(Lstring* lsp, long int n) {
     lsp->l = 0;
     lsp->m = n;
     lsp->s = (char*)gmalloc(n);
 }
 /* init_Lstring */
 
-Void de_init_Lstring
-#ifdef STDC
-    (Lstring* lsp)
-#else
-    (lsp) Lstring* lsp;
-#endif
-{
+void de_init_Lstring(Lstring* lsp) {
     lsp->l = 0;
     lsp->m = 0;
     free(lsp->s);
@@ -1497,13 +1237,7 @@ Void de_init_Lstring
 }
 /* de_init_Lstring */
 
-Lstring* alloc_Lstring
-#ifdef STDC
-    (long int n)
-#else
-    (n) long int n;
-#endif
-{
+Lstring* alloc_Lstring(long int n) {
     Lstring* lsp;
     lsp = (Lstring*)gmalloc(sizeof(Lstring));
     init_Lstring(lsp, n);
@@ -1511,27 +1245,14 @@ Lstring* alloc_Lstring
 }
 /* alloc_Lstring */
 
-Void free_Lstring
-#ifdef STDC
-    (Lstring* lstr)
-#else
-    (lstr) Lstring* lstr;
-#endif
-{
+void free_Lstring(Lstring* lstr) {
     free(lstr->s);
     free(lstr);
 }
 /* free_Lstring */
 
-Void ls_putb
-#ifdef STDC
-    (int ch, Lstring* lstr)
-#else
-    (ch, lstr) int ch;
-Lstring* lstr;
-#endif
 /* write byte ch into Lstring *lstr */
-{
+void ls_putb(int ch, Lstring* lstr) {
     if (lstr->l >= lstr->m) {
         PRINT_PROGNAME;
         fprintf(stderr, "(ls_putb) : ERROR : No more room in Lstring.\n");
@@ -1542,17 +1263,10 @@ Lstring* lstr;
 }
 /* ls_putb */
 
-long int get_Lstring
-#ifdef STDC
-    (FILE* dtl, Lstring* lstr)
-#else
-    (dtl, lstr) FILE* dtl;
-Lstring* lstr;
-#endif
 /* get a string from dtl file, store as an Lstring in *lstr. */
 /* lstr must already be allocated and initialised. */
 /* return length of Lstring *lstr */
-{
+long int get_Lstring(FILE* dtl, Lstring* lstr) {
     U4 nch;
     int char_status = CHAR_OK; /* OK so far */
 
@@ -1600,7 +1314,7 @@ Lstring* lstr;
                     ch, ch, EMES_CHAR, EMES_CHAR);
                 dexit(1);
             }
-            (Void) unread_char();
+            (void)unread_char();
             break; /* end of string */
         } else if (char_status == CHAR_OK) {
             ls_putb(ch, lstr);
@@ -1628,14 +1342,7 @@ Lstring* lstr;
 }
 /* get_Lstring */
 
-Void put_Lstring
-#ifdef STDC
-    (const Lstring* lstr, FILE* dvi)
-#else
-    (str, dvi) Lstring lstr;
-FILE* dvi;
-#endif
-{
+void put_Lstring(const Lstring* lstr, FILE* dvi) {
     size_t fwret;
     fwret = fwrite((lstr->s), sizeof(char), (size_t)(lstr->l), dvi);
 
@@ -1652,17 +1359,9 @@ FILE* dvi;
 }
 /* put_Lstring */
 
-U4 xfer_len_string
-#ifdef STDC
-    (int n, FILE* dtl, FILE* dvi)
-#else
-    (n, dtl, dvi) int n;
-FILE* dtl;
-FILE* dvi;
-#endif
 /* transfer (length and) quoted string from dtl to dvi file, */
 /* return number of bytes written to dvi file. */
-{
+U4 xfer_len_string(int n, FILE* dtl, FILE* dvi) {
     U4 k, k2;
     Lstring lstr;
 
@@ -1711,16 +1410,9 @@ FILE* dvi;
 }
 /* xfer_len_string */
 
-S4 xfer_bop_address
-#ifdef STDC
-    (FILE* dtl, FILE* dvi)
-#else
-    (dtl, dvi) FILE* dtl;
-FILE* dvi;
-#endif
 /* translate signed 4-byte bop address from dtl to dvi file. */
 /* return value of bop address written to DVI file */
-{
+S4 xfer_bop_address(FILE* dtl, FILE* dvi) {
     S4 snum = 0;             /* at most this space needed for byte address */
     COUNT nread = 0;         /* number of DTL bytes read by read_token */
     int nconv = 0;           /* number of arguments converted by sscanf */
@@ -1755,16 +1447,9 @@ FILE* dvi;
 }
 /* xfer_bop_address */
 
-S4 xfer_postamble_address
-#ifdef STDC
-    (FILE* dtl, FILE* dvi)
-#else
-    (dtl, dvi) FILE* dtl;
-FILE* dvi;
-#endif
 /* translate signed 4-byte postamble address from dtl to dvi file. */
 /* return value of postamble address written to DVI file */
-{
+S4 xfer_postamble_address(FILE* dtl, FILE* dvi) {
     S4 snum = 0;             /* at most this space needed for byte address */
     COUNT nread = 0;         /* number of DTL bytes read by read_token */
     int nconv = 0;           /* number of arguments converted by sscanf */
@@ -1799,16 +1484,7 @@ FILE* dvi;
 }
 /* xfer_postamble_address */
 
-int put_table
-#ifdef STDC
-    (op_table table, int opcode, FILE* dtl, FILE* dvi)
-#else
-    (table, opcode, dtl, dvi) op_table table;
-int opcode;
-FILE* dtl;
-FILE* dvi;
-#endif
-{
+int put_table(op_table table, int opcode, FILE* dtl, FILE* dvi) {
     /* table:  {char * name; int first, last; op_info * list; }; */
     /* op_info:   {int code; char * name; int nargs; char * args; }; */
 
@@ -1881,17 +1557,9 @@ FILE* dvi;
 
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
-U4 special
-#ifdef STDC
-    (FILE* dtl, FILE* dvi, int n)
-#else
-    (dtl, dvi, n) FILE* dtl;
-FILE* dvi;
-int n;
-#endif
 /* read special (1 <= n <= 4 byte) data from dtl, and write in dvi */
 /* return number of bytes written */
-{
+U4 special(FILE* dtl, FILE* dvi, int n) {
     U4 nk;
 
     if (debug) {
@@ -1921,18 +1589,10 @@ int n;
 }
 /* special */
 
-int fontdef
-#ifdef STDC
-    (FILE* dtl, FILE* dvi, int suffix)
-#else
-    (dtl, dvi, suffix) FILE* dtl;
-FILE* dvi;
-int suffix;
-#endif
 /* read fontdef fnt_def1 .. fnt_def4 from dtl, and write in dvi */
 /* suffix is the fontdef suffix : 1 to 4 */
 /* return number of bytes written */
-{
+int fontdef(FILE* dtl, FILE* dvi, int suffix) {
     U4 a, l, a2, l2;
     U4 k;
     Lstring lstr1, lstr2;
@@ -2037,16 +1697,9 @@ int suffix;
 }
 /* fontdef */
 
-U4 preamble
-#ifdef STDC
-    (FILE* dtl, FILE* dvi)
-#else
-    (dtl, dvi) FILE* dtl;
-FILE* dvi;
-#endif
 /* read preamble from dtl, and write in dvi */
 /* return number of bytes written */
-{
+U4 preamble(FILE* dtl, FILE* dvi) {
     U4 k1;
 
     if (debug) {
@@ -2080,16 +1733,9 @@ FILE* dvi;
 }
 /* preamble */
 
-int postamble
-#ifdef STDC
-    (FILE* dtl, FILE* dvi)
-#else
-    (dtl, dvi) FILE* dtl;
-FILE* dvi;
-#endif
 /* read postamble from dtl, and write in dvi */
 /* return number of bytes written */
-{
+int postamble(FILE* dtl, FILE* dvi) {
     postamble_address = dvi_written - 1;
 
     /* p[4] : DVI address of previous bop command */
@@ -2122,16 +1768,9 @@ FILE* dvi;
 }
 /* postamble */
 
-int post_post
-#ifdef STDC
-    (FILE* dtl, FILE* dvi)
-#else
-    (dtl, dvi) FILE* dtl;
-FILE* dvi;
-#endif
 /* read post_post from dtl, and write in dvi */
 /* return number of bytes written */
-{
+int post_post(FILE* dtl, FILE* dvi) {
     /* hope I'm writing the "223" bytes in an 8-bit clean way */
     int n223 = 0; /* number of "223" bytes in final padding */
 
@@ -2174,7 +1813,7 @@ FILE* dvi;
             /* loop again */
         } else {
             /* read a non-empty token that wasn't "223" */
-            (Void) unread_char();
+            (void)unread_char();
             if (group) {
                 if (strcmp(token, ECOM) == 0) {
                     /* end of DTL's post_post command */

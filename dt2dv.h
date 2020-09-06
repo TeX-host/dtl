@@ -178,89 +178,89 @@ op_table fnt = {FONT, 235, 238, fnt_n};
 
 /* Function prototypes */
 
-Void mem_viol ARGS((int sig));
-Void give_help(VOID);
-int parse ARGS((char* s));
-Void process ARGS((char* s));
+void mem_viol(int sig);
+void give_help(void);
+int parse(char* s);
+void process(char* s);
 
-Void no_op(VOID);
-Void dtl_stdin(VOID);
-Void dvi_stdout(VOID);
+void no_op(void);
+void dtl_stdin(void);
+void dvi_stdout(void);
 
-int open_dtl ARGS((char* dtl_file, FILE** pdtl));
-int open_dvi ARGS((char* dvi_file, FILE** pdvi));
+int open_dtl(char* dtl_file, FILE** pdtl);
+int open_dvi(char* dvi_file, FILE** pdvi);
 
-int dt2dv ARGS((FILE * dtl, FILE* dvi));
+int dt2dv(FILE* dtl, FILE* dvi);
 
-Void* gmalloc ARGS((long int size));
+void* gmalloc(long int size);
 
-Void dinfo(VOID);
-Void dexit ARGS((int n));
+void dinfo(void);
+void dexit(int n);
 
-int cons_cmds ARGS((int nprefixes, CmdPrefix* prefix, CmdTable cmds));
-Void free_cmds ARGS((CmdTable cmd_table));
+int cons_cmds(int nprefixes, CmdPrefix* prefix, CmdTable cmds);
+void free_cmds(CmdTable cmd_table);
 
-int get_line ARGS((FILE * fp, Line* line, int max));
-int read_line_char ARGS((FILE * fp, int* ch));
-int read_char ARGS((FILE * fp, int* ch));
-int unread_char(VOID);
-int read_string_char ARGS((FILE * fp, int* ch));
+int get_line(FILE* fp, Line* line, int max);
+int read_line_char(FILE* fp, int* ch);
+int read_char(FILE* fp, int* ch);
+int unread_char(void);
+int read_string_char(FILE* fp, int* ch);
 
-COUNT read_variety ARGS((FILE * dtl));
-COUNT read_token ARGS((FILE * dtl, char* token));
-COUNT skip_space ARGS((FILE * fp, int* ch));
-COUNT read_misc ARGS((FILE * fp, Token token));
-COUNT read_mes ARGS((FILE * fp, char* token));
+COUNT read_variety(FILE* dtl);
+COUNT read_token(FILE* dtl, char* token);
+COUNT skip_space(FILE* fp, int* ch);
+COUNT read_misc(FILE* fp, Token token);
+COUNT read_mes(FILE* fp, char* token);
 
-int find_command ARGS((char* command, int* opcode));
-int xfer_args ARGS((FILE * dtl, FILE* dvi, int opcode));
+int find_command(char* command, int* opcode);
+int xfer_args(FILE* dtl, FILE* dvi, int opcode);
 
-int set_seq ARGS((FILE * dtl, FILE* dvi));
+int set_seq(FILE* dtl, FILE* dvi);
 
-int check_byte ARGS((int byte));
-int put_byte ARGS((int onebyte, FILE* dvi));
+int check_byte(int byte);
+int put_byte(int onebyte, FILE* dvi);
 
-U4 xfer_hex ARGS((int n, FILE* dtl, FILE* dvi));
-U4 xfer_oct ARGS((int n, FILE* dtl, FILE* dvi));
-U4 xfer_unsigned ARGS((int n, FILE* dtl, FILE* dvi));
-S4 xfer_signed ARGS((int n, FILE* dtl, FILE* dvi));
+U4 xfer_hex(int n, FILE* dtl, FILE* dvi);
+U4 xfer_oct(int n, FILE* dtl, FILE* dvi);
+U4 xfer_unsigned(int n, FILE* dtl, FILE* dvi);
+S4 xfer_signed(int n, FILE* dtl, FILE* dvi);
 
-int check_bmes ARGS((FILE * dtl));
-int check_emes ARGS((FILE * dtl));
+int check_bmes(FILE* dtl);
+int check_emes(FILE* dtl);
 
-Void init_Lstring ARGS((Lstring * lsp, long int n));
-Void de_init_Lstring ARGS((Lstring * lsp));
-Lstring* alloc_Lstring ARGS((long int n));
-Void free_Lstring ARGS((Lstring * lstr));
-Void ls_putb ARGS((int ch, Lstring* lstr));
+void init_Lstring(Lstring* lsp, long int n);
+void de_init_Lstring(Lstring* lsp);
+Lstring* alloc_Lstring(long int n);
+void free_Lstring(Lstring* lstr);
+void ls_putb(int ch, Lstring* lstr);
 
-S4 get_Lstring ARGS((FILE * dtl, Lstring* lstr));
-Void put_Lstring ARGS((const Lstring* lstr, FILE* dvi));
-U4 xfer_len_string ARGS((int n, FILE* dtl, FILE* dvi));
+S4 get_Lstring(FILE* dtl, Lstring* lstr);
+void put_Lstring(const Lstring* lstr, FILE* dvi);
+U4 xfer_len_string(int n, FILE* dtl, FILE* dvi);
 
-U4 get_unsigned ARGS((FILE * dtl));
-S4 get_signed ARGS((FILE * dtl));
+U4 get_unsigned(FILE* dtl);
+S4 get_signed(FILE* dtl);
 
-int put_unsigned ARGS((int n, U4 unum, FILE* dvi));
-int put_signed ARGS((int n, S4 snum, FILE* dvi));
+int put_unsigned(int n, U4 unum, FILE* dvi);
+int put_signed(int n, S4 snum, FILE* dvi);
 
-S4 xfer_bop_address ARGS((FILE * dtl, FILE* dvi));
-S4 xfer_postamble_address ARGS((FILE * dtl, FILE* dvi));
+S4 xfer_bop_address(FILE* dtl, FILE* dvi);
+S4 xfer_postamble_address(FILE* dtl, FILE* dvi);
 
-int put_table ARGS((op_table table, int opcode, FILE* dtl, FILE* dvi));
+int put_table(op_table table, int opcode, FILE* dtl, FILE* dvi);
 
-U4 special ARGS((FILE * dtl, FILE* dvi, int n));
-int fontdef ARGS((FILE * dtl, FILE* dvi, int n));
+U4 special(FILE* dtl, FILE* dvi, int n);
+int fontdef(FILE* dtl, FILE* dvi, int n);
 
-U4 preamble ARGS((FILE * dtl, FILE* dvi));
-int postamble ARGS((FILE * dtl, FILE* dvi));
-int post_post ARGS((FILE * dtl, FILE* dvi));
+U4 preamble(FILE* dtl, FILE* dvi);
+int postamble(FILE* dtl, FILE* dvi);
+int post_post(FILE* dtl, FILE* dvi);
 
 typedef struct {
     char* keyword;      /* command line option keyword */
     int* p_var;         /* pointer to option variable */
     char* desc;         /* description of keyword and value */
-    Void (*p_fn)(VOID); /* pointer to function called when option is set */
+    void (*p_fn)(void); /* pointer to function called when option is set */
 } Options;
 
 Options opts[] = {

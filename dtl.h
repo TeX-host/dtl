@@ -24,26 +24,11 @@
 #define VERSION "0.6.0"
 
 /* Test for ANSI/ISO Standard C */
-#if (defined(__cplusplus) || defined(__STDC__) || defined(c_plusplus))
 #define STDC 1
-#else
-#define STDC 0
-#endif
-
-/* Version (Traditional or ANSI) of C affects prototype and type definitions */
-#if STDC
-#define ARGS(parenthesized_list) parenthesized_list
-#else /* NOT STDC */
-#define ARGS(parenthesized_list) ()
-#endif /* NOT STDC */
 
 #if STDC
-#define Void void
-#define VOID void
 #define FILE_BEGIN SEEK_SET
 #else  /* NOT STDC */
-#define Void int
-#define VOID
 #define FILE_BEGIN 0
 #endif /* NOT STDC */
 
