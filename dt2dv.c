@@ -510,7 +510,7 @@ int cons_cmds(int nprefixes, CmdPrefix prefix[], CmdTable cmds) {
 
 void free_cmds(CmdTable cmd_table) {
     for (int i = 0; i < NCMDS; i++){ 
-        gfree(cmd_table[i]);
+        free(cmd_table[i]);
     }
 } /* free_cmds */
 

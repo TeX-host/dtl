@@ -296,12 +296,6 @@ int nfile = 0;       /* number of filename arguments on the command line */
 
 #define PRINT_PROGNAME fprintf(stderr, "%s ", progname)
 
-/* Harbison & Steele (1991) warn that some C implementations */
-/* of free() do not treat NULL pointers correctly. */
-#define gfree(p)        \
-    {                   \
-        if (p) free(p); \
-    }
 
 FILE* dtl_fp = NULL;
 FILE* dvi_fp = NULL;
