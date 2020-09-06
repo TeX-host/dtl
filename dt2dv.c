@@ -30,27 +30,13 @@ int main(int argc, char* argv[]) {
 
     handler = (void (*)(int))signal(SIGSEGV, mem_viol);
 
-#ifndef __DATE__
-#define __DATE__ ""
-#endif
-
-#ifndef __TIME__
-#define __TIME__ ""
-#endif
-
-#if STDC
-#define C_LEVEL ""
-#else /* NOT STDC */
-#define C_LEVEL "non-"
-#endif /* NOT STDC */
-
     /* message about program and compiler */
     /* NB:  LTU EE's Sun/OS library is BSD, even though gcc 2.2.2 is ANSI */
 
     fprintf(stderr, "\n");
     fprintf(stderr,
-            "Program \"%s\" version %s compiled %s %s in %sstandard C.\n",
-            progname, VERSION, __DATE__, __TIME__, C_LEVEL);
+            "Program \"%s\" version %s compiled %s %s in standard C.\n",
+            progname, VERSION, __DATE__, __TIME__);
 
     /* interpret command line arguments */
 

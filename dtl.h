@@ -17,20 +17,15 @@
 */
 #define INC_DTL_H
 
+#include <stdio.h> // SEEK_SET
+
 /* variety of DTL produced */
 #define VARIETY "sequences-6"
 
 /* version of DTL programs */
 #define VERSION "0.6.0"
 
-/* Test for ANSI/ISO Standard C */
-#define STDC 1
-
-#if STDC
 #define FILE_BEGIN SEEK_SET
-#else  /* NOT STDC */
-#define FILE_BEGIN 0
-#endif /* NOT STDC */
 
 /* types to store 4 byte signed and unsigned integers */
 typedef long  S4;
