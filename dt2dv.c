@@ -145,7 +145,6 @@ int open_dtl(char* dtl_file, FILE** pdtl) {
     extern char* dtl_filename;
 
     dtl_filename = dtl_file;
-
     if (dtl_filename == NULL) {
         PRINT_PROGNAME;
         fprintf(stderr,
@@ -162,7 +161,6 @@ int open_dtl(char* dtl_file, FILE** pdtl) {
     }
 
     *pdtl = fopen(dtl_file, "r");
-
     if (*pdtl == NULL) {
         PRINT_PROGNAME;
         fprintf(stderr,
@@ -173,15 +171,14 @@ int open_dtl(char* dtl_file, FILE** pdtl) {
     }
 
     return 1; /* OK */
-}
-/* open_dtl */
+} /* open_dtl */
+
 
 /* I:  dvi_file;  I:  pdvi;  O:  *pdvi. */
 int open_dvi(char* dvi_file, FILE** pdvi) {
     extern char* dvi_filename;
 
     dvi_filename = dvi_file;
-
     if (dvi_filename == NULL) {
         PRINT_PROGNAME;
         fprintf(stderr,
@@ -198,7 +195,6 @@ int open_dvi(char* dvi_file, FILE** pdvi) {
     }
 
     *pdvi = fopen(dvi_file, "wb");
-
     if (*pdvi == NULL) {
         PRINT_PROGNAME;
         fprintf(stderr,
@@ -209,17 +205,18 @@ int open_dvi(char* dvi_file, FILE** pdvi) {
     }
 
     return 1; /* OK */
-}
-/* open_dvi */
+} /* open_dvi */
+
 
 void process(char* s) {
     extern FILE *dtl_fp, *dvi_fp;
     extern int nfile;
-    if (dtl_fp == NULL) /* first filename assumed to be DTL input */
-    {
+
+    if (dtl_fp == NULL) {
+        /* first filename assumed to be DTL input */
         open_dtl(s, &dtl_fp);
-    } else if (dvi_fp == NULL) /* second filename assumed to be DVI output */
-    {
+    } else if (dvi_fp == NULL) {
+        /* second filename assumed to be DVI output */
         open_dvi(s, &dvi_fp);
     } else {
         PRINT_PROGNAME;
@@ -227,8 +224,7 @@ void process(char* s) {
         exit(1);
     }
     ++nfile;
-}
-/* process */
+} /* process */
 
 COUNT dtl_read = 0;            /* bytes read from dtl file */
 COUNT dvi_written = 0;         /* bytes written to dvi file */
