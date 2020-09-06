@@ -20,11 +20,21 @@
 #include "dt2dv.h"
 
 
+/** Main functions.
+ *
+ * ## global var
+ *  @param[in] prog_name
+ *  @param[in] nfile
+ *  @param[in] dtl_fp
+ *  @param[in] dvi_fp
+ *  @param[in] dtl_filename
+ *  @param[in] dvi_filename
+ */
 int main(int argc, char* argv[]) {
     void (*handler)(int); /* Previous signal handler */
     int i;
 
-    progname = argv[0]; /* name of this program */
+    prog_name = argv[0]; /* name of this program */
 
     /* memory violation signal handler */
     handler = (void (*)(int))signal(SIGSEGV, mem_viol);
@@ -33,7 +43,7 @@ int main(int argc, char* argv[]) {
     /* NB:  LTU EE's Sun/OS library is BSD, even though gcc 2.2.2 is ANSI */
     fprintf(stderr, "\n");
     fprintf(stderr, "Program \"%s\" version %s compiled %s %s in standard C.\n",
-            progname, VERSION, __DATE__, __TIME__);
+            prog_name, VERSION, __DATE__, __TIME__);
 
     /* interpret command line arguments */
     nfile = 0;
@@ -56,7 +66,9 @@ int main(int argc, char* argv[]) {
     return 0; /* OK */
 } /* end main */
 
-/// global var: dtl_line.
+/**
+ * @param[in] dtl_line
+ */
 void mem_viol(int sig) {
     void (*handler)(int);
     handler = (void (*)(int))signal(SIGSEGV, mem_viol);
@@ -72,8 +84,11 @@ void mem_viol(int sig) {
     dexit(1);
 } /* mem_viol */
 
+/** Show a help msg.
+ * 
+ * @param[in] opts[]
+ */
 void give_help(void) {
-    int i;
     char* keyword;
 
     fprintf(stderr, "usage:   ");
@@ -81,7 +96,7 @@ void give_help(void) {
     fprintf(stderr, "[options]  dtl_file  dvi_file");
     fprintf(stderr, "\n");
 
-    for (i = 0; (keyword = opts[i].keyword) != NULL; i++) {
+    for (int i = 0; (keyword = opts[i].keyword) != NULL; i++) {
         fprintf(stderr, "    ");
         fprintf(stderr, "[%s]", keyword);
         fprintf(stderr, "    ");
@@ -92,30 +107,42 @@ void give_help(void) {
     fprintf(stderr, "Messages, like this one, go to stderr.\n");
 } /* give_help */
 
-void no_op(void) { /* do nothing */
-}
+/* do nothing */
+void no_op(void) {}
 
+/** Use stdin as dtl file.
+ *
+ * ## global var
+ *  @param[out] dtl_fp
+ *  @param[out] dtl_filename
+ *  @param[out] nfile
+ */
 void dtl_stdin(void) {
-    extern FILE* dtl_fp;
-    extern int nfile;
-
     dtl_fp = stdin;
     dtl_filename = "Standard Input";
     ++nfile;
-}
+} /* dtl_stdin */
 
+/** Use stdout as dvi file.
+ *
+ * ## global var
+ *  @param[out] dvi_fp
+ *  @param[out] dvi_filename
+ *  @param[out] nfile
+ */
 void dvi_stdout(void) {
-    extern FILE* dvi_fp;
-    extern int nfile;
-
     /* ! Perilous to monitors! */
     dvi_fp = stdout;
     dvi_filename = "Standard Output";
     ++nfile;
-}
+} /* dvi_stdout */
 
 
-/* parse one command-line argument, `s' */
+/** parse one command-line argument, `s'
+ *
+ * ## global var
+ *  @param[in] opts[]
+ */
 int parse(char* s) {
     int i;
     char* keyword;
@@ -139,11 +166,16 @@ int parse(char* s) {
 } /* parse */
 
 
-/* I:  dtl_file;  I:  pdtl;  O:  *pdtl. */
+/** Open dtl file, save pointer to *pdtl.
+ *
+ *  @param[in] dtl_file
+ *  @param[inout] pdtl
+ *
+ *  @param[out] dtl_filename [global]
+ */
 int open_dtl(char* dtl_file, FILE** pdtl) {
-    extern char* dtl_filename;
-
     dtl_filename = dtl_file;
+
     if (dtl_filename == NULL) {
         PRINT_PROGNAME;
         fprintf(stderr,
@@ -172,12 +204,16 @@ int open_dtl(char* dtl_file, FILE** pdtl) {
     return 1; /* OK */
 } /* open_dtl */
 
-
-/* I:  dvi_file;  I:  pdvi;  O:  *pdvi. */
+/** Open dvi file, save pointer to *pdvi.
+ *
+ *  @param[in] dvi_file
+ *  @param[inout] pdvi
+ *
+ *  @param[out] dvi_filename [global]
+ */
 int open_dvi(char* dvi_file, FILE** pdvi) {
-    extern char* dvi_filename;
-
     dvi_filename = dvi_file;
+
     if (dvi_filename == NULL) {
         PRINT_PROGNAME;
         fprintf(stderr,
@@ -206,11 +242,14 @@ int open_dvi(char* dvi_file, FILE** pdvi) {
     return 1; /* OK */
 } /* open_dvi */
 
-
+/**
+ *
+ * ## global var
+ *  @param[inout] dtl_fp
+ *  @param[inout] dvi_fp
+ *  @param[out] nfile
+ */
 void process(char* s) {
-    extern FILE *dtl_fp, *dvi_fp;
-    extern int nfile;
-
     if (dtl_fp == NULL) {
         /* first filename assumed to be DTL input */
         open_dtl(s, &dtl_fp);
@@ -222,9 +261,9 @@ void process(char* s) {
         fprintf(stderr, "(process) : at most two filenames allowed.\n");
         exit(1);
     }
+
     ++nfile;
 } /* process */
-
 
 
 /* write byte into dvi file */

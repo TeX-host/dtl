@@ -223,11 +223,10 @@ op_info fnt_n[] = {{235, FONT1, 1, "1"},
 op_table fnt = {FONT, 235, 238, fnt_n};
 
 
-char* progname = ""; /* intended for name of this program */
+char* prog_name = ""; /* intended for name of this program */
+#define PRINT_PROGNAME fprintf(stderr, "%s ", prog_name)
+
 int nfile = 0;       /* number of filename arguments on the command line */
-
-#define PRINT_PROGNAME fprintf(stderr, "%s ", progname)
-
 
 FILE* dtl_fp = NULL;
 FILE* dvi_fp = NULL;
