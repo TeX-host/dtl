@@ -47,7 +47,7 @@ typedef size_t  COUNT;
 /// size of a TeX and DVI word is 32 bits
 typedef int32_t word_t;
 /// format for a DVI word
-#define WF      "%"PRId32
+#define WORD_FMT      "%"PRId32
 
 #define MAXSTRLEN 256
 /// string of 8-bit characters for machine: keyboard, screen, memory 

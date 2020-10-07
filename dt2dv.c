@@ -1472,7 +1472,7 @@ S4 xfer_bop_address(FILE* dtl, FILE* dvi) {
         fprintf(stderr, ")\n");
         fprintf(stderr, "for previous bop in DTL file is wrong\n");
         fprintf(stderr, "Writing correct value (");
-        fprintf(stderr, WF, last_bop_address);
+        fprintf(stderr, WORD_FMT, last_bop_address);
         fprintf(stderr, ") to DVI file\n");
     }
 
@@ -1509,7 +1509,7 @@ S4 xfer_postamble_address(FILE* dtl, FILE* dvi) {
         fprintf(stderr, ")\n");
         fprintf(stderr, "for postamble in DTL file is wrong\n");
         fprintf(stderr, "Writing correct value (");
-        fprintf(stderr, WF, postamble_address);
+        fprintf(stderr, WORD_FMT, postamble_address);
         fprintf(stderr, ") to DVI file\n");
     }
 
