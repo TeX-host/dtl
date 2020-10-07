@@ -33,7 +33,7 @@ typedef int32_t     S4;
 typedef uint32_t    U4;
 /// scanf and printf formats to read or write those
 #define S4_FMT     "%"PRId32
-#define UF4     "%"PRIu32
+#define U4_FMT     "%"PRIu32
 /// 4 byte hexadecimal (checksum)
 #define HEX_FMT     "%"PRIx32
 /// 4 byte octal (checksum)

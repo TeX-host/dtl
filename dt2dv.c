@@ -1108,7 +1108,7 @@ U4 get_unsigned(FILE* dtl) {
 
     nread = read_token(dtl, token);
 
-    nconv = sscanf(token, UF4, &unum);
+    nconv = sscanf(token, U4_FMT, &unum);
 
     if (nconv < 1) {
         PRINT_PROGNAME;
@@ -1337,7 +1337,7 @@ size_t get_lstr(FILE* dtl, LStringPtr lsp) {
             fprintf(stderr,
                     "(get_lstr) : DTL FILE ERROR (%s) : ", dtl_filename);
             fprintf(stderr, "cannot read string[");
-            fprintf(stderr, UF4, nch);
+            fprintf(stderr, U4_FMT, nch);
             fprintf(stderr, "] from dtl file.\n");
             dexit(1);
         }
@@ -1418,7 +1418,7 @@ U4 xfer_len_string(int n, FILE* dtl, FILE* dvi) {
     if (debug) {
         PRINT_PROGNAME;
         fprintf(stderr, "(xfer_len_string) : string's nominal length k = ");
-        fprintf(stderr, UF4, k);
+        fprintf(stderr, U4_FMT, k);
         fprintf(stderr, " characters.\n");
     } /* if (debug) */
 
@@ -1426,10 +1426,10 @@ U4 xfer_len_string(int n, FILE* dtl, FILE* dvi) {
     if (k2 != k) {
         PRINT_PROGNAME;
         fprintf(stderr, "(xfer_len_string) : WARNING : string length (");
-        fprintf(stderr, UF4, k);
+        fprintf(stderr, U4_FMT, k);
         fprintf(stderr, ") in DTL file is wrong\n");
         fprintf(stderr, "Writing correct value (");
-        fprintf(stderr, UF4, k2);
+        fprintf(stderr, U4_FMT, k2);
         fprintf(stderr, ") to DVI file\n");
     }
 
@@ -1661,7 +1661,7 @@ int fontdef(FILE* dtl, FILE* dvi, int suffix) {
     if (debug) {
         PRINT_PROGNAME;
         fprintf(stderr, "(fontdef) : font ");
-        fprintf(stderr, UF4, k);
+        fprintf(stderr, U4_FMT, k);
         fprintf(stderr, ".\n");
     }
 
@@ -1692,10 +1692,10 @@ int fontdef(FILE* dtl, FILE* dvi, int suffix) {
     if (a2 != a) {
         PRINT_PROGNAME;
         fprintf(stderr, "(fontdef) : WARNING : font area string's length (");
-        fprintf(stderr, UF4, a);
+        fprintf(stderr, U4_FMT, a);
         fprintf(stderr, ") in DTL file is wrong\n");
         fprintf(stderr, "Writing correct value (");
-        fprintf(stderr, UF4, a2);
+        fprintf(stderr, U4_FMT, a2);
         fprintf(stderr, ") to DVI file\n");
     }
 
@@ -1705,10 +1705,10 @@ int fontdef(FILE* dtl, FILE* dvi, int suffix) {
     if (l2 != l) {
         PRINT_PROGNAME;
         fprintf(stderr, "(fontdef) : WARNING : font string's length (");
-        fprintf(stderr, UF4, l);
+        fprintf(stderr, U4_FMT, l);
         fprintf(stderr, ") in DTL file is wrong\n");
         fprintf(stderr, "Writing correct value (");
-        fprintf(stderr, UF4, l2);
+        fprintf(stderr, U4_FMT, l2);
         fprintf(stderr, ") to DVI file\n");
     }
 

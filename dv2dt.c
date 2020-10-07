@@ -142,7 +142,7 @@ COUNT wunsigned(int n, FILE* dvi, FILE* dtl) {
 
     fprintf(dtl, " ");
     unum = runsigned(n, dvi);
-    fprintf(dtl, UF4, unum);
+    fprintf(dtl, U4_FMT, unum);
     return n;
 }
 /* end wunsigned */
@@ -373,7 +373,7 @@ COUNT special(FILE* dvi, FILE* dtl, int n) {
     /* k[n] = length of special string */
     fprintf(dtl, " ");
     k = runsigned(n, dvi);
-    fprintf(dtl, UF4, k);
+    fprintf(dtl, U4_FMT, k);
 
     /* x[k] = special string */
     xferstring(k, dvi, dtl);
@@ -402,7 +402,7 @@ COUNT fontdef(FILE* dvi, FILE* dtl, int n) {
         fprintf(dtl, S4_FMT, ks);
     } else {
         ku = runsigned(n, dvi);
-        fprintf(dtl, UF4, ku);
+        fprintf(dtl, U4_FMT, ku);
     }
 
     /* c[4] = checksum */
@@ -419,22 +419,22 @@ COUNT fontdef(FILE* dvi, FILE* dtl, int n) {
     /* s[4] = scale factor */
     fprintf(dtl, " ");
     s = runsigned(4, dvi);
-    fprintf(dtl, UF4, s);
+    fprintf(dtl, U4_FMT, s);
 
     /* d[4] = design size */
     fprintf(dtl, " ");
     d = runsigned(4, dvi);
-    fprintf(dtl, UF4, d);
+    fprintf(dtl, U4_FMT, d);
 
     /* a[1] = length of area (directory) name */
     a = runsigned(1, dvi);
     fprintf(dtl, " ");
-    fprintf(dtl, UF4, a);
+    fprintf(dtl, U4_FMT, a);
 
     /* l[1] = length of font name */
     l = runsigned(1, dvi);
     fprintf(dtl, " ");
-    fprintf(dtl, UF4, l);
+    fprintf(dtl, U4_FMT, l);
 
     /* n[a+l] = font pathname string => area (directory) + font */
     xferstring(a, dvi, dtl);
@@ -454,27 +454,27 @@ COUNT preamble(FILE* dvi, FILE* dtl) {
     /* i[1] = DVI format identification */
     fprintf(dtl, " ");
     id = runsigned(1, dvi);
-    fprintf(dtl, UF4, id);
+    fprintf(dtl, U4_FMT, id);
 
     /* num[4] = numerator of DVI unit */
     fprintf(dtl, " ");
     num = runsigned(4, dvi);
-    fprintf(dtl, UF4, num);
+    fprintf(dtl, U4_FMT, num);
 
     /* den[4] = denominator of DVI unit */
     fprintf(dtl, " ");
     den = runsigned(4, dvi);
-    fprintf(dtl, UF4, den);
+    fprintf(dtl, U4_FMT, den);
 
     /* mag[4] = 1000 x magnification */
     fprintf(dtl, " ");
     mag = runsigned(4, dvi);
-    fprintf(dtl, UF4, mag);
+    fprintf(dtl, U4_FMT, mag);
 
     /* k[1] = length of comment */
     fprintf(dtl, " ");
     k = runsigned(1, dvi);
-    fprintf(dtl, UF4, k);
+    fprintf(dtl, U4_FMT, k);
 
     /* x[k] = comment string */
     xferstring(k, dvi, dtl);
@@ -493,42 +493,42 @@ COUNT postamble(FILE* dvi, FILE* dtl) {
     /* p[4] = pointer to final bop */
     fprintf(dtl, " ");
     p = runsigned(4, dvi);
-    fprintf(dtl, UF4, p);
+    fprintf(dtl, U4_FMT, p);
 
     /* num[4] = numerator of DVI unit */
     fprintf(dtl, " ");
     num = runsigned(4, dvi);
-    fprintf(dtl, UF4, num);
+    fprintf(dtl, U4_FMT, num);
 
     /* den[4] = denominator of DVI unit */
     fprintf(dtl, " ");
     den = runsigned(4, dvi);
-    fprintf(dtl, UF4, den);
+    fprintf(dtl, U4_FMT, den);
 
     /* mag[4] = 1000 x magnification */
     fprintf(dtl, " ");
     mag = runsigned(4, dvi);
-    fprintf(dtl, UF4, mag);
+    fprintf(dtl, U4_FMT, mag);
 
     /* l[4] = height + depth of tallest page */
     fprintf(dtl, " ");
     l = runsigned(4, dvi);
-    fprintf(dtl, UF4, l);
+    fprintf(dtl, U4_FMT, l);
 
     /* u[4] = width of widest page */
     fprintf(dtl, " ");
     u = runsigned(4, dvi);
-    fprintf(dtl, UF4, u);
+    fprintf(dtl, U4_FMT, u);
 
     /* s[2] = maximum stack depth */
     fprintf(dtl, " ");
     s = runsigned(2, dvi);
-    fprintf(dtl, UF4, s);
+    fprintf(dtl, U4_FMT, s);
 
     /* t[2] = total number of pages (bop commands) */
     fprintf(dtl, " ");
     t = runsigned(2, dvi);
-    fprintf(dtl, UF4, t);
+    fprintf(dtl, U4_FMT, t);
 
     /*  return (29);  */
     return (1 + 4 + 4 + 4 + 4 + 4 + 4 + 2 + 2);
@@ -547,12 +547,12 @@ COUNT postpost(FILE* dvi, FILE* dtl) {
     /* q[4] = pointer to post command */
     fprintf(dtl, " ");
     q = runsigned(4, dvi);
-    fprintf(dtl, UF4, q);
+    fprintf(dtl, U4_FMT, q);
 
     /* i[1] = DVI identification byte */
     fprintf(dtl, " ");
     id = runsigned(1, dvi);
-    fprintf(dtl, UF4, id);
+    fprintf(dtl, U4_FMT, id);
 
     /* final padding by "223" bytes */
     /* hope this way of obtaining b223 is 8-bit clean */
