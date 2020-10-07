@@ -14,7 +14,6 @@
                  by  The TUG DVI Driver Standards Committee.
                  Appendix A, "Device-Independent File Format".
 */
-
 #include "dv2dt.h"
 
 

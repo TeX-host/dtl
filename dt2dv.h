@@ -28,6 +28,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+/// bop:  not counting last argument, a signed address:
+#define OP_INFO_BOP \
+    { 139, BOP, 10, "-4 -4 -4 -4 -4 -4 -4 -4 -4 -4" }
+
 #include "dtl.h"
 
 
@@ -145,82 +149,7 @@ typedef char* CmdTable[NCMDS];
 /* initially all command name pointers are NULL */
 CmdTable cmd_table;
 
-/* operation's opcode, name, number of args, string of arguments. */
-typedef struct {
-    int code;
-    char* name;
-    int nargs;
-    char* args;
-} op_info;
 
-/* name of table, first opcode, last opcode, pointer to opcode info. */
-typedef struct {
-    char* name;
-    int first;
-    int last;
-    op_info* list;
-} op_table;
-
-/* Table for opcodes 128 to 170 inclusive. */
-
-op_info op_info_128_170[] = {
-    {128, SET1, 1, "1"},
-    {129, SET2, 1, "2"},
-    {130, SET3, 1, "3"},
-    {131, SET4, 1, "-4"},
-    {132, SETRULE, 2, "-4 -4"},
-    {133, PUT1, 1, "1"},
-    {134, PUT2, 1, "2"},
-    {135, PUT3, 1, "3"},
-    {136, PUT4, 1, "-4"},
-    {137, PUTRULE, 2, "-4 -4"},
-    {138, NOP, 0, ""},
-    /* bop:  not counting last argument, a signed address: */
-    {139, BOP, 10, "-4 -4 -4 -4 -4 -4 -4 -4 -4 -4"},
-    {140, EOP, 0, ""},
-    {141, PUSH, 0, ""},
-    {142, POP, 0, ""},
-    {143, RIGHT1, 1, "-1"},
-    {144, RIGHT2, 1, "-2"},
-    {145, RIGHT3, 1, "-3"},
-    {146, RIGHT4, 1, "-4"},
-    {147, W0, 0, ""},
-    {148, W1, 1, "-1"},
-    {149, W2, 1, "-2"},
-    {150, W3, 1, "-3"},
-    {151, W4, 1, "-4"},
-    {152, X0, 0, ""},
-    {153, X1, 1, "-1"},
-    {154, X2, 1, "-2"},
-    {155, X3, 1, "-3"},
-    {156, X4, 1, "-4"},
-    {157, DOWN1, 1, "-1"},
-    {158, DOWN2, 1, "-2"},
-    {159, DOWN3, 1, "-3"},
-    {160, DOWN4, 1, "-4"},
-    {161, Y0, 0, ""},
-    {162, Y1, 1, "-1"},
-    {163, Y2, 1, "-2"},
-    {164, Y3, 1, "-3"},
-    {165, Y4, 1, "-4"},
-    {166, Z0, 0, ""},
-    {167, Z1, 1, "-1"},
-    {168, Z2, 1, "-2"},
-    {169, Z3, 1, "-3"},
-    {170, Z4, 1, "-4"}};
-/* op_info  op_info_128_170 [] */
-
-op_table op_128_170 = {"op_128_170", 128, 170, op_info_128_170};
-
-/* Table for fnt1 to fnt4 (opcodes 235 to 238) inclusive. */
-
-op_info fnt_n[] = {{235, FONT1, 1, "1"},
-                   {236, FONT2, 1, "2"},
-                   {237, FONT3, 1, "3"},
-                   {238, FONT4, 1, "-4"}};
-/* op_info  fnt_n [] */
-
-op_table fnt = {FONT, 235, 238, fnt_n};
 
 
 char* prog_name = ""; /* intended for name of this program */
