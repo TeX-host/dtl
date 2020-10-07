@@ -152,7 +152,7 @@ COUNT wsigned(int n, FILE* dvi, FILE* dtl) {
 
     fprintf(dtl, " ");
     snum = rsigned(n, dvi);
-    fprintf(dtl, SF4, snum);
+    fprintf(dtl, S4_FMT, snum);
     return n;
 }
 /* end wsigned */
@@ -399,7 +399,7 @@ COUNT fontdef(FILE* dvi, FILE* dtl, int n) {
     fprintf(dtl, " ");
     if (n == 4) {
         ks = rsigned(n, dvi);
-        fprintf(dtl, SF4, ks);
+        fprintf(dtl, S4_FMT, ks);
     } else {
         ku = runsigned(n, dvi);
         fprintf(dtl, UF4, ku);

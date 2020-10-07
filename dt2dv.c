@@ -1131,7 +1131,7 @@ S4 get_signed(FILE* dtl) {
 
     nread = read_token(dtl, token);
 
-    nconv = sscanf(token, SF4, &snum);
+    nconv = sscanf(token, S4_FMT, &snum);
 
     if (nconv < 1) {
         PRINT_PROGNAME;
@@ -1455,7 +1455,7 @@ S4 xfer_bop_address(FILE* dtl, FILE* dvi) {
 
     nread += read_token(dtl, token);
 
-    nconv = sscanf(token, SF4, &snum);
+    nconv = sscanf(token, S4_FMT, &snum);
 
     if (nconv != 1) {
         PRINT_PROGNAME;
@@ -1468,7 +1468,7 @@ S4 xfer_bop_address(FILE* dtl, FILE* dvi) {
     if (snum != last_bop_address) {
         PRINT_PROGNAME;
         fprintf(stderr, "(xfer_bop_address) : WARNING : byte address (");
-        fprintf(stderr, SF4, snum);
+        fprintf(stderr, S4_FMT, snum);
         fprintf(stderr, ")\n");
         fprintf(stderr, "for previous bop in DTL file is wrong\n");
         fprintf(stderr, "Writing correct value (");
@@ -1492,7 +1492,7 @@ S4 xfer_postamble_address(FILE* dtl, FILE* dvi) {
 
     nread += read_token(dtl, token);
 
-    nconv = sscanf(token, SF4, &snum);
+    nconv = sscanf(token, S4_FMT, &snum);
 
     if (nconv != 1) {
         PRINT_PROGNAME;
@@ -1505,7 +1505,7 @@ S4 xfer_postamble_address(FILE* dtl, FILE* dvi) {
     if (snum != postamble_address) {
         PRINT_PROGNAME;
         fprintf(stderr, "(xfer_postamble_address) : WARNING : byte address (");
-        fprintf(stderr, SF4, snum);
+        fprintf(stderr, S4_FMT, snum);
         fprintf(stderr, ")\n");
         fprintf(stderr, "for postamble in DTL file is wrong\n");
         fprintf(stderr, "Writing correct value (");
