@@ -415,7 +415,7 @@ int dt2dv(FILE* dtl, FILE* dvi) {
     fprintf(stderr, "Read (from file \"%s\") ", dtl_filename);
     fprintf(stderr, COUNT_FMT, dtl_read);
     fprintf(stderr, " DTL bytes (");
-    fprintf(stderr, UF4, dtl_line.num);
+    fprintf(stderr, COUNT_FMT, dtl_line.num);
     fprintf(stderr, " lines);\n");
     fprintf(stderr, "wrote (to file \"%s\") ", dvi_filename);
     fprintf(stderr, COUNT_FMT, dvi_written);
@@ -456,7 +456,7 @@ void dinfo(void) {
     PRINT_PROGNAME;
     fprintf(stderr, "(dinfo) : ");
     fprintf(stderr, "Current DTL input line ");
-    fprintf(stderr, UF4, dtl_line.num);
+    fprintf(stderr, COUNT_FMT, dtl_line.num);
     fprintf(stderr, " :\n");
     fprintf(stderr, "\"%s\"\n", dtl_line.buf);
     fprintf(stderr, "Read ");
