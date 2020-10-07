@@ -98,12 +98,12 @@ int dv2dt(FILE* dvi, FILE* dtl) {
             /* fprintf (dtl, "%s%d", SETCHAR, opcode); */
             count += setseq(opcode, dvi, dtl);
         } else if (opcode >= 128 && opcode <= 170) {
-            count += wtable(op_128_170, opcode, dvi, dtl);
+            count += write_table(op_128_170, opcode, dvi, dtl);
         } else if (opcode >= 171 && opcode <= 234) {
             count += 1;
             fprintf(dtl, "%s%d", FONTNUM, opcode - 171);
         } else if (opcode >= 235 && opcode <= 238) {
-            count += wtable(fnt, opcode, dvi, dtl);
+            count += write_table(fnt, opcode, dvi, dtl);
         } else if (opcode >= 239 && opcode <= 242) {
             count += special(dvi, dtl, opcode - 238);
         } else if (opcode >= 243 && opcode <= 246) {
@@ -136,36 +136,34 @@ int dv2dt(FILE* dvi, FILE* dtl) {
 /* dv2dt */
 
 
-COUNT wunsigned(int n, FILE* dvi, FILE* dtl) {
+COUNT write_unsigned(int n, FILE* dvi, FILE* dtl) {
     U4 unum;
 
     fprintf(dtl, " ");
-    unum = runsigned(n, dvi);
+    unum = read_unsigned(n, dvi);
     fprintf(dtl, U4_FMT, unum);
     return n;
-}
-/* end wunsigned */
+} /* end write_unsigned */
 
-COUNT wsigned(int n, FILE* dvi, FILE* dtl) {
+COUNT write_signed(int n, FILE* dvi, FILE* dtl) {
     S4 snum;
 
     fprintf(dtl, " ");
-    snum = rsigned(n, dvi);
+    snum = read_signed(n, dvi);
     fprintf(dtl, S4_FMT, snum);
     return n;
-}
-/* end wsigned */
+} /* end write_signed */
 
 /* read 1 <= n <= 4 bytes for an unsigned integer from dvi file */
 /* DVI format uses Big-endian storage of numbers. */
-U4 runsigned(int n, FILE* dvi) {
+U4 read_unsigned(int n, FILE* dvi) {
     U4 integer;
     int ibyte = 0;
     int i;
 
     if (n < 1 || n > 4) {
         fprintf(stderr,
-                "%s:  runsigned() asked for %d bytes.  Must be 1 to 4.\n",
+                "%s:  read_unsigned() asked for %d bytes.  Must be 1 to 4.\n",
                 program, n);
         exit(1);
     }
@@ -179,18 +177,17 @@ U4 runsigned(int n, FILE* dvi) {
     }
 
     return integer;
-}
-/* end runsigned */
+} /* end read_unsigned */
 
 /* read 1 <= n <= 4 bytes for a signed integer from dvi file */
 /* DVI format uses Big-endian storage of numbers. */
-S4 rsigned(int n, FILE* dvi) {
+S4 read_signed(int n, FILE* dvi) {
     S4 integer;
     int ibyte = 0;
     int i;
 
     if (n < 1 || n > 4) {
-        fprintf(stderr, "%s:  rsigned() asked for %d bytes.  Must be 1 to 4.\n",
+        fprintf(stderr, "%s:  read_signed() asked for %d bytes.  Must be 1 to 4.\n",
                 program, n);
         exit(1);
     }
@@ -208,12 +205,11 @@ S4 rsigned(int n, FILE* dvi) {
     }
 
     return integer;
-}
-/* end rsigned */
+} /* end read_signed */
 
 /* write command with given opcode in given table */
 /* return number of DVI bytes in this command */
-COUNT wtable(op_table table, int opcode, FILE* dvi, FILE* dtl) {
+COUNT write_table(op_table table, int opcode, FILE* dvi, FILE* dtl) {
     op_info op;       /* pointer into table of operations and arguments */
     COUNT bcount = 0; /* number of bytes in arguments of this opcode */
     String args;      /* arguments string */
@@ -260,13 +256,12 @@ COUNT wtable(op_table table, int opcode, FILE* dvi, FILE* dtl) {
 
         pos += nread;
 
-        bcount += (argtype < 0 ? wsigned(-argtype, dvi, dtl)
-                               : wunsigned(argtype, dvi, dtl));
+        bcount += (argtype < 0 ? write_signed(-argtype, dvi, dtl)
+                               : write_unsigned(argtype, dvi, dtl));
     } /* end for */
 
     return bcount;
-}
-/* wtable */
+} /* write_table */
 
 /* write a sequence of setchar commands */
 /* return count of DVI bytes interpreted into DTL */
@@ -371,7 +366,7 @@ COUNT special(FILE* dvi, FILE* dtl, int n) {
 
     /* k[n] = length of special string */
     fprintf(dtl, " ");
-    k = runsigned(n, dvi);
+    k = read_unsigned(n, dvi);
     fprintf(dtl, U4_FMT, k);
 
     /* x[k] = special string */
@@ -397,16 +392,16 @@ COUNT fontdef(FILE* dvi, FILE* dtl, int n) {
     /* k[n] = font number */
     fprintf(dtl, " ");
     if (n == 4) {
-        ks = rsigned(n, dvi);
+        ks = read_signed(n, dvi);
         fprintf(dtl, S4_FMT, ks);
     } else {
-        ku = runsigned(n, dvi);
+        ku = read_unsigned(n, dvi);
         fprintf(dtl, U4_FMT, ku);
     }
 
     /* c[4] = checksum */
     fprintf(dtl, " ");
-    c = runsigned(4, dvi);
+    c = read_unsigned(4, dvi);
 
 #ifdef HEX_CHECKSUM
     fprintf(dtl, HEX_FMT, c);
@@ -417,21 +412,21 @@ COUNT fontdef(FILE* dvi, FILE* dtl, int n) {
 
     /* s[4] = scale factor */
     fprintf(dtl, " ");
-    s = runsigned(4, dvi);
+    s = read_unsigned(4, dvi);
     fprintf(dtl, U4_FMT, s);
 
     /* d[4] = design size */
     fprintf(dtl, " ");
-    d = runsigned(4, dvi);
+    d = read_unsigned(4, dvi);
     fprintf(dtl, U4_FMT, d);
 
     /* a[1] = length of area (directory) name */
-    a = runsigned(1, dvi);
+    a = read_unsigned(1, dvi);
     fprintf(dtl, " ");
     fprintf(dtl, U4_FMT, a);
 
     /* l[1] = length of font name */
-    l = runsigned(1, dvi);
+    l = read_unsigned(1, dvi);
     fprintf(dtl, " ");
     fprintf(dtl, U4_FMT, l);
 
@@ -452,27 +447,27 @@ COUNT preamble(FILE* dvi, FILE* dtl) {
 
     /* i[1] = DVI format identification */
     fprintf(dtl, " ");
-    id = runsigned(1, dvi);
+    id = read_unsigned(1, dvi);
     fprintf(dtl, U4_FMT, id);
 
     /* num[4] = numerator of DVI unit */
     fprintf(dtl, " ");
-    num = runsigned(4, dvi);
+    num = read_unsigned(4, dvi);
     fprintf(dtl, U4_FMT, num);
 
     /* den[4] = denominator of DVI unit */
     fprintf(dtl, " ");
-    den = runsigned(4, dvi);
+    den = read_unsigned(4, dvi);
     fprintf(dtl, U4_FMT, den);
 
     /* mag[4] = 1000 x magnification */
     fprintf(dtl, " ");
-    mag = runsigned(4, dvi);
+    mag = read_unsigned(4, dvi);
     fprintf(dtl, U4_FMT, mag);
 
     /* k[1] = length of comment */
     fprintf(dtl, " ");
-    k = runsigned(1, dvi);
+    k = read_unsigned(1, dvi);
     fprintf(dtl, U4_FMT, k);
 
     /* x[k] = comment string */
@@ -491,42 +486,42 @@ COUNT postamble(FILE* dvi, FILE* dtl) {
 
     /* p[4] = pointer to final bop */
     fprintf(dtl, " ");
-    p = runsigned(4, dvi);
+    p = read_unsigned(4, dvi);
     fprintf(dtl, U4_FMT, p);
 
     /* num[4] = numerator of DVI unit */
     fprintf(dtl, " ");
-    num = runsigned(4, dvi);
+    num = read_unsigned(4, dvi);
     fprintf(dtl, U4_FMT, num);
 
     /* den[4] = denominator of DVI unit */
     fprintf(dtl, " ");
-    den = runsigned(4, dvi);
+    den = read_unsigned(4, dvi);
     fprintf(dtl, U4_FMT, den);
 
     /* mag[4] = 1000 x magnification */
     fprintf(dtl, " ");
-    mag = runsigned(4, dvi);
+    mag = read_unsigned(4, dvi);
     fprintf(dtl, U4_FMT, mag);
 
     /* l[4] = height + depth of tallest page */
     fprintf(dtl, " ");
-    l = runsigned(4, dvi);
+    l = read_unsigned(4, dvi);
     fprintf(dtl, U4_FMT, l);
 
     /* u[4] = width of widest page */
     fprintf(dtl, " ");
-    u = runsigned(4, dvi);
+    u = read_unsigned(4, dvi);
     fprintf(dtl, U4_FMT, u);
 
     /* s[2] = maximum stack depth */
     fprintf(dtl, " ");
-    s = runsigned(2, dvi);
+    s = read_unsigned(2, dvi);
     fprintf(dtl, U4_FMT, s);
 
     /* t[2] = total number of pages (bop commands) */
     fprintf(dtl, " ");
-    t = runsigned(2, dvi);
+    t = read_unsigned(2, dvi);
     fprintf(dtl, U4_FMT, t);
 
     /*  return (29);  */
@@ -545,12 +540,12 @@ COUNT postpost(FILE* dvi, FILE* dtl) {
 
     /* q[4] = pointer to post command */
     fprintf(dtl, " ");
-    q = runsigned(4, dvi);
+    q = read_unsigned(4, dvi);
     fprintf(dtl, U4_FMT, q);
 
     /* i[1] = DVI identification byte */
     fprintf(dtl, " ");
-    id = runsigned(1, dvi);
+    id = read_unsigned(1, dvi);
     fprintf(dtl, U4_FMT, id);
 
     /* final padding by "223" bytes */

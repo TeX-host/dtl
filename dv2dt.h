@@ -41,12 +41,12 @@ int open_dvi(char* dvi_file, FILE** dvi);
 int open_dtl(char* dtl_file, FILE** dtl);
 int dv2dt(FILE* dvi, FILE* dtl);
 
-COUNT wunsigned(int n, FILE* dvi, FILE* dtl);
-COUNT wsigned(int n, FILE* dvi, FILE* dtl);
-S4 rsigned(int n, FILE* dvi);
-U4 runsigned(int n, FILE* dvi);
+COUNT write_unsigned(int n, FILE* dvi, FILE* dtl);
+COUNT write_signed(int n, FILE* dvi, FILE* dtl);
+S4 read_signed(int n, FILE* dvi);
+U4 read_unsigned(int n, FILE* dvi);
 
-COUNT wtable(op_table table, int opcode, FILE* dvi, FILE* dtl);
+COUNT write_table(op_table table, int opcode, FILE* dvi, FILE* dtl);
 
 COUNT setseq(int opcode, FILE* dvi, FILE* dtl);
 void setpchar(int charcode, FILE* dtl);
