@@ -42,6 +42,7 @@ typedef uint32_t    U4;
 /// type for byte count for DVI file 
 /// COUNT must be large enough to hold a U4 (unsigned 4 byte) value 
 typedef size_t  COUNT;
+#define SZ_FMT  "%zd"
 
 /// size of a TeX and DVI word is 32 bits
 typedef int32_t word_t;
