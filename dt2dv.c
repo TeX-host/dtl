@@ -1059,7 +1059,7 @@ U4 xfer_oct(int n, FILE* dtl, FILE* dvi) {
 
     nread = read_token(dtl, token);
 
-    nconv = sscanf(token, OF4, &unum);
+    nconv = sscanf(token, OCT_FMT, &unum);
 
     if (nconv < 1) {
         PRINT_PROGNAME;

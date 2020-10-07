@@ -37,7 +37,7 @@ typedef uint32_t    U4;
 /// 4 byte hexadecimal (checksum)
 #define HEX_FMT     "%"PRIx32
 /// 4 byte octal (checksum)
-#define OF4     "%"PRIo32
+#define OCT_FMT     "%"PRIo32
 
 /// type for byte count for DVI file 
 /// COUNT must be large enough to hold a U4 (unsigned 4 byte) value 
