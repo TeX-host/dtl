@@ -34,9 +34,9 @@ typedef uint32_t    U4;
 /// scanf and printf formats to read or write those
 #define SF4     "%"PRId32
 #define UF4     "%"PRIu32
-/// 4 byte hexadecimal
+/// 4 byte hexadecimal (checksum)
 #define XF4     "%"PRIx32
-/// 4 byte octal
+/// 4 byte octal (checksum)
 #define OF4     "%"PRIo32
 
 /// type for byte count for DVI file 

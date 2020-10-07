@@ -408,6 +408,7 @@ COUNT fontdef(FILE* dvi, FILE* dtl, int n) {
     /* c[4] = checksum */
     fprintf(dtl, " ");
     c = runsigned(4, dvi);
+
 #ifdef HEX_CHECKSUM
     fprintf(dtl, XF4, c);
 #else /* NOT HEX_CHECKSUM */
