@@ -17,11 +17,10 @@
 */
 #define INC_DTL_H
 
-
-/* variety of DTL produced */
+/// variety of DTL produced
 #define VARIETY "sequences-6"
 
-/* version of DTL programs */
+/// version of DTL programs
 #define VERSION "0.6.0"
 
 
@@ -52,16 +51,20 @@ typedef long int word_t;
 typedef char String[MAXSTRLEN+1];
 
 
-int debug = 0;  /* normally, debugging is off */
+/** global variable
+ */
+
+/// normally, debugging is off
+int debug = 0;  
+
+/// Is each DTL command parenthesised by a BCOM and an ECOM? 
+/// by default, no grouping 
+int group = 0;  
 
 
-/* Is each DTL command parenthesised by a BCOM and an ECOM? */
-
-int group = 0;  /* by default, no grouping */
-
-
-/* signals of beginning and end of a command and its arguments */
-/* these apply only if group is nonzero */
+/** signals of beginning and end of a command and its arguments 
+ * these apply only if group is nonzero 
+ */
 
 #define BCOM "{"
 #define ECOM "}"
@@ -70,7 +73,8 @@ int group = 0;  /* by default, no grouping */
 #define ECOM_CHAR '}'
 
 
-/* beginning and end of a message string */
+/** beginning and end of a message string 
+ */
 
 #define  BMES  "'"
 #define  EMES  BMES
@@ -79,7 +83,8 @@ int group = 0;  /* by default, no grouping */
 #define  EMES_CHAR  BMES_CHAR
 
 
-/* beginning and end of sequence of font characters */
+/** beginning and end of sequence of font characters 
+ */
 
 #define  BSEQ  "("
 #define  ESEQ  ")"
@@ -88,13 +93,15 @@ int group = 0;  /* by default, no grouping */
 #define  ESEQ_CHAR  ')'
 
 
-/* escape and quote characters */
+/** escape and quote characters
+ */
 
-#define  ESC_CHAR  '\\'
-#define  QUOTE_CHAR  '\"'
+#define  ESC_CHAR   '\\'
+#define  QUOTE_CHAR '\"'
 
 
-/* command names in DTL */
+/** command names in DTL 
+ */
 
 #define  SETCHAR  "\\"
 #define  SET      "s"
