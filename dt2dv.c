@@ -1025,7 +1025,7 @@ U4 xfer_hex(int n, FILE* dtl, FILE* dvi) {
 
     nread = read_token(dtl, token);
 
-    nconv = sscanf(token, XF4, &unum);
+    nconv = sscanf(token, HEX_FMT, &unum);
 
     if (nconv < 1) {
         PRINT_PROGNAME;

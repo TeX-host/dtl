@@ -410,7 +410,7 @@ COUNT fontdef(FILE* dvi, FILE* dtl, int n) {
     c = runsigned(4, dvi);
 
 #ifdef HEX_CHECKSUM
-    fprintf(dtl, XF4, c);
+    fprintf(dtl, HEX_FMT, c);
 #else /* NOT HEX_CHECKSUM */
     /* write in octal, to allow quick comparison with tftopl's output */
     fprintf(dtl, OF4, c);

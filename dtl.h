@@ -35,7 +35,7 @@ typedef uint32_t    U4;
 #define S4_FMT     "%"PRId32
 #define UF4     "%"PRIu32
 /// 4 byte hexadecimal (checksum)
-#define XF4     "%"PRIx32
+#define HEX_FMT     "%"PRIx32
 /// 4 byte octal (checksum)
 #define OF4     "%"PRIo32
 
