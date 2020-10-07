@@ -16,6 +16,7 @@
                  Appendix A, "Device-Independent File Format".
 */
 #define INC_DTL_H
+#include <inttypes.h>
 
 /// variety of DTL produced
 #define VARIETY "sequences-6"
@@ -24,30 +25,31 @@
 #define VERSION "0.6.0"
 
 
-/* types to store 4 byte signed and unsigned integers */
-typedef long  S4;
-typedef unsigned long  U4;
-/* scanf and printf formats to read or write those */
-#define SF4  "%ld"
-#define UF4  "%lu"
-/* 4 byte hexadecimal */
-/* #define XF4  "%04lx" */
-#define XF4  "%lx"
-/* 4 byte octal */
-#define OF4  "%lo"
+/** types 
+ */
 
-/* type for byte count for DVI file */
-/* COUNT must be large enough to hold a U4 (unsigned 4 byte) value */
-typedef U4  COUNT;
+/// types to store 4 byte signed and unsigned integers
+typedef int32_t     S4;
+typedef uint32_t    U4;
+/// scanf and printf formats to read or write those
+#define SF4     "%"PRId32
+#define UF4     "%"PRIu32
+/// 4 byte hexadecimal
+#define XF4     "%"PRIx32
+/// 4 byte octal
+#define OF4     "%"PRIo32
 
-/* size of a TeX and DVI word is 32 bits; in some systems a `long int' is needed */
-typedef long int word_t;
-/* format for a DVI word */
-#define WF "%ld"
+/// type for byte count for DVI file 
+/// COUNT must be large enough to hold a U4 (unsigned 4 byte) value 
+typedef size_t  COUNT;
 
-/* string of 8-bit characters for machine: keyboard, screen, memory */
+/// size of a TeX and DVI word is 32 bits
+typedef int32_t word_t;
+/// format for a DVI word
+#define WF      "%"PRId32
 
 #define MAXSTRLEN 256
+/// string of 8-bit characters for machine: keyboard, screen, memory 
 typedef char String[MAXSTRLEN+1];
 
 
