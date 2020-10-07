@@ -79,7 +79,7 @@ void mem_viol(int sig) {
     PRINT_PROGNAME;
     fprintf(stderr, "(mem_viol) : RUNTIME MEMORY ERROR : memory violation, ");
     fprintf(stderr, "dtl line >= ");
-    fprintf(stderr, SZ_FMT, dtl_line.num);
+    fprintf(stderr, COUNT_FMT, dtl_line.num);
     fprintf(stderr, "\n");
     dexit(1);
 } /* mem_viol */
@@ -357,7 +357,7 @@ int dt2dv(FILE* dtl, FILE* dvi) {
             if (debug) {
                 PRINT_PROGNAME;
                 fprintf(stderr, "(dt2dv) : command ");
-                fprintf(stderr, SZ_FMT, ncom);
+                fprintf(stderr, COUNT_FMT, ncom);
                 fprintf(stderr, " = \"%s\".\n", dtl_cmd);
             }
 
@@ -413,15 +413,15 @@ int dt2dv(FILE* dtl, FILE* dvi) {
     PRINT_PROGNAME;
     fprintf(stderr, "(dt2dv) :\n");
     fprintf(stderr, "Read (from file \"%s\") ", dtl_filename);
-    fprintf(stderr, SZ_FMT, dtl_read);
+    fprintf(stderr, COUNT_FMT, dtl_read);
     fprintf(stderr, " DTL bytes (");
     fprintf(stderr, UF4, dtl_line.num);
     fprintf(stderr, " lines);\n");
     fprintf(stderr, "wrote (to file \"%s\") ", dvi_filename);
-    fprintf(stderr, SZ_FMT, dvi_written);
+    fprintf(stderr, COUNT_FMT, dvi_written);
     fprintf(stderr, " DVI bytes;\n");
     fprintf(stderr, "completely interpreted ");
-    fprintf(stderr, SZ_FMT, ncom);
+    fprintf(stderr, COUNT_FMT, ncom);
     fprintf(stderr, " DVI command%s.\n", (ncom == 1 ? "" : "s"));
     fprintf(stderr, "\n");
 
@@ -460,14 +460,14 @@ void dinfo(void) {
     fprintf(stderr, " :\n");
     fprintf(stderr, "\"%s\"\n", dtl_line.buf);
     fprintf(stderr, "Read ");
-    fprintf(stderr, SZ_FMT, dtl_read);
+    fprintf(stderr, COUNT_FMT, dtl_read);
     fprintf(stderr, " DTL bytes (");
-    fprintf(stderr, SZ_FMT, com_read);
+    fprintf(stderr, COUNT_FMT, com_read);
     fprintf(stderr, " in current command), wrote ");
-    fprintf(stderr, SZ_FMT, dvi_written);
+    fprintf(stderr, COUNT_FMT, dvi_written);
     fprintf(stderr, " DVI bytes.\n");
     fprintf(stderr, "Successfully interpreted ");
-    fprintf(stderr, SZ_FMT, ncom);
+    fprintf(stderr, COUNT_FMT, ncom);
     fprintf(stderr, " DVI command%s.\n", (ncom == 1 ? "" : "s"));
 } /* dinfo */
 
@@ -699,7 +699,7 @@ COUNT skip_space(FILE* fp, int* ch) {
                 PRINT_PROGNAME;
                 fprintf(stderr, "(skip_space) : ");
                 fprintf(stderr, "end of DTL line (at least) ");
-                fprintf(stderr, SZ_FMT, dtl_line.num);
+                fprintf(stderr, COUNT_FMT, dtl_line.num);
                 fprintf(stderr, "\n");
             }
         }
@@ -1877,7 +1877,7 @@ int post_post(FILE* dtl, FILE* dvi) {
         PRINT_PROGNAME;
         fprintf(stderr, "(post_post) : WARNING : \n");
         fprintf(stderr, "DVI size ");
-        fprintf(stderr, SZ_FMT, dvi_written);
+        fprintf(stderr, COUNT_FMT, dvi_written);
         fprintf(stderr, " (bytes) wouldn't be a multiple of 4 !\n");
         fprintf(
             stderr,
