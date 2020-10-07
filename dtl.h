@@ -19,10 +19,10 @@
 #include <inttypes.h>
 
 /// variety of DTL produced
-#define VARIETY "sequences-6"
+#define VARIETY     "sequences-6"
 
 /// version of DTL programs
-#define VERSION "0.6.0"
+#define VERSION     "0.6.0"
 
 
 /** types 
@@ -32,8 +32,8 @@
 typedef int32_t     S4;
 typedef uint32_t    U4;
 /// scanf and printf formats to read or write those
-#define S4_FMT     "%"PRId32
-#define U4_FMT     "%"PRIu32
+#define S4_FMT      "%"PRId32
+#define U4_FMT      "%"PRIu32
 /// 4 byte hexadecimal (checksum)
 #define HEX_FMT     "%"PRIx32
 /// 4 byte octal (checksum)
@@ -41,17 +41,17 @@ typedef uint32_t    U4;
 
 /// type for byte count for DVI file 
 /// COUNT must be large enough to hold a U4 (unsigned 4 byte) value 
-typedef size_t  COUNT;
-#define COUNT_FMT  "%zd"
+typedef size_t      COUNT;
+#define COUNT_FMT   "%zd"
 
 /// size of a TeX and DVI word is 32 bits
-typedef int32_t word_t;
+typedef int32_t     word_t;
 /// format for a DVI word
-#define WORD_FMT      "%"PRId32
+#define WORD_FMT    "%"PRId32
 
-#define MAXSTRLEN 256
+#define MAXSTRLEN   256
 /// string of 8-bit characters for machine: keyboard, screen, memory 
-typedef char String[MAXSTRLEN+1];
+typedef char        String[MAXSTRLEN+1];
 
 
 /** global variable
