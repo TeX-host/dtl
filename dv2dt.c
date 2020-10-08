@@ -31,10 +31,16 @@ int main(int argc, char* argv[]) {
     return dv2dt(dvi, dtl);
 } /* end main */
 
-/* I:  dvi_file;  I:  pdvi;  O:  *pdvi. */
+
+/** Open DVI file for input.
+ * 
+ *  @param[in]      dvi_file
+ *  @param[inout]   pdvi
+ */
 int open_dvi(char* dvi_file, FILE** pdvi) {
     if (pdvi == NULL) {
-        fprintf(stderr, "%s:  address of dvi variable is NULL.\n", program_name);
+        fprintf(stderr, "%s:  address of dvi variable is NULL.\n",
+                program_name);
         exit(EXIT_FAILURE);
     }
 
@@ -47,27 +53,30 @@ int open_dvi(char* dvi_file, FILE** pdvi) {
     }
 
     return 1; /* OK */
-}
-/* open_dvi */
+} /* open_dvi */
 
-/* I:  dtl_file;  I:  pdtl;  O:  *pdtl. */
+/** Open DTL file for output.
+ *
+ *  @param[in]      dtl_file
+ *  @param[inout]   pdtl
+ */
 int open_dtl(char* dtl_file, FILE** pdtl) {
     if (pdtl == NULL) {
-        fprintf(stderr, "%s:  address of dtl variable is NULL.\n", program_name);
+        fprintf(stderr, "%s:  address of dtl variable is NULL.\n",
+                program_name);
         exit(EXIT_FAILURE);
     }
 
     *pdtl = fopen(dtl_file, "w");
 
     if (*pdtl == NULL) {
-        fprintf(stderr, "%s:  Cannot open \"%s\" for text writing.\n", program_name,
-                dtl_file);
+        fprintf(stderr, "%s:  Cannot open \"%s\" for text writing.\n",
+                program_name, dtl_file);
         exit(EXIT_FAILURE);
     }
 
     return 1; /* OK */
-}
-/* open_dtl */
+} /* open_dtl */
 
 int dv2dt(FILE* dvi, FILE* dtl) {
     int opcode;
