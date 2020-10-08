@@ -14,6 +14,7 @@
                  by  The TUG DVI Driver Standards Committee.
                  Appendix A, "Device-Independent File Format".
 */
+#include <stdlib.h> // EXIT_SUCCESS, EXIT_FAILURE
 #include "dv2dt.h"
 
 
@@ -25,20 +26,16 @@ int main(int argc, char* argv[]) {
     strncpy(program_name, argv[0], MAXSTRLEN);
 
     if (argc > 1) open_dvi(argv[1], &dvi);
-
     if (argc > 2) open_dtl(argv[2], &dtl);
 
-    dv2dt(dvi, dtl);
-
-    return 0; /* OK */
-}
-/* end main */
+    return dv2dt(dvi, dtl);
+} /* end main */
 
 /* I:  dvi_file;  I:  pdvi;  O:  *pdvi. */
 int open_dvi(char* dvi_file, FILE** pdvi) {
     if (pdvi == NULL) {
         fprintf(stderr, "%s:  address of dvi variable is NULL.\n", program_name);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     *pdvi = fopen(dvi_file, "rb");
@@ -46,7 +43,7 @@ int open_dvi(char* dvi_file, FILE** pdvi) {
     if (*pdvi == NULL) {
         fprintf(stderr, "%s:  Cannot open \"%s\" for binary reading.\n",
                 program_name, dvi_file);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     return 1; /* OK */
@@ -57,7 +54,7 @@ int open_dvi(char* dvi_file, FILE** pdvi) {
 int open_dtl(char* dtl_file, FILE** pdtl) {
     if (pdtl == NULL) {
         fprintf(stderr, "%s:  address of dtl variable is NULL.\n", program_name);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     *pdtl = fopen(dtl_file, "w");
@@ -65,7 +62,7 @@ int open_dtl(char* dtl_file, FILE** pdtl) {
     if (*pdtl == NULL) {
         fprintf(stderr, "%s:  Cannot open \"%s\" for text writing.\n", program_name,
                 dtl_file);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     return 1; /* OK */
@@ -91,7 +88,7 @@ int dv2dt(FILE* dvi, FILE* dtl) {
         if (opcode < 0 || opcode > 255) {
             count += 1;
             fprintf(stderr, "%s:  Non-byte from \"fgetc()\"!\n", program_name);
-            exit(1);
+            exit(EXIT_FAILURE);
         } else if (opcode <= 127) {
             /* setchar commands */
             /* count += 1; */
@@ -120,20 +117,19 @@ int dv2dt(FILE* dvi, FILE* dtl) {
         } else {
             count += 1;
             fprintf(stderr, "%s:  unknown byte.\n", program_name);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
         PRINT_ECOM; /* end of command and parameters */
         fprintf(dtl, "\n");
         if (fflush(dtl) == EOF) {
             fprintf(stderr, "%s:  fflush on dtl file gave write error!\n",
                     program_name);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
     } /* end while */
 
-    return 1; /* OK */
-}
-/* dv2dt */
+    return EXIT_SUCCESS;
+} /* dv2dt */
 
 
 /** read 1 <= n <= 4 bytes for an unsigned integer from dvi file
@@ -151,7 +147,7 @@ U4 read_unsigned(int nBytes, FILE* dvi) {
         fprintf(stderr,
                 "%s:  read_unsigned() asked for %d bytes.  Must be 1 to 4.\n",
                 program_name, nBytes);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     /* Following calculation works iff storage is big-endian. */
@@ -195,7 +191,7 @@ S4 read_signed(int nBytes, FILE* dvi) {
         fprintf(stderr, 
                 "%s:  read_signed() asked for %d bytes.  Must be 1 to 4.\n",
                 program_name, nBytes);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     /* Following calculation works iff storage is big-endian. */
@@ -241,7 +237,7 @@ COUNT write_table(op_table table, int opcode, FILE* dvi, FILE* dtl) {
     if (opcode < table.first || opcode > table.last) {
         fprintf(stderr, "%s: opcode %d is outside table %s [ %d to %d ] !\n",
                 program_name, opcode, table.name, table.first, table.last);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     op = table.list[opcode - table.first];
@@ -249,7 +245,7 @@ COUNT write_table(op_table table, int opcode, FILE* dvi, FILE* dtl) {
     /* Further defensive programming. */
     if (op.code != opcode) {
         fprintf(stderr, "%s: internal table %s wrong!\n", program_name, table.name);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     bcount = 1;
@@ -272,7 +268,7 @@ COUNT write_table(op_table table, int opcode, FILE* dvi, FILE* dtl) {
         if (nconv != 1 || nread <= 0) {
             fprintf(stderr, "%s: internal read of table %s failed!\n", program_name,
                     table.name);
-            exit(1);
+            exit(EXIT_FAILURE);
         }
 
         pos += nread;
@@ -321,7 +317,7 @@ COUNT setseq(int opcode, FILE* dvi, FILE* dtl) {
         /* prepare to reread opcode of next DVI command */
         if (ungetc(opcode, dvi) == EOF) {
             fprintf(stderr, "setseq:  cannot push back a byte\n");
-            exit(1);
+            exit(EXIT_FAILURE);
         }
 
         /* end of sequence of font characters */
@@ -380,7 +376,7 @@ COUNT special(FILE* dvi, FILE* dtl, int n) {
 
     if (n < 1 || n > 4) {
         fprintf(stderr, "%s:  special %d, range is 1 to 4.\n", program_name, n);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     fprintf(dtl, "%s%d", SPECIAL, n);
@@ -402,7 +398,7 @@ COUNT fontdef(FILE* dvi, FILE* dtl, int n) {
 
     if (n < 1 || n > 4) {
         fprintf(stderr, "%s:  font def %d, range is 1 to 4.\n", program_name, n);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     fprintf(dtl, "%s%d", FONTDEF, n);
@@ -533,12 +529,12 @@ COUNT postpost(FILE* dvi, FILE* dtl) {
     if (n223 < 4) {
         fprintf(stderr, "%s:  bad post_post:  fewer than four \"223\" bytes.\n",
                 program_name);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     if (b223 != EOF) {
         fprintf(stderr, "%s:  bad post_post:  doesn't end with a \"223\".\n",
                 program_name);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     return (1 + 4 + 1 + n223);
