@@ -397,8 +397,7 @@ COUNT special(FILE* dvi, FILE* dtl, int n) {
 /* read fontdef 1 .. 4 from dvi and write in dtl */
 /* return number of DVI bytes interpreted into DTL */
 COUNT fontdef(FILE* dvi, FILE* dtl, int n) {
-    U4 ku, c, s, d, a, l;
-    S4 ks;
+    U4 c, a, l;
 
     if (n < 1 || n > 4) {
         fprintf(stderr, "%s:  font def %d, range is 1 to 4.\n", program, n);
@@ -409,11 +408,9 @@ COUNT fontdef(FILE* dvi, FILE* dtl, int n) {
 
     /* k[n] = font number */
     if (n == 4) {
-        fprintf(dtl, " ");
-        ks = read_signed(n, dvi);
-        fprintf(dtl, S4_FMT, ks);
+        xref_signed(n, dvi, dtl);
     } else {
-        ku = xref_unsigned(n, dvi, dtl);
+        xref_unsigned(n, dvi, dtl);
     }
 
     /* c[4] = checksum */
@@ -428,10 +425,10 @@ COUNT fontdef(FILE* dvi, FILE* dtl, int n) {
 #endif
 
     /* s[4] = scale factor */
-    s = xref_unsigned(4, dvi, dtl);
+    xref_unsigned(4, dvi, dtl);
 
     /* d[4] = design size */
-    d = xref_unsigned(4, dvi, dtl);
+    xref_unsigned(4, dvi, dtl);
 
     /* a[1] = length of area (directory) name */
     a = read_unsigned(1, dvi);
