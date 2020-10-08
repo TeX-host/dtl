@@ -385,9 +385,7 @@ COUNT special(FILE* dvi, FILE* dtl, int n) {
     fprintf(dtl, "%s%d", SPECIAL, n);
 
     /* k[n] = length of special string */
-    fprintf(dtl, " ");
-    k = read_unsigned(n, dvi);
-    fprintf(dtl, U4_FMT, k);
+    k = xref_unsigned(n ,dvi, dtl);
 
     /* x[k] = special string */
     xferstring(k, dvi, dtl);
@@ -410,13 +408,12 @@ COUNT fontdef(FILE* dvi, FILE* dtl, int n) {
     fprintf(dtl, "%s%d", FONTDEF, n);
 
     /* k[n] = font number */
-    fprintf(dtl, " ");
     if (n == 4) {
+        fprintf(dtl, " ");
         ks = read_signed(n, dvi);
         fprintf(dtl, S4_FMT, ks);
     } else {
-        ku = read_unsigned(n, dvi);
-        fprintf(dtl, U4_FMT, ku);
+        ku = xref_unsigned(n, dvi, dtl);
     }
 
     /* c[4] = checksum */
@@ -431,14 +428,10 @@ COUNT fontdef(FILE* dvi, FILE* dtl, int n) {
 #endif
 
     /* s[4] = scale factor */
-    fprintf(dtl, " ");
-    s = read_unsigned(4, dvi);
-    fprintf(dtl, U4_FMT, s);
+    s = xref_unsigned(4, dvi, dtl);
 
     /* d[4] = design size */
-    fprintf(dtl, " ");
-    d = read_unsigned(4, dvi);
-    fprintf(dtl, U4_FMT, d);
+    d = xref_unsigned(4, dvi, dtl);
 
     /* a[1] = length of area (directory) name */
     a = read_unsigned(1, dvi);
@@ -461,112 +454,77 @@ COUNT fontdef(FILE* dvi, FILE* dtl, int n) {
 /* read preamble from dvi and write in dtl */
 /* return number of DVI bytes interpreted into DTL */
 COUNT preamble(FILE* dvi, FILE* dtl) {
-    U4 id, num, den, mag, k;
+    U4 k;
 
     fprintf(dtl, "pre");
 
     /* i[1] = DVI format identification */
-    fprintf(dtl, " ");
-    id = read_unsigned(1, dvi);
-    fprintf(dtl, U4_FMT, id);
+    xref_unsigned(1, dvi, dtl);
 
     /* num[4] = numerator of DVI unit */
-    fprintf(dtl, " ");
-    num = read_unsigned(4, dvi);
-    fprintf(dtl, U4_FMT, num);
+    xref_unsigned(4, dvi, dtl);
 
     /* den[4] = denominator of DVI unit */
-    fprintf(dtl, " ");
-    den = read_unsigned(4, dvi);
-    fprintf(dtl, U4_FMT, den);
+    xref_unsigned(4, dvi, dtl);
 
     /* mag[4] = 1000 x magnification */
-    fprintf(dtl, " ");
-    mag = read_unsigned(4, dvi);
-    fprintf(dtl, U4_FMT, mag);
+    xref_unsigned(4, dvi, dtl);
 
     /* k[1] = length of comment */
-    fprintf(dtl, " ");
-    k = read_unsigned(1, dvi);
-    fprintf(dtl, U4_FMT, k);
+    k = xref_unsigned(1, dvi, dtl);
 
     /* x[k] = comment string */
     xferstring(k, dvi, dtl);
 
     return (1 + 1 + 4 + 4 + 4 + 1 + k);
-}
-/* end preamble */
+} /* end preamble */
 
 /* read postamble from dvi and write in dtl */
 /* return number of bytes */
 COUNT postamble(FILE* dvi, FILE* dtl) {
-    U4 p, num, den, mag, l, u, s, t;
-
     fprintf(dtl, "post");
 
     /* p[4] = pointer to final bop */
-    fprintf(dtl, " ");
-    p = read_unsigned(4, dvi);
-    fprintf(dtl, U4_FMT, p);
+    xref_unsigned(4, dvi, dtl);
 
     /* num[4] = numerator of DVI unit */
-    fprintf(dtl, " ");
-    num = read_unsigned(4, dvi);
-    fprintf(dtl, U4_FMT, num);
+    xref_unsigned(4, dvi, dtl);
 
     /* den[4] = denominator of DVI unit */
-    fprintf(dtl, " ");
-    den = read_unsigned(4, dvi);
-    fprintf(dtl, U4_FMT, den);
+    xref_unsigned(4, dvi, dtl);
 
     /* mag[4] = 1000 x magnification */
-    fprintf(dtl, " ");
-    mag = read_unsigned(4, dvi);
-    fprintf(dtl, U4_FMT, mag);
+    xref_unsigned(4, dvi, dtl);
 
     /* l[4] = height + depth of tallest page */
-    fprintf(dtl, " ");
-    l = read_unsigned(4, dvi);
-    fprintf(dtl, U4_FMT, l);
+    xref_unsigned(4, dvi, dtl);
 
     /* u[4] = width of widest page */
-    fprintf(dtl, " ");
-    u = read_unsigned(4, dvi);
-    fprintf(dtl, U4_FMT, u);
+    xref_unsigned(4, dvi, dtl);
 
     /* s[2] = maximum stack depth */
-    fprintf(dtl, " ");
-    s = read_unsigned(2, dvi);
-    fprintf(dtl, U4_FMT, s);
+    xref_unsigned(2, dvi, dtl);
 
     /* t[2] = total number of pages (bop commands) */
-    fprintf(dtl, " ");
-    t = read_unsigned(2, dvi);
-    fprintf(dtl, U4_FMT, t);
+    xref_unsigned(2, dvi, dtl);
 
     /*  return (29);  */
     return (1 + 4 + 4 + 4 + 4 + 4 + 4 + 2 + 2);
-}
-/* end postamble */
+} /* end postamble */
 
 /* read post_post from dvi and write in dtl */
 /* return number of bytes */
 COUNT postpost(FILE* dvi, FILE* dtl) {
-    U4 q, id;
     int b223; /* hope this is 8-bit clean */
     int n223; /* number of "223" bytes in final padding */
 
     fprintf(dtl, "post_post");
 
     /* q[4] = pointer to post command */
-    fprintf(dtl, " ");
-    q = read_unsigned(4, dvi);
-    fprintf(dtl, U4_FMT, q);
+    xref_unsigned(4, dvi, dtl);
 
     /* i[1] = DVI identification byte */
-    fprintf(dtl, " ");
-    id = read_unsigned(1, dvi);
-    fprintf(dtl, U4_FMT, id);
+    xref_unsigned(1, dvi, dtl);
 
     /* final padding by "223" bytes */
     /* hope this way of obtaining b223 is 8-bit clean */
