@@ -233,14 +233,19 @@ S4 xref_signed(int nBytes, FILE* dvi, FILE* dtl) {
     return snum;
 } /* end xref_signed */
 
-/* write command with given opcode in given table */
-/* return number of DVI bytes in this command */
+/** Write command with given opcode in given table.
+ *
+ *  @param[in]  table
+ *  @param[in]  opcode
+ *  @param[in]  dvi
+ *  @param[out] dtl
+ *  @return bytes_count  number of DVI bytes in this command
+ */
 COUNT write_table(op_table table, int opcode, FILE* dvi, FILE* dtl) {
-    op_info op;       /* pointer into table of operations and arguments */
-    COUNT bcount = 0; /* number of bytes in arguments of this opcode */
-    String args;      /* arguments string */
-    int i;            /* count of arguments read from args */
-    int pos;          /* position in args */
+    op_info op; /* pointer into table of operations and arguments */
+    COUNT bytes_count = 0; /* number of bytes in arguments of this opcode */
+    String args; /* arguments string */
+    int arg_pos; /* position in args */
 
     /* Defensive programming. */
     if (opcode < table.first || opcode > table.last) {
@@ -253,11 +258,12 @@ COUNT write_table(op_table table, int opcode, FILE* dvi, FILE* dtl) {
 
     /* Further defensive programming. */
     if (op.code != opcode) {
-        fprintf(stderr, "%s: internal table %s wrong!\n", program_name, table.name);
+        fprintf(stderr, "%s: internal table %s wrong!\n", 
+                program_name, table.name);
         exit(EXIT_FAILURE);
     }
 
-    bcount = 1;
+    bytes_count = 1;
     fprintf(dtl, "%s", op.name);
 
     /* NB:  sscanf does an ungetc, */
@@ -265,28 +271,27 @@ COUNT write_table(op_table table, int opcode, FILE* dvi, FILE* dtl) {
 
     strncpy(args, op.args, MAXSTRLEN);
 
-    pos = 0;
-    for (i = 0; i < op.nargs; i++) {
-        int argtype; /* sign and number of bytes in current argument */
-        int nconv;   /* number of successful conversions from args */
-        int nread;   /* number of bytes read from args */
+    arg_pos = 0;
+    for (int i = 0; i < op.nargs; i++) {
+        int arg_type; /* sign and number of bytes in current argument */
+        int n_conv;   /* number of successful conversions from args */
+        int n_read;   /* number of bytes read from args */
 
-        nconv = sscanf(args + pos, "%d%n", &argtype, &nread);
+        n_conv = sscanf(args + arg_pos, "%d%n", &arg_type, &n_read);
 
         /* internal consistency checks */
-        if (nconv != 1 || nread <= 0) {
-            fprintf(stderr, "%s: internal read of table %s failed!\n", program_name,
-                    table.name);
+        if (n_conv != 1 || n_read <= 0) {
+            fprintf(stderr, "%s: internal read of table %s failed!\n",
+                    program_name, table.name);
             exit(EXIT_FAILURE);
         }
 
-        pos += nread;
-
-        bcount += (argtype < 0 ? xref_signed(-argtype, dvi, dtl)
-                               : xref_unsigned(argtype, dvi, dtl));
+        arg_pos += n_read;
+        bytes_count += (arg_type < 0 ? xref_signed(-arg_type, dvi, dtl)
+                                     : xref_unsigned(arg_type, dvi, dtl));
     } /* end for */
 
-    return bcount;
+    return bytes_count;
 } /* write_table */
 
 /* write a sequence of setchar commands */
