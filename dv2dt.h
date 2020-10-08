@@ -43,8 +43,6 @@ int dv2dt(FILE* dvi, FILE* dtl);
 
 U4 xref_unsigned(int nBytes, FILE* dvi, FILE* dtl);
 S4 xref_signed(int nBytes, FILE* dvi, FILE* dtl);
-U4 read_unsigned(int nBytes, FILE* dvi);
-S4 read_signed(int nBytes, FILE* dvi);
 
 COUNT write_table(op_table table, int opcode, FILE* dvi, FILE* dtl);
 

@@ -135,37 +135,6 @@ int dv2dt(FILE* dvi, FILE* dtl) {
 }
 /* dv2dt */
 
-/** transfer n bytes as an unsign int from dvi to dtl.
- *
- *  @param[in]  nBytes  number of bytes to be transfered
- *  @param[in]  dvi     input DVI file
- *  @param[out] dtl     output DTL file
- */
-U4 xref_unsigned(int nBytes, FILE* dvi, FILE* dtl) {
-    U4 unum;
-
-    fprintf(dtl, " ");
-    unum = read_unsigned(nBytes, dvi);
-    fprintf(dtl, U4_FMT, unum);
-
-    return unum;
-} /* end xref_unsigned */
-
-/** transfer n bytes as a sign int from dvi to dtl.
- *
- *  @param[in]  nBytes  number of bytes to be transfered
- *  @param[in]  dvi     input DVI file
- *  @param[out] dtl     output DTL file
- */
-S4 xref_signed(int nBytes, FILE* dvi, FILE* dtl) {
-    S4 snum;
-
-    fprintf(dtl, " ");
-    snum = read_signed(nBytes, dvi);
-    fprintf(dtl, S4_FMT, snum);
-
-    return snum;
-} /* end xref_signed */
 
 /** read 1 <= n <= 4 bytes for an unsigned integer from dvi file
  * DVI format uses Big-endian storage of numbers.
@@ -194,6 +163,22 @@ U4 read_unsigned(int nBytes, FILE* dvi) {
 
     return integer;
 } /* end read_unsigned */
+
+/** transfer n bytes as an unsign int from dvi to dtl.
+ *
+ *  @param[in]  nBytes  number of bytes to be transfered
+ *  @param[in]  dvi     input DVI file
+ *  @param[out] dtl     output DTL file
+ */
+U4 xref_unsigned(int nBytes, FILE* dvi, FILE* dtl) {
+    U4 unum;
+
+    fprintf(dtl, " ");
+    unum = read_unsigned(nBytes, dvi);
+    fprintf(dtl, U4_FMT, unum);
+
+    return unum;
+} /* end xref_unsigned */
 
 /** read 1 <= n <= 4 bytes for a signed integer from dvi file
  *  DVI format uses Big-endian storage of numbers.
@@ -226,6 +211,22 @@ S4 read_signed(int nBytes, FILE* dvi) {
 
     return integer;
 } /* end read_signed */
+
+/** transfer n bytes as a sign int from dvi to dtl.
+ *
+ *  @param[in]  nBytes  number of bytes to be transfered
+ *  @param[in]  dvi     input DVI file
+ *  @param[out] dtl     output DTL file
+ */
+S4 xref_signed(int nBytes, FILE* dvi, FILE* dtl) {
+    S4 snum;
+
+    fprintf(dtl, " ");
+    snum = read_signed(nBytes, dvi);
+    fprintf(dtl, S4_FMT, snum);
+
+    return snum;
+} /* end xref_signed */
 
 /* write command with given opcode in given table */
 /* return number of DVI bytes in this command */
