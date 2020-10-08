@@ -135,42 +135,58 @@ int dv2dt(FILE* dvi, FILE* dtl) {
 }
 /* dv2dt */
 
-
-COUNT write_unsigned(int n, FILE* dvi, FILE* dtl) {
+/** transfer n bytes as an unsign int from dvi to dtl.
+ *
+ *  @param[in]  nBytes  number of bytes to be transfered
+ *  @param[in]  dvi     input DVI file
+ *  @param[out] dtl     output DTL file
+ */
+U4 xref_unsigned(int nBytes, FILE* dvi, FILE* dtl) {
     U4 unum;
 
     fprintf(dtl, " ");
-    unum = read_unsigned(n, dvi);
+    unum = read_unsigned(nBytes, dvi);
     fprintf(dtl, U4_FMT, unum);
-    return n;
-} /* end write_unsigned */
 
-COUNT write_signed(int n, FILE* dvi, FILE* dtl) {
+    return unum;
+} /* end xref_unsigned */
+
+/** transfer n bytes as a sign int from dvi to dtl.
+ *
+ *  @param[in]  nBytes  number of bytes to be transfered
+ *  @param[in]  dvi     input DVI file
+ *  @param[out] dtl     output DTL file
+ */
+S4 xref_signed(int nBytes, FILE* dvi, FILE* dtl) {
     S4 snum;
 
     fprintf(dtl, " ");
-    snum = read_signed(n, dvi);
+    snum = read_signed(nBytes, dvi);
     fprintf(dtl, S4_FMT, snum);
-    return n;
-} /* end write_signed */
 
-/* read 1 <= n <= 4 bytes for an unsigned integer from dvi file */
-/* DVI format uses Big-endian storage of numbers. */
-U4 read_unsigned(int n, FILE* dvi) {
-    U4 integer;
+    return snum;
+} /* end xref_signed */
+
+/** read 1 <= n <= 4 bytes for an unsigned integer from dvi file
+ * DVI format uses Big-endian storage of numbers.
+ *
+ *  @param[in] n number of bytes to read
+ *  @param[in] dvi file
+ *  @return unsign int
+ */
+U4 read_unsigned(int nBytes, FILE* dvi) {
+    U4 integer = 0;
     int ibyte = 0;
-    int i;
 
-    if (n < 1 || n > 4) {
+    if (nBytes < 1 || nBytes > 4) {
         fprintf(stderr,
                 "%s:  read_unsigned() asked for %d bytes.  Must be 1 to 4.\n",
-                program, n);
+                program, nBytes);
         exit(1);
     }
 
     /* Following calculation works iff storage is big-endian. */
-    integer = 0;
-    for (i = 0; i < n; i++) {
+    for (int i = 0; i < nBytes; i++) {
         integer *= 256;
         ibyte = fgetc(dvi);
         integer += ibyte;
@@ -179,22 +195,26 @@ U4 read_unsigned(int n, FILE* dvi) {
     return integer;
 } /* end read_unsigned */
 
-/* read 1 <= n <= 4 bytes for a signed integer from dvi file */
-/* DVI format uses Big-endian storage of numbers. */
-S4 read_signed(int n, FILE* dvi) {
-    S4 integer;
+/** read 1 <= n <= 4 bytes for a signed integer from dvi file
+ *  DVI format uses Big-endian storage of numbers.
+ *
+ *  @param[in] n number of bytes to read
+ *  @param[in] dvi file
+ *  @return sign int
+ */
+S4 read_signed(int nBytes, FILE* dvi) {
+    S4 integer = 0;
     int ibyte = 0;
-    int i;
 
-    if (n < 1 || n > 4) {
-        fprintf(stderr, "%s:  read_signed() asked for %d bytes.  Must be 1 to 4.\n",
-                program, n);
+    if (nBytes < 1 || nBytes > 4) {
+        fprintf(stderr, 
+                "%s:  read_signed() asked for %d bytes.  Must be 1 to 4.\n",
+                program, nBytes);
         exit(1);
     }
 
     /* Following calculation works iff storage is big-endian. */
-    integer = 0;
-    for (i = 0; i < n; i++) {
+    for (int i = 0; i < nBytes; i++) {
         integer *= 256;
         ibyte = fgetc(dvi);
         /* Big-endian implies sign byte is first byte. */
@@ -256,8 +276,8 @@ COUNT write_table(op_table table, int opcode, FILE* dvi, FILE* dtl) {
 
         pos += nread;
 
-        bcount += (argtype < 0 ? write_signed(-argtype, dvi, dtl)
-                               : write_unsigned(argtype, dvi, dtl));
+        bcount += (argtype < 0 ? xref_signed(-argtype, dvi, dtl)
+                               : xref_unsigned(argtype, dvi, dtl));
     } /* end for */
 
     return bcount;
