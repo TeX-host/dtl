@@ -16,6 +16,7 @@
 */
 #include <stdlib.h> // EXIT_SUCCESS, EXIT_FAILURE
 #include <ctype.h>  // isprint
+#include <stdio.h>  // fputc, fputs
 #include "dv2dt.h"
 
 
@@ -84,12 +85,12 @@ int dv2dt(FILE* dvi, FILE* dtl) {
     COUNT count; /* intended to count bytes to DVI file; as yet unused. */
 
     PRINT_BCOM;
-    fprintf(dtl, "variety ");
-    /*  fprintf (dtl, BMES); */
-    fprintf(dtl, VARIETY);
-    /*  fprintf (dtl, EMES); */
+    fputs("variety ", dtl);
+    /* fputc(BMES_CHAR, dtl); */
+    fputs(VARIETY, dtl);
+    /* fputc(EMES_CHAR, dtl); */
     PRINT_ECOM;
-    fprintf(dtl, "\n");
+    fputc('\n', dtl);
 
     /* start counting DVI bytes */
     count = 0;
@@ -130,7 +131,7 @@ int dv2dt(FILE* dvi, FILE* dtl) {
             exit(EXIT_FAILURE);
         }
         PRINT_ECOM; /* end of command and parameters */
-        fprintf(dtl, "\n");
+        fputc('\n', dtl);
         if (fflush(dtl) == EOF) {
             fprintf(stderr, "%s:  fflush on dtl file gave write error!\n",
                     program_name);
@@ -179,7 +180,7 @@ U4 read_unsigned(int nBytes, FILE* dvi) {
 U4 xref_unsigned(int nBytes, FILE* dvi, FILE* dtl) {
     U4 unum;
 
-    fprintf(dtl, " ");
+    fputc(' ', dtl);
     unum = read_unsigned(nBytes, dvi);
     fprintf(dtl, U4_FMT, unum);
 
@@ -227,7 +228,7 @@ S4 read_signed(int nBytes, FILE* dvi) {
 S4 xref_signed(int nBytes, FILE* dvi, FILE* dtl) {
     S4 snum;
 
-    fprintf(dtl, " ");
+    fputc(' ', dtl);
     snum = read_signed(nBytes, dvi);
     fprintf(dtl, S4_FMT, snum);
 
@@ -265,7 +266,7 @@ COUNT write_table(op_table table, int opcode, FILE* dvi, FILE* dtl) {
     }
 
     bytes_count = 1;
-    fprintf(dtl, "%s", op.name);
+    fputs(op.name, dtl);
 
     /* NB:  sscanf does an ungetc, */
     /*      so args must be writable. */
@@ -315,7 +316,7 @@ COUNT set_seq(int opcode, FILE* dvi, FILE* dtl) {
     /*  @assert( isprint(char_code) )  */
 
     /* start of sequence of font characters */
-    fprintf(dtl, BSEQ);
+    fputc(BSEQ_CHAR, dtl);
 
     /* first character */
     set_pchar(char_code, dtl);
@@ -344,7 +345,7 @@ COUNT set_seq(int opcode, FILE* dvi, FILE* dtl) {
     }
 
     /* end of sequence of font characters */
-    fprintf(dtl, ESEQ);
+    fputc(ESEQ_CHAR, dtl);
 
     return char_count;
 } /* set_seq */
@@ -358,23 +359,23 @@ COUNT set_seq(int opcode, FILE* dvi, FILE* dtl) {
 void set_pchar(int charcode, FILE* dtl) {
     switch (charcode) {
         case ESC_CHAR:
-            fprintf(dtl, "%c", ESC_CHAR);
-            fprintf(dtl, "%c", ESC_CHAR);
+            fputc(ESC_CHAR, dtl);
+            fputc(ESC_CHAR, dtl);
             break;
         case QUOTE_CHAR:
-            fprintf(dtl, "%c", ESC_CHAR);
-            fprintf(dtl, "%c", QUOTE_CHAR);
+            fputc(ESC_CHAR, dtl);
+            fputc(QUOTE_CHAR, dtl);
             break;
         case BSEQ_CHAR:
-            fprintf(dtl, "%c", ESC_CHAR);
-            fprintf(dtl, "%c", BSEQ_CHAR);
+            fputc(ESC_CHAR, dtl);
+            fputc(BSEQ_CHAR, dtl);
             break;
         case ESEQ_CHAR:
-            fprintf(dtl, "%c", ESC_CHAR);
-            fprintf(dtl, "%c", ESEQ_CHAR);
+            fputc(ESC_CHAR, dtl);
+            fputc(ESEQ_CHAR, dtl);
             break;
-        default: 
-            fprintf(dtl, "%c", charcode); 
+        default:
+            fputc(charcode, dtl);
             break;
     }
 } /* set_pchar */
@@ -386,19 +387,19 @@ void set_pchar(int charcode, FILE* dtl) {
  *  @param[out] dtl
  */
 void xfer_string(int nChars, FILE* dvi, FILE* dtl) {
-    fprintf(dtl, " ");
-    fprintf(dtl, "'");
+    fputc(' ', dtl);
+    fputc('\'', dtl);
 
     for (int i = 0; i < nChars; i++) {
         int ch = fgetc(dvi);
 
         if (ch == ESC_CHAR || ch == EMES_CHAR) {
-            fprintf(dtl, "%c", ESC_CHAR);
+            fputc(ESC_CHAR, dtl);
         }
-        fprintf(dtl, "%c", ch);
+        fputc(ch, dtl);
     }
 
-    fprintf(dtl, "'");
+    fputc('\'', dtl);
 } /* xfer_string */
 
 /** read special 1 .. 4 from dvi and write in dtl.
@@ -454,7 +455,7 @@ COUNT fontdef(int nBytes, FILE* dvi, FILE* dtl) {
     }
 
     /* c[4] = checksum */
-    fprintf(dtl, " ");
+    fputc(' ', dtl);
     c = read_unsigned(4, dvi);
 
 #ifdef HEX_CHECKSUM
@@ -490,7 +491,7 @@ COUNT fontdef(int nBytes, FILE* dvi, FILE* dtl) {
 COUNT preamble(FILE* dvi, FILE* dtl) {
     U4 k;
 
-    fprintf(dtl, "pre");
+    fputs("pre", dtl);
     xref_unsigned(1, dvi, dtl);     /*   i[1] = DVI format identification   */
     xref_unsigned(4, dvi, dtl);     /* num[4] = numerator of DVI unit       */
     xref_unsigned(4, dvi, dtl);     /* den[4] = denominator of DVI unit     */
@@ -506,7 +507,7 @@ COUNT preamble(FILE* dvi, FILE* dtl) {
  *  @return number of bytes
  */
 COUNT postamble(FILE* dvi, FILE* dtl) {
-    fprintf(dtl, "post");
+    fputs("post", dtl);
     xref_unsigned(4, dvi, dtl); /*   p[4] = pointer to final bop            */
     xref_unsigned(4, dvi, dtl); /* num[4] = numerator of DVI unit           */
     xref_unsigned(4, dvi, dtl); /* den[4] = denominator of DVI unit         */ 
@@ -528,15 +529,15 @@ COUNT postpost(FILE* dvi, FILE* dtl) {
     int b223; /* hope this is 8-bit clean */
     int n223; /* number of "223" bytes in final padding */
 
-    fprintf(dtl, "post_post");
+    fputs("post_post", dtl);
     xref_unsigned(4, dvi, dtl); /* q[4] = pointer to post command */
     xref_unsigned(1, dvi, dtl); /* i[1] = DVI identification byte */
 
     /* final padding by "223" bytes */
     /* hope this way of obtaining b223 is 8-bit clean */
     for (n223 = 0; (b223 = fgetc(dvi)) == 223; n223++) {
-        fprintf(dtl, " ");
-        fprintf(dtl, "%d", 223);
+        fputc(' ', dtl);
+        fputc(223, dtl);
     }
     if (n223 < 4) {
         fprintf(stderr, "%s:  bad post_post:  fewer than four \"223\" bytes.\n",

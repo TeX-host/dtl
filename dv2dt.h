@@ -18,8 +18,6 @@
 #define INC_DV2DT_H
 
 /* unix version; read from stdin, write to stdout, by default. */
-
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -28,10 +26,11 @@
 
 #include "dtl.h"
 
+
 #define PRINT_BCOM \
-    if (group) fprintf(dtl, "%s", BCOM)
+    if (group) fputc(BCOM_CHAR, dtl)
 #define PRINT_ECOM \
-    if (group) fprintf(dtl, "%s", ECOM)
+    if (group) fputc(ECOM_CHAR, dtl)
 
 
 /* function prototypes */
