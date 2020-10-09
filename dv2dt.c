@@ -307,8 +307,8 @@ COUNT set_seq(int opcode, FILE* dvi, FILE* dtl) {
     int char_count = 0;
 
     if (!isprint(char_code)) {
-        char_count = 1;
         fprintf(dtl, "%s%02X", SETCHAR, opcode);
+        char_count++;
         return char_count;
     }
 
@@ -318,8 +318,8 @@ COUNT set_seq(int opcode, FILE* dvi, FILE* dtl) {
     fprintf(dtl, BSEQ);
 
     /* first character */
-    char_count = 1;
     setpchar(char_code, dtl);
+    char_count++;
 
     /* subsequent characters */
     while ((opcode = fgetc(dvi)) != EOF) {
@@ -332,8 +332,8 @@ COUNT set_seq(int opcode, FILE* dvi, FILE* dtl) {
             /* end of font character sequence, as for other commands */
             break;
         } else { /* printable ASCII */
-            char_count += 1;
             setpchar(char_code, dtl);
+            char_count++;
         }
     } /* end for loop */
 
