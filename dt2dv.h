@@ -153,7 +153,8 @@ CmdTable cmd_table;
 
 
 char* prog_name = ""; /* intended for name of this program */
-#define PRINT_PROGNAME fprintf(stderr, "%s ", prog_name)
+#define ERROR_MSG_SATRT \
+    fprintf(stderr, "%s:%d (%s) : ", __FILE__, __LINE__, __func__)
 
 int nfile = 0;       /* number of filename arguments on the command line */
 
