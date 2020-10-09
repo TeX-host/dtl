@@ -35,8 +35,8 @@
 
 /* function prototypes */
 
-int open_dvi(char* dvi_file, FILE** dvi);
-int open_dtl(char* dtl_file, FILE** dtl);
+int open_dvi(char* dvi_fname, FILE** pdvi);
+int open_dtl(char* dtl_fname, FILE** pdtl);
 int dv2dt(FILE* dvi, FILE* dtl);
 
 U4 xref_unsigned(int nBytes, FILE* dvi, FILE* dtl);

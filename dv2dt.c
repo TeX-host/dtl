@@ -36,21 +36,21 @@ int main(int argc, char* argv[]) {
 
 /** Open DVI file for input.
  * 
- *  @param[in]      dvi_file
+ *  @param[in]      dvi_fname
  *  @param[inout]   pdvi
  */
-int open_dvi(char* dvi_file, FILE** pdvi) {
+int open_dvi(char* dvi_fname, FILE** pdvi) {
     if (pdvi == NULL) {
         fprintf(stderr, "%s:  address of dvi variable is NULL.\n",
                 program_name);
         exit(EXIT_FAILURE);
     }
 
-    *pdvi = fopen(dvi_file, "rb");
+    *pdvi = fopen(dvi_fname, "rb");
 
     if (*pdvi == NULL) {
         fprintf(stderr, "%s:  Cannot open \"%s\" for binary reading.\n",
-                program_name, dvi_file);
+                program_name, dvi_fname);
         exit(EXIT_FAILURE);
     }
 
@@ -59,21 +59,21 @@ int open_dvi(char* dvi_file, FILE** pdvi) {
 
 /** Open DTL file for output.
  *
- *  @param[in]      dtl_file
+ *  @param[in]      dtl_fname
  *  @param[inout]   pdtl
  */
-int open_dtl(char* dtl_file, FILE** pdtl) {
+int open_dtl(char* dtl_fname, FILE** pdtl) {
     if (pdtl == NULL) {
         fprintf(stderr, "%s:  address of dtl variable is NULL.\n",
                 program_name);
         exit(EXIT_FAILURE);
     }
 
-    *pdtl = fopen(dtl_file, "w");
+    *pdtl = fopen(dtl_fname, "w");
 
     if (*pdtl == NULL) {
         fprintf(stderr, "%s:  Cannot open \"%s\" for text writing.\n",
-                program_name, dtl_file);
+                program_name, dtl_fname);
         exit(EXIT_FAILURE);
     }
 
