@@ -22,7 +22,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 
 #define OP_INFO_BOP \
     { 139, BOP, 11, "-4 -4 -4 -4 -4 -4 -4 -4 -4 -4 -4" }
@@ -46,7 +45,7 @@ S4 xref_signed(int nBytes, FILE* dvi, FILE* dtl);
 
 COUNT write_table(op_table table, int opcode, FILE* dvi, FILE* dtl);
 
-COUNT setseq(int opcode, FILE* dvi, FILE* dtl);
+COUNT set_seq(int opcode, FILE* dvi, FILE* dtl);
 void setpchar(int charcode, FILE* dtl);
 void xferstring(int k, FILE* dvi, FILE* dtl);
 

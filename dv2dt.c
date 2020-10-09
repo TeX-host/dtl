@@ -15,6 +15,7 @@
                  Appendix A, "Device-Independent File Format".
 */
 #include <stdlib.h> // EXIT_SUCCESS, EXIT_FAILURE
+#include <ctype.h>  // isprint
 #include "dv2dt.h"
 
 
@@ -102,7 +103,7 @@ int dv2dt(FILE* dvi, FILE* dtl) {
             /* setchar commands */
             /* count += 1; */
             /* fprintf (dtl, "%s%d", SETCHAR, opcode); */
-            count += setseq(opcode, dvi, dtl);
+            count += set_seq(opcode, dvi, dtl);
         } else if (opcode >= 128 && opcode <= 170) {
             count += write_table(op_128_170, opcode, dvi, dtl);
         } else if (opcode >= 171 && opcode <= 234) {
@@ -294,52 +295,56 @@ COUNT write_table(op_table table, int opcode, FILE* dvi, FILE* dtl) {
     return bytes_count;
 } /* write_table */
 
-/* write a sequence of setchar commands */
-/* return count of DVI bytes interpreted into DTL */
-COUNT setseq(int opcode, FILE* dvi, FILE* dtl) {
-    int charcode = opcode; /* fortuitous */
-    int ccount = 0;
+/** Write a sequence of setchar commands.
+ *
+ *  @param[in]  opcode
+ *  @param[in]  dvi
+ *  @param[out] dtl
+ *  @return count of DVI bytes interpreted into DTL.
+ */
+COUNT set_seq(int opcode, FILE* dvi, FILE* dtl) {
+    int char_code = opcode; /* fortuitous */
+    int char_count = 0;
 
-    if (!isprint(charcode)) {
-        ccount = 1;
+    if (!isprint(char_code)) {
+        char_count = 1;
         fprintf(dtl, "%s%02X", SETCHAR, opcode);
     } else {
         /* start of sequence of font characters */
         fprintf(dtl, BSEQ);
 
         /* first character */
-        ccount = 1;
-        setpchar(charcode, dtl);
+        char_count = 1;
+        setpchar(char_code, dtl);
 
         /* subsequent characters */
         while ((opcode = fgetc(dvi)) != EOF) {
             if (opcode < 0 || opcode > 127) {
                 break; /* not a setchar command, so sequence has ended */
             }
-            charcode = opcode;      /* fortuitous */
-            if (!isprint(charcode)) /* not printable ascii */
-            {
-                break; /* end of font character sequence, as for other commands
-                        */
-            } else     /* printable ASCII */
-            {
-                ccount += 1;
-                setpchar(charcode, dtl);
+
+            char_code = opcode;      /* fortuitous */
+            if (!isprint(char_code)) { /* not printable ascii */
+                /* end of font character sequence, as for other commands */
+                break;
+            } else { /* printable ASCII */
+                char_count += 1;
+                setpchar(char_code, dtl);
             }
         } /* end for loop */
 
         /* prepare to reread opcode of next DVI command */
         if (ungetc(opcode, dvi) == EOF) {
-            fprintf(stderr, "setseq:  cannot push back a byte\n");
+            fprintf(stderr, "set_seq:  cannot push back a byte\n");
             exit(EXIT_FAILURE);
         }
 
         /* end of sequence of font characters */
         fprintf(dtl, ESEQ);
     }
-    return ccount;
-}
-/* setseq */
+
+    return char_count;
+} /* set_seq */
 
 /* set printable character */
 void setpchar(int charcode, FILE* dtl) {
