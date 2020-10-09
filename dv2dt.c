@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
  */
 int open_dvi(char* dvi_fname, FILE** pdvi) {
     if (pdvi == NULL) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "address of dvi variable is NULL.\n");
         exit(EXIT_FAILURE);
     }
@@ -47,7 +47,7 @@ int open_dvi(char* dvi_fname, FILE** pdvi) {
     *pdvi = fopen(dvi_fname, "rb");
 
     if (*pdvi == NULL) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "Cannot open \"%s\" for binary reading.\n",
                 dvi_fname);
         exit(EXIT_FAILURE);
@@ -63,7 +63,7 @@ int open_dvi(char* dvi_fname, FILE** pdvi) {
  */
 int open_dtl(char* dtl_fname, FILE** pdtl) {
     if (pdtl == NULL) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "address of dtl variable is NULL.\n");
         exit(EXIT_FAILURE);
     }
@@ -71,7 +71,7 @@ int open_dtl(char* dtl_fname, FILE** pdtl) {
     *pdtl = fopen(dtl_fname, "w");
 
     if (*pdtl == NULL) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "Cannot open \"%s\" for text writing.\n",
                 dtl_fname);
         exit(EXIT_FAILURE);
@@ -98,7 +98,7 @@ int dv2dt(FILE* dvi, FILE* dtl) {
         PRINT_BCOM; /* start of command and parameters */
         if (opcode < 0 || opcode > 255) {
             count += 1;
-            ERROR_MSG_SATRT;
+            ERROR_SATRT;
             fprintf(stderr, "Non-byte from \"fgetc()\"!\n");
             exit(EXIT_FAILURE);
         } else if (opcode <= 127) {
@@ -128,14 +128,14 @@ int dv2dt(FILE* dvi, FILE* dtl) {
             fprintf(dtl, "opcode%d", opcode);
         } else {
             count += 1;
-            ERROR_MSG_SATRT;
+            ERROR_SATRT;
             fprintf(stderr, "unknown byte.\n");
             exit(EXIT_FAILURE);
         }
         PRINT_ECOM; /* end of command and parameters */
         fputc('\n', dtl);
         if (fflush(dtl) == EOF) {
-            ERROR_MSG_SATRT;
+            ERROR_SATRT;
             fprintf(stderr, "fflush on dtl file gave write error!\n");
             exit(EXIT_FAILURE);
         }
@@ -157,7 +157,7 @@ U4 read_unsigned(int nBytes, FILE* dvi) {
     int ibyte = 0;
 
     if (nBytes < 1 || nBytes > 4) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr,
                 "read_unsigned() asked for %d bytes.  Must be 1 to 4.\n",
                 nBytes);
@@ -202,7 +202,7 @@ S4 read_signed(int nBytes, FILE* dvi) {
     int ibyte = 0;
 
     if (nBytes < 1 || nBytes > 4) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, 
                 "read_signed() asked for %d bytes.  Must be 1 to 4.\n",
                 nBytes);
@@ -255,7 +255,7 @@ COUNT write_table(op_table table, int opcode, FILE* dvi, FILE* dtl) {
 
     /* Defensive programming. */
     if (opcode < table.first || opcode > table.last) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "opcode %d is outside table %s [ %d to %d ] !\n",
                 opcode, table.name, table.first, table.last);
         exit(EXIT_FAILURE);
@@ -288,7 +288,7 @@ COUNT write_table(op_table table, int opcode, FILE* dvi, FILE* dtl) {
 
         /* internal consistency checks */
         if (n_conv != 1 || n_read <= 0) {
-            ERROR_MSG_SATRT;
+            ERROR_SATRT;
             fprintf(stderr, "internal read of table %s failed!\n",
                     table.name);
             exit(EXIT_FAILURE);
@@ -419,7 +419,7 @@ COUNT special(int nBytes, FILE* dvi, FILE* dtl) {
     U4 k;
 
     if (nBytes < 1 || nBytes > 4) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "special %d, range is 1 to 4.\n", 
                 nBytes);
         exit(EXIT_FAILURE);
@@ -447,7 +447,7 @@ COUNT fontdef(int nBytes, FILE* dvi, FILE* dtl) {
     U4 c, a, l;
 
     if (nBytes < 1 || nBytes > 4) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "font def %d, range is 1 to 4.\n", 
                 nBytes);
         exit(EXIT_FAILURE);
@@ -548,12 +548,12 @@ COUNT postpost(FILE* dvi, FILE* dtl) {
         fputc(223, dtl);
     }
     if (n223 < 4) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "bad post_post:  fewer than four \"223\" bytes.\n");
         exit(EXIT_FAILURE);
     }
     if (b223 != EOF) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "bad post_post:  doesn't end with a \"223\".\n");
         exit(EXIT_FAILURE);
     }

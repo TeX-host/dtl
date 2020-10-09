@@ -76,7 +76,7 @@ void dtl_msg_start(char* level, char* _file, int _ln, char* _func) {
 }
 #define _MSG_SATRT(level) dtl_msg_start(level, __FILE__, __LINE__, __func__)
 
-#define ERROR_MSG_SATRT _MSG_SATRT("error")
+#define ERROR_SATRT _MSG_SATRT("error")
 #define WARN_SATRT _MSG_SATRT("warning")
 #define INFO_SATRT _MSG_SATRT("info")
 

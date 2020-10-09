@@ -72,7 +72,7 @@ int main(int argc, char* argv[]) {
 void mem_viol(int sig) {
     void (*handler)(int);
     handler = (void (*)(int))signal(SIGSEGV, mem_viol);
-    ERROR_MSG_SATRT;
+    ERROR_SATRT;
     if (sig != SIGSEGV) {
         fprintf(stderr, "called with wrong signal!\n");
     }
@@ -91,7 +91,7 @@ void give_help(void) {
     char* keyword;
 
     fprintf(stderr, "usage:   ");
-    ERROR_MSG_SATRT;
+    ERROR_SATRT;
     fprintf(stderr, "[options]  dtl_file  dvi_file");
     fprintf(stderr, "\n");
 
@@ -176,14 +176,14 @@ int open_dtl(char* dtl_file, FILE** pdtl) {
     dtl_filename = dtl_file;
 
     if (dtl_filename == NULL) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr,
                 "INTERNAL ERROR : dtl file's name is NULL.\n");
         dexit(EXIT_FAILURE);
     }
 
     if (pdtl == NULL) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(
             stderr,
             "INTERNAL ERROR : address of dtl variable is NULL.\n");
@@ -192,7 +192,7 @@ int open_dtl(char* dtl_file, FILE** pdtl) {
 
     *pdtl = fopen(dtl_file, "r");
     if (*pdtl == NULL) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr,
                 "DTL FILE ERROR : Cannot open \"%s\" for text "
                 "reading.\n",
@@ -214,14 +214,14 @@ int open_dvi(char* dvi_file, FILE** pdvi) {
     dvi_filename = dvi_file;
 
     if (dvi_filename == NULL) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr,
                 "INTERNAL ERROR : dvi file's name is NULL.\n");
         dexit(EXIT_FAILURE);
     }
 
     if (pdvi == NULL) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(
             stderr,
             "INTERNAL ERROR : address of dvi variable is NULL.\n");
@@ -230,7 +230,7 @@ int open_dvi(char* dvi_file, FILE** pdvi) {
 
     *pdvi = fopen(dvi_file, "wb");
     if (*pdvi == NULL) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr,
                 "DVI FILE ERROR : Cannot open \"%s\" for binary "
                 "writing.\n",
@@ -256,7 +256,7 @@ void process(char* s) {
         /* second filename assumed to be DVI output */
         open_dvi(s, &dvi_fp);
     } else {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "at most two filenames allowed.\n");
         exit(1);
     }
@@ -271,7 +271,7 @@ int put_byte(int byte, FILE* dvi) {
 
     /*  if (fprintf (dvi, "%c", byte) != 1) */
     if (fprintf(dvi, "%c", byte) < 0) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(
             stderr,
             "DVI FILE ERROR (%s) : cannot write to dvi file.\n",
@@ -325,7 +325,7 @@ int dt2dv(FILE* dtl, FILE* dvi) {
             /* test for end of input, or reading error */
             if (strlen(token) == 0) {
                 if (debug) {
-                    ERROR_MSG_SATRT;
+                    ERROR_SATRT;
                     fprintf(stderr,
                             "end of input, or reading error.\n");
                 }
@@ -333,7 +333,7 @@ int dt2dv(FILE* dtl, FILE* dvi) {
             }
             /* test whether this command begins correctly */
             else if (strcmp(token, BCOM) != 0) {
-                ERROR_MSG_SATRT;
+                ERROR_SATRT;
                 fprintf(stderr,
                         "DTL FILE ERROR (%s) : ", dtl_filename);
                 fprintf(stderr, "command must begin with \"%s\", ", BCOM);
@@ -348,13 +348,13 @@ int dt2dv(FILE* dtl, FILE* dvi) {
         /* test for end of input, or reading error */
         if (strlen(dtl_cmd) == 0) {
             if (debug) {
-                ERROR_MSG_SATRT;
+                ERROR_SATRT;
                 fprintf(stderr, "end of input, or reading error.\n");
             }
             break;
         } else {
             if (debug) {
-                ERROR_MSG_SATRT;
+                ERROR_SATRT;
                 fprintf(stderr, "command ");
                 fprintf(stderr, COUNT_FMT, ncom);
                 fprintf(stderr, " = \"%s\".\n", dtl_cmd);
@@ -371,7 +371,7 @@ int dt2dv(FILE* dtl, FILE* dvi) {
                 /* sequence of font characters for SETCHAR */
                 set_seq(dtl, dvi);
             } else {
-                ERROR_MSG_SATRT;
+                ERROR_SATRT;
                 fprintf(
                     stderr,
                     "DTL FILE ERROR (%s) : unknown command \"%s\".\n",
@@ -388,14 +388,14 @@ int dt2dv(FILE* dtl, FILE* dvi) {
             /* test for end of input, or reading error */
             if (strlen(token) == 0) {
                 if (debug) {
-                    ERROR_MSG_SATRT;
+                    ERROR_SATRT;
                     fprintf(stderr,
                             "end of input, or reading error.\n");
                 }
                 break;
             }
             if (strcmp(token, ECOM) != 0) {
-                ERROR_MSG_SATRT;
+                ERROR_SATRT;
                 fprintf(stderr,
                         "DTL FILE ERROR (%s) : ", dtl_filename);
                 fprintf(stderr, "ECOM (\"%s\") expected, not `%c' (char %d).\n",
@@ -409,7 +409,7 @@ int dt2dv(FILE* dtl, FILE* dvi) {
     }
     /* end while */
 
-    ERROR_MSG_SATRT;
+    ERROR_SATRT;
     fprintf(stderr, "\n");
     fprintf(stderr, "Read (from file \"%s\") ", dtl_filename);
     fprintf(stderr, COUNT_FMT, dtl_read);
@@ -434,7 +434,7 @@ void* gmalloc(size_t size) {
     void* p = NULL;
 
     if (size < 1) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "INTERNAL ERROR : ");
         fprintf(stderr, "unreasonable request to malloc %zd bytes\n", size);
         dexit(EXIT_FAILURE);
@@ -442,7 +442,7 @@ void* gmalloc(size_t size) {
 
     p = malloc(size);
     if (p == NULL) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "MEMORY ALLOCATION ERROR : ");
         fprintf(stderr, "operating system failed to malloc %zd bytes\n", size);
         dexit(EXIT_FAILURE);
@@ -452,7 +452,7 @@ void* gmalloc(size_t size) {
 
 
 void dinfo(void) {
-    ERROR_MSG_SATRT;
+    ERROR_SATRT;
     fprintf(stderr, "Current DTL input line ");
     fprintf(stderr, COUNT_FMT, dtl_line.num);
     fprintf(stderr, " :\n");
@@ -472,7 +472,7 @@ void dinfo(void) {
 
 void dexit(int n) {
     dinfo();
-    ERROR_MSG_SATRT;
+    ERROR_SATRT;
     fprintf(stderr, "exiting with status %d.\n", n);
     exit(n);
 } /* dexit */
@@ -492,7 +492,7 @@ int cons_cmds(int nprefixes, CmdPrefix prefix[], CmdTable cmds) {
     for (i = 0; i < nprefixes; prefix++, i++) {
         code = prefix->first_code;
         if (code < 0 || code > 255) {
-            ERROR_MSG_SATRT;
+            ERROR_SATRT;
             fprintf(stderr, "INTERNAL ERROR : ");
             fprintf(
                 stderr,
@@ -505,7 +505,7 @@ int cons_cmds(int nprefixes, CmdPrefix prefix[], CmdTable cmds) {
             plen = strlen(prefix->name);
             /**** Suffixes in DTL are Integers, in Sequence */
             if (prefix->last_suffix < prefix->first_suffix) {
-                ERROR_MSG_SATRT;
+                ERROR_SATRT;
                 fprintf(stderr, "INTERNAL ERROR : ");
                 fprintf(stderr, "prefix's last suffix %d < first suffix (%d)\n",
                         prefix->last_suffix, prefix->first_suffix);
@@ -577,7 +577,7 @@ int read_line_char(FILE* fp, int* ch) {
         if (line_status == 0) {
             /* at end of DTL file */
             if (debug) {
-                ERROR_MSG_SATRT;
+                ERROR_SATRT;
                 fprintf(stderr, "end of DTL file\n");
                 dinfo();
             }
@@ -585,7 +585,7 @@ int read_line_char(FILE* fp, int* ch) {
         } else {
             /* new DTL line was read */
             if (debug) {
-                ERROR_MSG_SATRT;
+                ERROR_SATRT;
                 fprintf(stderr, "new DTL input line:\n");
                 fprintf(stderr, "\"%s\"\n", dtl_line.buf);
             }
@@ -614,13 +614,13 @@ int read_char(FILE* fp, int* ch) {
         status = 0;
     } else {
         if (c > 255) {
-            ERROR_MSG_SATRT;
+            ERROR_SATRT;
             fprintf(stderr,
                     "character %d not in range 0 to 255\n", c);
             dinfo();
             status = 0;
         } else if (!isprint(c) && !isspace(c)) {
-            ERROR_MSG_SATRT;
+            ERROR_SATRT;
             fprintf(stderr, "character %d %s.\n", c,
                     "not printable and not white space");
             dinfo();
@@ -647,7 +647,7 @@ COUNT read_variety(FILE* dtl) {
     vread += nread;
     /* test whether signature begins correctly */
     if (strcmp(token, "variety") != 0) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr,
                 "DTL FILE ERROR (%s) : ", dtl_filename);
         fprintf(stderr, "DTL signature must begin with \"%s\", not \"%s\".\n",
@@ -660,7 +660,7 @@ COUNT read_variety(FILE* dtl) {
     vread += nread;
     /* test whether variety is correct */
     if (strcmp(token, VARIETY) != 0) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr,
                 "DTL FILE ERROR (%s) : ", dtl_filename);
         fprintf(stderr, "DTL variety must be \"%s\", not \"%s\".\n", VARIETY,
@@ -668,7 +668,7 @@ COUNT read_variety(FILE* dtl) {
         dexit(EXIT_FAILURE);
     }
 
-    ERROR_MSG_SATRT;
+    ERROR_SATRT;
     fprintf(stderr, "DTL variety %s is OK.\n", VARIETY);
 
     return vread; /* OK */
@@ -694,7 +694,7 @@ COUNT skip_space(FILE* fp, int* ch) {
         if (debug) {
             /* report when each DTL end of line is reached */
             if (c == '\n') {
-                ERROR_MSG_SATRT;
+                ERROR_SATRT;
                 fprintf(stderr, "end of DTL line (at least) ");
                 fprintf(stderr, COUNT_FMT, dtl_line.num);
                 fprintf(stderr, "\n");
@@ -733,7 +733,7 @@ COUNT read_token(FILE* dtl, char* token) {
         /* write an empty token */
         strcpy(token, "");
         if (debug) {
-            ERROR_MSG_SATRT;
+            ERROR_SATRT;
             fprintf(stderr, "end of dtl file.\n");
         }
     } else if (group && ch == BCOM_CHAR) {
@@ -755,7 +755,7 @@ COUNT read_token(FILE* dtl, char* token) {
     }
 
     if (debug) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "token = \"%s\"\n", token);
     }
 
@@ -889,7 +889,7 @@ int find_command(char* command, int* opcode) {
 
 int check_byte(int byte) {
     if (byte < 0 || byte > 255) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "INTERNAL ERROR : ");
         fprintf(stderr, "byte %d not in the range of 0 to 255.\n", byte);
         dexit(EXIT_FAILURE);
@@ -934,7 +934,7 @@ int xfer_args(FILE* dtl, FILE* dvi, int opcode) {
     else if (opcode >= 250 && opcode <= 255)
         ; /* these, undefined, opcodes use no data */
     else {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "opcode %d not handled.\n", opcode);
     }
 
@@ -960,7 +960,7 @@ int set_seq(FILE* dtl, FILE* dvi) {
         (void)read_char(dtl, &ch);
         /* but check for end of dtl file, or serious file reading error */
         if (ch < 0) {
-            ERROR_MSG_SATRT;
+            ERROR_SATRT;
             fprintf(stderr, "end of dtl file, ");
             fprintf(stderr, "or serious dtl file reading error\n");
             dinfo();
@@ -983,7 +983,7 @@ int set_seq(FILE* dtl, FILE* dvi) {
                     put_byte(128, dvi); /* SET1 opcode */
                     put_unsigned(1, (U4)ch, dvi);
                 } else {
-                    ERROR_MSG_SATRT;
+                    ERROR_SATRT;
                     fprintf(
                         stderr,
                         "DTL character %d is not in range 0 to 255\n",
@@ -1010,7 +1010,7 @@ U4 xfer_hex(int n, FILE* dtl, FILE* dvi) {
     static Token token = ""; /* DTL token */
 
     if (n < 1 || n > 4) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr,
                 "INTERNAL ERROR : asked for %d bytes.  Must be 1 "
                 "to 4.\n",
@@ -1023,7 +1023,7 @@ U4 xfer_hex(int n, FILE* dtl, FILE* dvi) {
     nconv = sscanf(token, HEX_FMT, &unum);
 
     if (nconv < 1) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "DTL FILE ERROR (%s) :  %s \"%s\".\n",
                 dtl_filename, "hexadecimal number expected, not", token);
         dexit(EXIT_FAILURE);
@@ -1044,7 +1044,7 @@ U4 xfer_oct(int n, FILE* dtl, FILE* dvi) {
     static Token token = ""; /* DTL token */
 
     if (n < 1 || n > 4) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr,
                 "INTERNAL ERROR : asked for %d bytes.  Must be 1 "
                 "to 4.\n",
@@ -1057,7 +1057,7 @@ U4 xfer_oct(int n, FILE* dtl, FILE* dvi) {
     nconv = sscanf(token, OCT_FMT, &unum);
 
     if (nconv < 1) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "DTL FILE ERROR (%s) :  %s \"%s\".\n",
                 dtl_filename, "octal number expected, not", token);
         dexit(EXIT_FAILURE);
@@ -1106,7 +1106,7 @@ U4 get_unsigned(FILE* dtl) {
     nconv = sscanf(token, U4_FMT, &unum);
 
     if (nconv < 1) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "DTL FILE ERROR (%s) :  %s \"%s\".\n",
                 dtl_filename, "unsigned number expected, not", token);
         dexit(EXIT_FAILURE);
@@ -1129,7 +1129,7 @@ S4 get_signed(FILE* dtl) {
     nconv = sscanf(token, S4_FMT, &snum);
 
     if (nconv < 1) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "DTL FILE ERROR (%s) :  %s \"%s\".\n",
                 dtl_filename, "signed number expected, not", token);
         dexit(EXIT_FAILURE);
@@ -1148,7 +1148,7 @@ int put_unsigned(int n, U4 unum, FILE* dvi) {
     int i;
 
     if (n < 1 || n > 4) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr,
                 "INTERNAL ERROR : asked for %d bytes.  Must "
                 "be 1 to 4.\n",
@@ -1178,7 +1178,7 @@ int put_signed(int n, S4 snum, FILE* dvi) {
     /* Will this deal properly with the sign? */
 
     if (n < 1 || n > 4) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr,
                 "INTERNAL ERROR : asked for %d bytes.  Must be "
                 "1 to 4.\n",
@@ -1205,14 +1205,14 @@ int check_bmes(FILE* dtl) {
     (void)skip_space(dtl, &ch);
 
     if (ch < 0) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "DTL FILE ERROR (%s) : ", dtl_filename);
         fprintf(stderr, "end of dtl file, or reading error\n");
         dexit(EXIT_FAILURE);
     }
 
     if (ch != BMES_CHAR) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "DTL FILE ERROR (%s) : ", dtl_filename);
         fprintf(stderr, "BMES_CHAR (`%c') %s, not `%c' (char %d).\n", BMES_CHAR,
                 "expected before string", ch, ch);
@@ -1228,14 +1228,14 @@ int check_emes(FILE* dtl) {
     int ch; /* dtl character */
 
     if (read_char(dtl, &ch) == 0) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "DTL FILE ERROR (%s) : ", dtl_filename);
         fprintf(stderr, "end of dtl file, or reading error\n");
         dexit(EXIT_FAILURE);
     }
 
     if (ch != EMES_CHAR) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "DTL FILE ERROR (%s) : ", dtl_filename);
         fprintf(stderr, "EMES_CHAR (`%c') %s, not `%c' (char %d).\n", EMES_CHAR,
                 "expected to follow string", ch, ch);
@@ -1289,7 +1289,7 @@ void free_lstr(LStringPtr lsp) {
  */
 void putch_lstr(int ch, LStringPtr lsp) {
     if (lsp->l >= lsp->m) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "ERROR : No more room in LString.\n");
         dexit(EXIT_FAILURE);
     } else {
@@ -1310,14 +1310,14 @@ size_t get_lstr(FILE* dtl, LStringPtr lsp) {
 
 
     if (debug) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "entering get_lstr.\n");
     } /* if (debug) */
 
     check_bmes(dtl);
 
     if (debug) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "string is: \"");
     } /* if (debug) */
 
@@ -1328,7 +1328,7 @@ size_t get_lstr(FILE* dtl, LStringPtr lsp) {
         if (char_status == CHAR_FAIL) {
             /* end of dtl file, or reading error */
             fprintf(stderr, "\n");
-            ERROR_MSG_SATRT;
+            ERROR_SATRT;
             fprintf(stderr,
                     "DTL FILE ERROR (%s) : ", dtl_filename);
             fprintf(stderr, "cannot read string[");
@@ -1343,7 +1343,7 @@ size_t get_lstr(FILE* dtl, LStringPtr lsp) {
 
         if (char_status == CHAR_EOS) {
             if (ch != EMES_CHAR) {
-                ERROR_MSG_SATRT;
+                ERROR_SATRT;
                 fprintf(stderr, "INTERNAL ERROR : ");
                 fprintf(stderr, "char_status = CHAR_FAIL,\n");
                 fprintf(
@@ -1357,7 +1357,7 @@ size_t get_lstr(FILE* dtl, LStringPtr lsp) {
         } else if (char_status == CHAR_OK) {
             putch_lstr(ch, lsp);
         } else {
-            ERROR_MSG_SATRT;
+            ERROR_SATRT;
             fprintf(stderr, "INTERNAL ERROR : ");
             fprintf(stderr, "char_status = %d is unfamiliar!\n", char_status);
             dexit(EXIT_FAILURE);
@@ -1371,7 +1371,7 @@ size_t get_lstr(FILE* dtl, LStringPtr lsp) {
     check_emes(dtl);
 
     if (debug) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "leaving get_lstr.\n");
     } /* if (debug) */
 
@@ -1386,7 +1386,7 @@ void put_lstr(LStringPtr lsp, FILE* dvi) {
     dvi_written += fw_ret;
 
     if (fw_ret < lsp->l) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr,
                 "DVI File ERROR : not all bytes written ");
         fprintf(stderr, "(%zd of %zd).\n", fw_ret, lsp->l);
@@ -1402,7 +1402,7 @@ U4 xfer_len_string(int n, FILE* dtl, FILE* dvi) {
     LString lstr;
 
     if (debug) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "entering xfer_len_string.\n");
     } /* if (debug) */
 
@@ -1411,7 +1411,7 @@ U4 xfer_len_string(int n, FILE* dtl, FILE* dvi) {
     /* k[n] : length of special string */
     k = get_unsigned(dtl);
     if (debug) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "string's nominal length k = ");
         fprintf(stderr, U4_FMT, k);
         fprintf(stderr, " characters.\n");
@@ -1419,7 +1419,7 @@ U4 xfer_len_string(int n, FILE* dtl, FILE* dvi) {
 
     k2 = get_lstr(dtl, &lstr);
     if (k2 != k) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "WARNING : string length (");
         fprintf(stderr, U4_FMT, k);
         fprintf(stderr, ") in DTL file is wrong\n");
@@ -1433,7 +1433,7 @@ U4 xfer_len_string(int n, FILE* dtl, FILE* dvi) {
 
     clear_lstr(&lstr);
     if (debug) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "leaving xfer_len_string.\n");
     } /* if (debug) */
 
@@ -1453,7 +1453,7 @@ S4 xfer_bop_address(FILE* dtl, FILE* dvi) {
     nconv = sscanf(token, S4_FMT, &snum);
 
     if (nconv != 1) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr,
                 "DTL FILE ERROR (%s) : ", dtl_filename);
         fprintf(stderr, "signed number expected, not \"%s\".\n", token);
@@ -1461,7 +1461,7 @@ S4 xfer_bop_address(FILE* dtl, FILE* dvi) {
     }
 
     if (snum != last_bop_address) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "WARNING : byte address (");
         fprintf(stderr, S4_FMT, snum);
         fprintf(stderr, ")\n");
@@ -1490,7 +1490,7 @@ S4 xfer_postamble_address(FILE* dtl, FILE* dvi) {
     nconv = sscanf(token, S4_FMT, &snum);
 
     if (nconv != 1) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "DTL FILE ERROR (%s) : ",
                 dtl_filename);
         fprintf(stderr, "signed number expected, not \"%s\".\n", token);
@@ -1498,7 +1498,7 @@ S4 xfer_postamble_address(FILE* dtl, FILE* dvi) {
     }
 
     if (snum != postamble_address) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "WARNING : byte address (");
         fprintf(stderr, S4_FMT, snum);
         fprintf(stderr, ")\n");
@@ -1525,7 +1525,7 @@ int put_table(op_table table, int opcode, FILE* dtl, FILE* dvi) {
 
     /* Defensive programming. */
     if (opcode < table.first || opcode > table.last) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr,
                 "DTL FILE (OR INTERNAL) ERROR : opcode %d ",
                 opcode);
@@ -1538,7 +1538,7 @@ int put_table(op_table table, int opcode, FILE* dtl, FILE* dvi) {
 
     /* More defensive programming. */
     if (opcode != op.code) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr,
                 "INTERNAL ERROR : opcode %d for command \"%s\"",
                 opcode, op.name);
@@ -1564,7 +1564,7 @@ int put_table(op_table table, int opcode, FILE* dtl, FILE* dvi) {
         nconv = sscanf(args + pos, "%d%n", &argtype, &nscan);
 
         if (nconv < 1 || nscan < 1) {
-            ERROR_MSG_SATRT;
+            ERROR_SATRT;
             fprintf(stderr,
                     "INTERNAL ERROR : internal read of table %s "
                     "failed!\n",
@@ -1593,12 +1593,12 @@ U4 special(FILE* dtl, FILE* dvi, int n) {
     U4 nk;
 
     if (debug) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "entering special.\n");
     }
 
     if (n < 1 || n > 4) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "DTL FILE ERROR (%s) : special %d, ",
                 dtl_filename, n);
         fprintf(stderr, "range is 1 to 4.\n");
@@ -1611,7 +1611,7 @@ U4 special(FILE* dtl, FILE* dvi, int n) {
     nk = xfer_len_string(n, dtl, dvi);
 
     if (debug) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "leaving special.\n");
     }
 
@@ -1628,12 +1628,12 @@ int fontdef(FILE* dtl, FILE* dvi, int suffix) {
     LString lstr1, lstr2;
 
     if (debug) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "entering fontdef.\n");
     }
 
     if (suffix < 1 || suffix > 4) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "DTL FILE ERROR (%s) : ", dtl_filename);
         fprintf(stderr, "font def %d, but range is 1 to 4.\n", suffix);
         dexit(EXIT_FAILURE);
@@ -1643,7 +1643,7 @@ int fontdef(FILE* dtl, FILE* dvi, int suffix) {
     init_lstr(&lstr2, LSTR_SIZE);
 
     if (debug) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "about to read font number.\n");
     }
 
@@ -1654,7 +1654,7 @@ int fontdef(FILE* dtl, FILE* dvi, int suffix) {
         k = xfer_unsigned(suffix, dtl, dvi);
 
     if (debug) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "font ");
         fprintf(stderr, U4_FMT, k);
         fprintf(stderr, ".\n");
@@ -1685,7 +1685,7 @@ int fontdef(FILE* dtl, FILE* dvi, int suffix) {
     /* n[a+l] : font pathname string <= area + font */
     a2 = get_lstr(dtl, &lstr1);
     if (a2 != a) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "WARNING : font area string's length (");
         fprintf(stderr, U4_FMT, a);
         fprintf(stderr, ") in DTL file is wrong\n");
@@ -1698,7 +1698,7 @@ int fontdef(FILE* dtl, FILE* dvi, int suffix) {
 
     l2 = get_lstr(dtl, &lstr2);
     if (l2 != l) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "WARNING : font string's length (");
         fprintf(stderr, U4_FMT, l);
         fprintf(stderr, ") in DTL file is wrong\n");
@@ -1716,7 +1716,7 @@ int fontdef(FILE* dtl, FILE* dvi, int suffix) {
     clear_lstr(&lstr2);
 
     if (debug) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "leaving fontdef.\n");
     }
 
@@ -1730,7 +1730,7 @@ U4 preamble(FILE* dtl, FILE* dvi) {
     U4 k1;
 
     if (debug) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "entering preamble.\n");
     }
 
@@ -1752,7 +1752,7 @@ U4 preamble(FILE* dtl, FILE* dvi) {
     k1 = xfer_len_string(1, dtl, dvi);
 
     if (debug) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "leaving preamble.\n");
     }
 
@@ -1823,7 +1823,7 @@ int post_post(FILE* dtl, FILE* dvi) {
         if (nread == 0) {
             if (group) {
                 /* dtl file shouldn't end before an ECOM */
-                ERROR_MSG_SATRT;
+                ERROR_SATRT;
                 fprintf(stderr,
                         "DTL FILE ERROR (%s) : ", dtl_filename);
                 fprintf(stderr, "premature end of DTL file!\n");
@@ -1846,7 +1846,7 @@ int post_post(FILE* dtl, FILE* dvi) {
                     /* end of DTL's post_post command */
                 } else {
                     /* error : expected end of post_post */
-                    ERROR_MSG_SATRT;
+                    ERROR_SATRT;
                     fprintf(stderr, "DTL FILE ERROR (%s) : ",
                             dtl_filename);
                     fprintf(stderr, "token \"%s\" should be ECOM (\"%s\")\n",
@@ -1861,7 +1861,7 @@ int post_post(FILE* dtl, FILE* dvi) {
     /* end for */
 
     if (n223 < 4) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "DTL FILE ERROR (%s) : \n", dtl_filename);
         fprintf(stderr, "fewer than four `223' padding bytes.\n");
         fprintf(stderr, "Will write at least four `223' padding bytes.\n");
@@ -1869,7 +1869,7 @@ int post_post(FILE* dtl, FILE* dvi) {
 
     /* check whether the DVI file size is a multiple of 4 bytes */
     if ((dvi_written + n223) % 4 != 0) {
-        ERROR_MSG_SATRT;
+        ERROR_SATRT;
         fprintf(stderr, "WARNING : \n");
         fprintf(stderr, "DVI size ");
         fprintf(stderr, COUNT_FMT, dvi_written);
