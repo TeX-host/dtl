@@ -401,8 +401,10 @@ void xfer_string(int k, FILE* dvi, FILE* dtl) {
     fprintf(dtl, "'");
 } /* xfer_string */
 
-/* read special 1 .. 4 from dvi and write in dtl */
-/* return number of DVI bytes interpreted into DTL */
+/** read special 1 .. 4 from dvi and write in dtl.
+ * 
+ *  @return number of DVI bytes interpreted into DTL.
+ */
 COUNT special(FILE* dvi, FILE* dtl, int n) {
     U4 k;
 
@@ -420,8 +422,7 @@ COUNT special(FILE* dvi, FILE* dtl, int n) {
     xfer_string(k, dvi, dtl);
 
     return (1 + n + k);
-}
-/* end special */
+} /* end special */
 
 /* read fontdef 1 .. 4 from dvi and write in dtl */
 /* return number of DVI bytes interpreted into DTL */
