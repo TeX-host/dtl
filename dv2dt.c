@@ -426,12 +426,8 @@ COUNT special(int nBytes, FILE* dvi, FILE* dtl) {
     }
 
     fprintf(dtl, "%s%d", SPECIAL, nBytes);
-
-    /* k[n] = length of special string */
-    k = xref_unsigned(nBytes, dvi, dtl);
-
-    /* x[k] = special string */
-    xfer_string(k, dvi, dtl);
+    k = xref_unsigned(nBytes, dvi, dtl); /* k[n] = length of special string */
+    xfer_string(k, dvi, dtl);            /* x[k] = special string */
 
     return (1 + nBytes + k);
 } /* end special */
@@ -473,21 +469,12 @@ COUNT fontdef(int nBytes, FILE* dvi, FILE* dtl) {
     fprintf(dtl, OCT_FMT, c);
 #endif
 
-    /* s[4] = scale factor */
-    xref_unsigned(4, dvi, dtl);
-
-    /* d[4] = design size */
-    xref_unsigned(4, dvi, dtl);
-
-    /* a[1] = length of area (directory) name */
-    a = xref_unsigned(1, dvi, dtl);
-
-    /* l[1] = length of font name */
-    l = xref_unsigned(1, dvi, dtl);
-
-    /* n[a+l] = font pathname string => area (directory) + font */
-    xfer_string(a, dvi, dtl);
-    xfer_string(l, dvi, dtl);
+    xref_unsigned(4, dvi, dtl);     /*   s[4] = scale factor */
+    xref_unsigned(4, dvi, dtl);     /*   d[4] = design size */
+    a = xref_unsigned(1, dvi, dtl); /*   a[1] = length of area (directory) name */
+    l = xref_unsigned(1, dvi, dtl); /*   l[1] = length of font name */
+    xfer_string(a+l, dvi, dtl);     /* n[a+l] = font pathname string 
+                                                => area (directory) + font */
 
     return (1 + nBytes + 4 + 4 + 4 + 1 + 1 + a + l);
 } /* end fontdef */
