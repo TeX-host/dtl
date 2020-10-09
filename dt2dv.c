@@ -23,7 +23,7 @@
 /** Main functions.
  *
  * ## global var
- *  @param[in] prog_name
+ *  @param[in] program_name
  *  @param[in] nfile
  *  @param[in] dtl_fp
  *  @param[in] dvi_fp
@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
     void (*handler)(int); /* Previous signal handler */
     int i;
 
-    prog_name = argv[0]; /* name of this program */
+    program_name = argv[0]; /* name of this program */
 
     /* memory violation signal handler */
     handler = (void (*)(int))signal(SIGSEGV, mem_viol);
@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
     /* NB:  LTU EE's Sun/OS library is BSD, even though gcc 2.2.2 is ANSI */
     fprintf(stderr, "\n");
     fprintf(stderr, "Program \"%s\" version %s compiled %s %s in standard C.\n",
-            prog_name, VERSION, __DATE__, __TIME__);
+            program_name, VERSION, __DATE__, __TIME__);
 
     /* interpret command line arguments */
     nfile = 0;

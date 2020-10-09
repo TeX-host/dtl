@@ -64,6 +64,16 @@ int debug = 0;
 /// by default, no grouping 
 int group = 0;
 
+/// name of this program
+char* program_name;
+#define ERROR_MSG_SATRT                                                    \
+    if (debug) {                                                           \
+        fprintf(stderr, "%s:%d: In function '%s': ", __FILE__, __LINE__,   \
+                __func__);                                                 \
+    } else {                                                               \
+        fprintf(stderr, "%s: In function '%s': ", program_name, __func__); \
+    }
+
 
 /** signals of beginning and end of a command and its arguments 
  * these apply only if group is nonzero 

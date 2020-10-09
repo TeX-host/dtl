@@ -150,17 +150,6 @@ typedef char* CmdTable[NCMDS];
 CmdTable cmd_table;
 
 
-
-
-char* program_name; /* intended for name of this program */
-#define ERROR_MSG_SATRT                                                  \
-    if (debug) {                                                         \
-        fprintf(stderr, "%s:%d: In function '%s': ", __FILE__, __LINE__, \
-                __func__);                                               \
-    } else {                                                             \
-        fprintf(stderr, "%s: In function '%s': ", program_name, __func__);  \
-    }
-
 int nfile = 0;       /* number of filename arguments on the command line */
 
 FILE* dtl_fp = NULL;
