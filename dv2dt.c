@@ -379,23 +379,27 @@ void set_pchar(int charcode, FILE* dtl) {
     }
 } /* set_pchar */
 
-/* copy string of k characters from dvi file to dtl file */
-void xferstring(int k, FILE* dvi, FILE* dtl) {
-    int i;
-    int ch;
-
+/** copy string of k characters from dvi file to dtl file
+ *
+ *  @param[in]  k
+ *  @param[in]  dvi
+ *  @param[out] dtl
+ */
+void xfer_string(int k, FILE* dvi, FILE* dtl) {
     fprintf(dtl, " ");
     fprintf(dtl, "'");
-    for (i = 0; i < k; i++) {
-        ch = fgetc(dvi);
+
+    for (int i = 0; i < k; i++) {
+        int ch = fgetc(dvi);
+
         if (ch == ESC_CHAR || ch == EMES_CHAR) {
             fprintf(dtl, "%c", ESC_CHAR);
         }
         fprintf(dtl, "%c", ch);
     }
+
     fprintf(dtl, "'");
-}
-/* xferstring */
+} /* xfer_string */
 
 /* read special 1 .. 4 from dvi and write in dtl */
 /* return number of DVI bytes interpreted into DTL */
@@ -413,7 +417,7 @@ COUNT special(FILE* dvi, FILE* dtl, int n) {
     k = xref_unsigned(n ,dvi, dtl);
 
     /* x[k] = special string */
-    xferstring(k, dvi, dtl);
+    xfer_string(k, dvi, dtl);
 
     return (1 + n + k);
 }
@@ -466,8 +470,8 @@ COUNT fontdef(FILE* dvi, FILE* dtl, int n) {
     fprintf(dtl, U4_FMT, l);
 
     /* n[a+l] = font pathname string => area (directory) + font */
-    xferstring(a, dvi, dtl);
-    xferstring(l, dvi, dtl);
+    xfer_string(a, dvi, dtl);
+    xfer_string(l, dvi, dtl);
 
     return (1 + n + 4 + 4 + 4 + 1 + 1 + a + l);
 }
@@ -496,7 +500,7 @@ COUNT preamble(FILE* dvi, FILE* dtl) {
     k = xref_unsigned(1, dvi, dtl);
 
     /* x[k] = comment string */
-    xferstring(k, dvi, dtl);
+    xfer_string(k, dvi, dtl);
 
     return (1 + 1 + 4 + 4 + 4 + 1 + k);
 } /* end preamble */
