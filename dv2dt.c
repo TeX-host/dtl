@@ -318,7 +318,7 @@ COUNT set_seq(int opcode, FILE* dvi, FILE* dtl) {
     fprintf(dtl, BSEQ);
 
     /* first character */
-    setpchar(char_code, dtl);
+    set_pchar(char_code, dtl);
     char_count++;
 
     /* subsequent characters */
@@ -332,7 +332,7 @@ COUNT set_seq(int opcode, FILE* dvi, FILE* dtl) {
             /* end of font character sequence, as for other commands */
             break;
         } else { /* printable ASCII */
-            setpchar(char_code, dtl);
+            set_pchar(char_code, dtl);
             char_count++;
         }
     } /* end for loop */
@@ -349,8 +349,13 @@ COUNT set_seq(int opcode, FILE* dvi, FILE* dtl) {
     return char_count;
 } /* set_seq */
 
-/* set printable character */
-void setpchar(int charcode, FILE* dtl) {
+/** set printable character.
+ * 
+ *  @param[in]  charcode
+ *  @param[out] dtl
+ *  @return void
+ */
+void set_pchar(int charcode, FILE* dtl) {
     switch (charcode) {
         case ESC_CHAR:
             fprintf(dtl, "%c", ESC_CHAR);
@@ -368,10 +373,11 @@ void setpchar(int charcode, FILE* dtl) {
             fprintf(dtl, "%c", ESC_CHAR);
             fprintf(dtl, "%c", ESEQ_CHAR);
             break;
-        default: fprintf(dtl, "%c", charcode); break;
+        default: 
+            fprintf(dtl, "%c", charcode); 
+            break;
     }
-}
-/* setpchar */
+} /* set_pchar */
 
 /* copy string of k characters from dvi file to dtl file */
 void xferstring(int k, FILE* dvi, FILE* dtl) {

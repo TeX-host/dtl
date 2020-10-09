@@ -46,7 +46,7 @@ S4 xref_signed(int nBytes, FILE* dvi, FILE* dtl);
 COUNT write_table(op_table table, int opcode, FILE* dvi, FILE* dtl);
 
 COUNT set_seq(int opcode, FILE* dvi, FILE* dtl);
-void setpchar(int charcode, FILE* dtl);
+void set_pchar(int charcode, FILE* dtl);
 void xferstring(int k, FILE* dvi, FILE* dtl);
 
 COUNT special(FILE* dvi, FILE* dtl, int n);
