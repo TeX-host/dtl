@@ -16,7 +16,6 @@
 */
 #include <stdlib.h> // EXIT_SUCCESS, EXIT_FAILURE
 #include <ctype.h>  // isprint
-#include <stdio.h>  // fputc, fputs
 #include "dv2dt.h"
 
 

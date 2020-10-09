@@ -18,6 +18,7 @@
 #define INC_DV2DT_H
 
 /* unix version; read from stdin, write to stdout, by default. */
+#include <stdio.h> // FILE, fputc, fputs
 #include <stdlib.h>
 #include <string.h>
 
@@ -31,7 +32,8 @@
     if (group) fputc(BCOM_CHAR, dtl)
 #define PRINT_ECOM \
     if (group) fputc(ECOM_CHAR, dtl)
-#define PRINT_PROGRAM_NAME fprintf(stderr, "[%s:%s]  ", program_name, __func__)
+#define PRINT_PROGRAM_NAME \
+    fprintf(stderr, "%s:%d (%s) : ", __FILE__, __LINE__, __func__)
 
 
 /* function prototypes */
