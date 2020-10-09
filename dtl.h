@@ -66,14 +66,19 @@ int group = 0;
 
 /// name of this program
 char* program_name;
-#define ERROR_MSG_SATRT                                                    \
-    if (debug) {                                                           \
-        fprintf(stderr, "%s:%d: In function '%s': ", __FILE__, __LINE__,   \
-                __func__);                                                 \
-    } else {                                                               \
-        fprintf(stderr, "%s: In function '%s': ", program_name, __func__); \
+void dtl_msg_start(char* level, char* _file, int _ln, char* _func) {
+    fprintf(stderr, "[%s]", level);
+    if (debug) {
+        fprintf(stderr, "%s:%d: In function '%s': ", _file, _ln, _func);
+    } else {
+        fprintf(stderr, "%s: In function '%s': ", program_name, _func);
     }
+}
+#define _MSG_SATRT(level) dtl_msg_start(level, __FILE__, __LINE__, __func__)
 
+#define ERROR_MSG_SATRT _MSG_SATRT("error")
+#define WARN_SATRT _MSG_SATRT("warning")
+#define INFO_SATRT _MSG_SATRT("info")
 
 /** signals of beginning and end of a command and its arguments 
  * these apply only if group is nonzero 
