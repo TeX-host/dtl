@@ -464,14 +464,10 @@ COUNT fontdef(FILE* dvi, FILE* dtl, int n) {
     xref_unsigned(4, dvi, dtl);
 
     /* a[1] = length of area (directory) name */
-    a = read_unsigned(1, dvi);
-    fprintf(dtl, " ");
-    fprintf(dtl, U4_FMT, a);
+    a = xref_unsigned(1, dvi, dtl);
 
     /* l[1] = length of font name */
-    l = read_unsigned(1, dvi);
-    fprintf(dtl, " ");
-    fprintf(dtl, U4_FMT, l);
+    l = xref_unsigned(1, dvi, dtl);
 
     /* n[a+l] = font pathname string => area (directory) + font */
     xfer_string(a, dvi, dtl);
