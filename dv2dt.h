@@ -47,10 +47,10 @@ COUNT write_table(op_table table, int opcode, FILE* dvi, FILE* dtl);
 
 COUNT set_seq(int opcode, FILE* dvi, FILE* dtl);
 void set_pchar(int charcode, FILE* dtl);
-void xfer_string(int k, FILE* dvi, FILE* dtl);
+void xfer_string(int nChars, FILE* dvi, FILE* dtl);
 
-COUNT special(FILE* dvi, FILE* dtl, int n);
-COUNT fontdef(FILE* dvi, FILE* dtl, int n);
+COUNT special(int nBytes, FILE* dvi, FILE* dtl);
+COUNT fontdef(int nBytes, FILE* dvi, FILE* dtl);
 COUNT preamble(FILE* dvi, FILE* dtl);
 COUNT postamble(FILE* dvi, FILE* dtl);
 COUNT postpost(FILE* dvi, FILE* dtl);

@@ -112,9 +112,9 @@ int dv2dt(FILE* dvi, FILE* dtl) {
         } else if (opcode >= 235 && opcode <= 238) {
             count += write_table(fnt, opcode, dvi, dtl);
         } else if (opcode >= 239 && opcode <= 242) {
-            count += special(dvi, dtl, opcode - 238);
+            count += special(opcode - 238, dvi, dtl);
         } else if (opcode >= 243 && opcode <= 246) {
-            count += fontdef(dvi, dtl, opcode - 242);
+            count += fontdef(opcode - 242, dvi, dtl);
         } else if (opcode == 247) {
             count += preamble(dvi, dtl);
         } else if (opcode == 248) {
@@ -379,17 +379,17 @@ void set_pchar(int charcode, FILE* dtl) {
     }
 } /* set_pchar */
 
-/** copy string of k characters from dvi file to dtl file
+/** Copy string of n characters from DVI file to DTL file.
  *
- *  @param[in]  k
+ *  @param[in]  nChars
  *  @param[in]  dvi
  *  @param[out] dtl
  */
-void xfer_string(int k, FILE* dvi, FILE* dtl) {
+void xfer_string(int nChars, FILE* dvi, FILE* dtl) {
     fprintf(dtl, " ");
     fprintf(dtl, "'");
 
-    for (int i = 0; i < k; i++) {
+    for (int i = 0; i < nChars; i++) {
         int ch = fgetc(dvi);
 
         if (ch == ESC_CHAR || ch == EMES_CHAR) {
@@ -402,48 +402,55 @@ void xfer_string(int k, FILE* dvi, FILE* dtl) {
 } /* xfer_string */
 
 /** read special 1 .. 4 from dvi and write in dtl.
- * 
+ *
+ *  @param[in]  nBytes
+ *  @param[in]  dvi
+ *  @param[out] dtl
  *  @return number of DVI bytes interpreted into DTL.
  */
-COUNT special(FILE* dvi, FILE* dtl, int n) {
+COUNT special(int nBytes, FILE* dvi, FILE* dtl) {
     U4 k;
 
-    if (n < 1 || n > 4) {
-        fprintf(stderr, "%s:  special %d, range is 1 to 4.\n", program_name, n);
+    if (nBytes < 1 || nBytes > 4) {
+        fprintf(stderr, "%s:  special %d, range is 1 to 4.\n", 
+        program_name, nBytes);
         exit(EXIT_FAILURE);
     }
 
-    fprintf(dtl, "%s%d", SPECIAL, n);
+    fprintf(dtl, "%s%d", SPECIAL, nBytes);
 
     /* k[n] = length of special string */
-    k = xref_unsigned(n ,dvi, dtl);
+    k = xref_unsigned(nBytes, dvi, dtl);
 
     /* x[k] = special string */
     xfer_string(k, dvi, dtl);
 
-    return (1 + n + k);
+    return (1 + nBytes + k);
 } /* end special */
 
 /** read fontdef 1 .. 4 from dvi and write in dtl
  *
- * @return number of DVI bytes interpreted into DTL.
+ *  @param[in]  nBytes
+ *  @param[in]  dvi
+ *  @param[out] dtl
+ *  @return number of DVI bytes interpreted into DTL.
  */
-COUNT fontdef(FILE* dvi, FILE* dtl, int n) {
+COUNT fontdef(int nBytes, FILE* dvi, FILE* dtl) {
     U4 c, a, l;
 
-    if (n < 1 || n > 4) {
+    if (nBytes < 1 || nBytes > 4) {
         fprintf(stderr, "%s:  font def %d, range is 1 to 4.\n", 
-                program_name, n);
+                program_name, nBytes);
         exit(EXIT_FAILURE);
     }
 
-    fprintf(dtl, "%s%d", FONTDEF, n);
+    fprintf(dtl, "%s%d", FONTDEF, nBytes);
 
     /* k[n] = font number */
-    if (n == 4) {
-        xref_signed(n, dvi, dtl);
+    if (nBytes == 4) {
+        xref_signed(nBytes, dvi, dtl);
     } else {
-        xref_unsigned(n, dvi, dtl);
+        xref_unsigned(nBytes, dvi, dtl);
     }
 
     /* c[4] = checksum */
@@ -473,7 +480,7 @@ COUNT fontdef(FILE* dvi, FILE* dtl, int n) {
     xfer_string(a, dvi, dtl);
     xfer_string(l, dvi, dtl);
 
-    return (1 + n + 4 + 4 + 4 + 1 + 1 + a + l);
+    return (1 + nBytes + 4 + 4 + 4 + 1 + 1 + a + l);
 } /* end fontdef */
 
 /** read preamble from dvi and write in dtl
