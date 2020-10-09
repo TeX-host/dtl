@@ -23,8 +23,7 @@ int main(int argc, char* argv[]) {
     FILE* dvi = stdin;
     FILE* dtl = stdout;
 
-    /* Watch out:  C's standard library's string functions are dicey */
-    strncpy(program_name, argv[0], MAXSTRLEN);
+    program_name = argv[0];
 
     if (argc > 1) open_dvi(argv[1], &dvi);
     if (argc > 2) open_dtl(argv[2], &dtl);

@@ -62,6 +62,6 @@ COUNT preamble(FILE* dvi, FILE* dtl);
 COUNT postamble(FILE* dvi, FILE* dtl);
 COUNT postpost(FILE* dvi, FILE* dtl);
 
-String program_name; /* name of dv2dt program */
+char* program_name; /* name of dv2dt program */
 
 #endif /* INC_DV2DT_H */
