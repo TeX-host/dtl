@@ -32,8 +32,13 @@
     if (group) fputc(BCOM_CHAR, dtl)
 #define PRINT_ECOM \
     if (group) fputc(ECOM_CHAR, dtl)
-#define PRINT_PROGRAM_NAME \
-    fprintf(stderr, "%s:%d (%s) : ", __FILE__, __LINE__, __func__)
+#define ERROR_MSG_SATRT                                                    \
+    if (debug) {                                                           \
+        fprintf(stderr, "%s:%d: In function '%s': ", __FILE__, __LINE__,   \
+                __func__);                                                 \
+    } else {                                                               \
+        fprintf(stderr, "%s: In function '%s': ", program_name, __func__); \
+    }
 
 
 /* function prototypes */

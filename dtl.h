@@ -62,7 +62,7 @@ int debug = 0;
 
 /// Is each DTL command parenthesised by a BCOM and an ECOM? 
 /// by default, no grouping 
-int group = 0;  
+int group = 0;
 
 
 /** signals of beginning and end of a command and its arguments 
