@@ -424,13 +424,16 @@ COUNT special(FILE* dvi, FILE* dtl, int n) {
     return (1 + n + k);
 } /* end special */
 
-/* read fontdef 1 .. 4 from dvi and write in dtl */
-/* return number of DVI bytes interpreted into DTL */
+/** read fontdef 1 .. 4 from dvi and write in dtl
+ *
+ * @return number of DVI bytes interpreted into DTL.
+ */
 COUNT fontdef(FILE* dvi, FILE* dtl, int n) {
     U4 c, a, l;
 
     if (n < 1 || n > 4) {
-        fprintf(stderr, "%s:  font def %d, range is 1 to 4.\n", program_name, n);
+        fprintf(stderr, "%s:  font def %d, range is 1 to 4.\n", 
+                program_name, n);
         exit(EXIT_FAILURE);
     }
 
@@ -475,8 +478,7 @@ COUNT fontdef(FILE* dvi, FILE* dtl, int n) {
     xfer_string(l, dvi, dtl);
 
     return (1 + n + 4 + 4 + 4 + 1 + 1 + a + l);
-}
-/* end fontdef */
+} /* end fontdef */
 
 /* read preamble from dvi and write in dtl */
 /* return number of DVI bytes interpreted into DTL */
