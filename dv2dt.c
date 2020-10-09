@@ -517,19 +517,17 @@ COUNT postamble(FILE* dvi, FILE* dtl) {
     return (1 + 4 + 4 + 4 + 4 + 4 + 4 + 2 + 2); // 29
 } /* end postamble */
 
-/* read post_post from dvi and write in dtl */
-/* return number of bytes */
+/** read post_post from dvi and write in dtl.
+ * 
+ *  @return  number of bytes
+ */
 COUNT postpost(FILE* dvi, FILE* dtl) {
     int b223; /* hope this is 8-bit clean */
     int n223; /* number of "223" bytes in final padding */
 
     fprintf(dtl, "post_post");
-
-    /* q[4] = pointer to post command */
-    xref_unsigned(4, dvi, dtl);
-
-    /* i[1] = DVI identification byte */
-    xref_unsigned(1, dvi, dtl);
+    xref_unsigned(4, dvi, dtl); /* q[4] = pointer to post command */
+    xref_unsigned(1, dvi, dtl); /* i[1] = DVI identification byte */
 
     /* final padding by "223" bytes */
     /* hope this way of obtaining b223 is 8-bit clean */
@@ -549,7 +547,6 @@ COUNT postpost(FILE* dvi, FILE* dtl) {
     }
 
     return (1 + 4 + 1 + n223);
-}
-/* end postpost */
+} /* end postpost */
 
 /* end of "dv2dt.c" */
