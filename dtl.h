@@ -66,7 +66,7 @@ int group = 0;
 
 /// name of this program
 char* program_name;
-void dtl_msg_start(char* level, char* _file, int _ln, char* _func) {
+void dtl_msg_start(char* level, const char* _file, int _ln, const char* _func) {
     fprintf(stderr, "[%s]", level);
     if (debug) {
         fprintf(stderr, "%s:%d: In function '%s': ", _file, _ln, _func);
