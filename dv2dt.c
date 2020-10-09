@@ -480,30 +480,20 @@ COUNT fontdef(FILE* dvi, FILE* dtl, int n) {
     return (1 + n + 4 + 4 + 4 + 1 + 1 + a + l);
 } /* end fontdef */
 
-/* read preamble from dvi and write in dtl */
-/* return number of DVI bytes interpreted into DTL */
+/** read preamble from dvi and write in dtl
+ *
+ *  @return number of DVI bytes interpreted into DTL
+ */
 COUNT preamble(FILE* dvi, FILE* dtl) {
     U4 k;
 
     fprintf(dtl, "pre");
-
-    /* i[1] = DVI format identification */
-    xref_unsigned(1, dvi, dtl);
-
-    /* num[4] = numerator of DVI unit */
-    xref_unsigned(4, dvi, dtl);
-
-    /* den[4] = denominator of DVI unit */
-    xref_unsigned(4, dvi, dtl);
-
-    /* mag[4] = 1000 x magnification */
-    xref_unsigned(4, dvi, dtl);
-
-    /* k[1] = length of comment */
-    k = xref_unsigned(1, dvi, dtl);
-
-    /* x[k] = comment string */
-    xfer_string(k, dvi, dtl);
+    xref_unsigned(1, dvi, dtl);     /*   i[1] = DVI format identification   */
+    xref_unsigned(4, dvi, dtl);     /* num[4] = numerator of DVI unit       */
+    xref_unsigned(4, dvi, dtl);     /* den[4] = denominator of DVI unit     */
+    xref_unsigned(4, dvi, dtl);     /* mag[4] = 1000 x magnification        */
+    k = xref_unsigned(1, dvi, dtl); /*   k[1] = length of comment           */
+    xfer_string(k, dvi, dtl);       /*   x[k] = comment string              */
 
     return (1 + 1 + 4 + 4 + 4 + 1 + k);
 } /* end preamble */
