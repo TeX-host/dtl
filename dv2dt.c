@@ -498,37 +498,23 @@ COUNT preamble(FILE* dvi, FILE* dtl) {
     return (1 + 1 + 4 + 4 + 4 + 1 + k);
 } /* end preamble */
 
-/* read postamble from dvi and write in dtl */
-/* return number of bytes */
+/** read postamble from dvi and write in dtl.
+ *
+ *  @return number of bytes
+ */
 COUNT postamble(FILE* dvi, FILE* dtl) {
     fprintf(dtl, "post");
+    xref_unsigned(4, dvi, dtl); /*   p[4] = pointer to final bop            */
+    xref_unsigned(4, dvi, dtl); /* num[4] = numerator of DVI unit           */
+    xref_unsigned(4, dvi, dtl); /* den[4] = denominator of DVI unit         */ 
+    xref_unsigned(4, dvi, dtl); /* mag[4] = 1000 x magnification            */
+    xref_unsigned(4, dvi, dtl); /*   l[4] = height + depth of tallest page  */
+    xref_unsigned(4, dvi, dtl); /*   u[4] = width of widest page            */
+    xref_unsigned(2, dvi, dtl); /*   s[2] = maximum stack depth             */
+    xref_unsigned(2, dvi, dtl); /*   t[2] = total number of pages 
+                                                (bop commands)              */
 
-    /* p[4] = pointer to final bop */
-    xref_unsigned(4, dvi, dtl);
-
-    /* num[4] = numerator of DVI unit */
-    xref_unsigned(4, dvi, dtl);
-
-    /* den[4] = denominator of DVI unit */
-    xref_unsigned(4, dvi, dtl);
-
-    /* mag[4] = 1000 x magnification */
-    xref_unsigned(4, dvi, dtl);
-
-    /* l[4] = height + depth of tallest page */
-    xref_unsigned(4, dvi, dtl);
-
-    /* u[4] = width of widest page */
-    xref_unsigned(4, dvi, dtl);
-
-    /* s[2] = maximum stack depth */
-    xref_unsigned(2, dvi, dtl);
-
-    /* t[2] = total number of pages (bop commands) */
-    xref_unsigned(2, dvi, dtl);
-
-    /*  return (29);  */
-    return (1 + 4 + 4 + 4 + 4 + 4 + 4 + 2 + 2);
+    return (1 + 4 + 4 + 4 + 4 + 4 + 4 + 2 + 2); // 29
 } /* end postamble */
 
 /* read post_post from dvi and write in dtl */
