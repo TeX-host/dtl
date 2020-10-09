@@ -41,16 +41,17 @@ int main(int argc, char* argv[]) {
  */
 int open_dvi(char* dvi_fname, FILE** pdvi) {
     if (pdvi == NULL) {
-        fprintf(stderr, "%s:  address of dvi variable is NULL.\n",
-                program_name);
+        PRINT_PROGRAM_NAME;
+        fprintf(stderr, "address of dvi variable is NULL.\n");
         exit(EXIT_FAILURE);
     }
 
     *pdvi = fopen(dvi_fname, "rb");
 
     if (*pdvi == NULL) {
-        fprintf(stderr, "%s:  Cannot open \"%s\" for binary reading.\n",
-                program_name, dvi_fname);
+        PRINT_PROGRAM_NAME;
+        fprintf(stderr, "Cannot open \"%s\" for binary reading.\n",
+                dvi_fname);
         exit(EXIT_FAILURE);
     }
 
@@ -64,16 +65,17 @@ int open_dvi(char* dvi_fname, FILE** pdvi) {
  */
 int open_dtl(char* dtl_fname, FILE** pdtl) {
     if (pdtl == NULL) {
-        fprintf(stderr, "%s:  address of dtl variable is NULL.\n",
-                program_name);
+        PRINT_PROGRAM_NAME;
+        fprintf(stderr, "address of dtl variable is NULL.\n");
         exit(EXIT_FAILURE);
     }
 
     *pdtl = fopen(dtl_fname, "w");
 
     if (*pdtl == NULL) {
-        fprintf(stderr, "%s:  Cannot open \"%s\" for text writing.\n",
-                program_name, dtl_fname);
+        PRINT_PROGRAM_NAME;
+        fprintf(stderr, "Cannot open \"%s\" for text writing.\n",
+                dtl_fname);
         exit(EXIT_FAILURE);
     }
 
@@ -98,7 +100,8 @@ int dv2dt(FILE* dvi, FILE* dtl) {
         PRINT_BCOM; /* start of command and parameters */
         if (opcode < 0 || opcode > 255) {
             count += 1;
-            fprintf(stderr, "%s:  Non-byte from \"fgetc()\"!\n", program_name);
+            PRINT_PROGRAM_NAME;
+            fprintf(stderr, "Non-byte from \"fgetc()\"!\n");
             exit(EXIT_FAILURE);
         } else if (opcode <= 127) {
             /* setchar commands */
@@ -127,14 +130,15 @@ int dv2dt(FILE* dvi, FILE* dtl) {
             fprintf(dtl, "opcode%d", opcode);
         } else {
             count += 1;
-            fprintf(stderr, "%s:  unknown byte.\n", program_name);
+            PRINT_PROGRAM_NAME;
+            fprintf(stderr, "unknown byte.\n");
             exit(EXIT_FAILURE);
         }
         PRINT_ECOM; /* end of command and parameters */
         fputc('\n', dtl);
         if (fflush(dtl) == EOF) {
-            fprintf(stderr, "%s:  fflush on dtl file gave write error!\n",
-                    program_name);
+            PRINT_PROGRAM_NAME;
+            fprintf(stderr, "fflush on dtl file gave write error!\n");
             exit(EXIT_FAILURE);
         }
     } /* end while */
@@ -155,9 +159,10 @@ U4 read_unsigned(int nBytes, FILE* dvi) {
     int ibyte = 0;
 
     if (nBytes < 1 || nBytes > 4) {
+        PRINT_PROGRAM_NAME;
         fprintf(stderr,
-                "%s:  read_unsigned() asked for %d bytes.  Must be 1 to 4.\n",
-                program_name, nBytes);
+                "read_unsigned() asked for %d bytes.  Must be 1 to 4.\n",
+                nBytes);
         exit(EXIT_FAILURE);
     }
 
@@ -199,9 +204,10 @@ S4 read_signed(int nBytes, FILE* dvi) {
     int ibyte = 0;
 
     if (nBytes < 1 || nBytes > 4) {
+        PRINT_PROGRAM_NAME;
         fprintf(stderr, 
-                "%s:  read_signed() asked for %d bytes.  Must be 1 to 4.\n",
-                program_name, nBytes);
+                "read_signed() asked for %d bytes.  Must be 1 to 4.\n",
+                nBytes);
         exit(EXIT_FAILURE);
     }
 
@@ -251,8 +257,9 @@ COUNT write_table(op_table table, int opcode, FILE* dvi, FILE* dtl) {
 
     /* Defensive programming. */
     if (opcode < table.first || opcode > table.last) {
-        fprintf(stderr, "%s: opcode %d is outside table %s [ %d to %d ] !\n",
-                program_name, opcode, table.name, table.first, table.last);
+        PRINT_PROGRAM_NAME;
+        fprintf(stderr, "opcode %d is outside table %s [ %d to %d ] !\n",
+                opcode, table.name, table.first, table.last);
         exit(EXIT_FAILURE);
     }
 
@@ -260,8 +267,8 @@ COUNT write_table(op_table table, int opcode, FILE* dvi, FILE* dtl) {
 
     /* Further defensive programming. */
     if (op.code != opcode) {
-        fprintf(stderr, "%s: internal table %s wrong!\n", 
-                program_name, table.name);
+        fprintf(stderr, "internal table %s wrong!\n", 
+                table.name);
         exit(EXIT_FAILURE);
     }
 
@@ -283,8 +290,9 @@ COUNT write_table(op_table table, int opcode, FILE* dvi, FILE* dtl) {
 
         /* internal consistency checks */
         if (n_conv != 1 || n_read <= 0) {
-            fprintf(stderr, "%s: internal read of table %s failed!\n",
-                    program_name, table.name);
+            PRINT_PROGRAM_NAME;
+            fprintf(stderr, "internal read of table %s failed!\n",
+                    table.name);
             exit(EXIT_FAILURE);
         }
 
@@ -413,8 +421,9 @@ COUNT special(int nBytes, FILE* dvi, FILE* dtl) {
     U4 k;
 
     if (nBytes < 1 || nBytes > 4) {
-        fprintf(stderr, "%s:  special %d, range is 1 to 4.\n", 
-        program_name, nBytes);
+        PRINT_PROGRAM_NAME;
+        fprintf(stderr, "special %d, range is 1 to 4.\n", 
+                nBytes);
         exit(EXIT_FAILURE);
     }
 
@@ -440,8 +449,9 @@ COUNT fontdef(int nBytes, FILE* dvi, FILE* dtl) {
     U4 c, a, l;
 
     if (nBytes < 1 || nBytes > 4) {
-        fprintf(stderr, "%s:  font def %d, range is 1 to 4.\n", 
-                program_name, nBytes);
+        PRINT_PROGRAM_NAME;
+        fprintf(stderr, "font def %d, range is 1 to 4.\n", 
+                nBytes);
         exit(EXIT_FAILURE);
     }
 
@@ -540,13 +550,13 @@ COUNT postpost(FILE* dvi, FILE* dtl) {
         fputc(223, dtl);
     }
     if (n223 < 4) {
-        fprintf(stderr, "%s:  bad post_post:  fewer than four \"223\" bytes.\n",
-                program_name);
+        PRINT_PROGRAM_NAME;
+        fprintf(stderr, "bad post_post:  fewer than four \"223\" bytes.\n");
         exit(EXIT_FAILURE);
     }
     if (b223 != EOF) {
-        fprintf(stderr, "%s:  bad post_post:  doesn't end with a \"223\".\n",
-                program_name);
+        PRINT_PROGRAM_NAME;
+        fprintf(stderr, "bad post_post:  doesn't end with a \"223\".\n");
         exit(EXIT_FAILURE);
     }
 

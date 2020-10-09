@@ -31,6 +31,7 @@
     if (group) fputc(BCOM_CHAR, dtl)
 #define PRINT_ECOM \
     if (group) fputc(ECOM_CHAR, dtl)
+#define PRINT_PROGRAM_NAME fprintf(stderr, "[%s:%s]  ", program_name, __func__)
 
 
 /* function prototypes */
