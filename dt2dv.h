@@ -152,13 +152,13 @@ CmdTable cmd_table;
 
 
 
-char* prog_name = ""; /* intended for name of this program */
+char* program_name; /* intended for name of this program */
 #define ERROR_MSG_SATRT                                                  \
     if (debug) {                                                         \
         fprintf(stderr, "%s:%d: In function '%s': ", __FILE__, __LINE__, \
                 __func__);                                               \
     } else {                                                             \
-        fprintf(stderr, "%s: In function '%s': ", prog_name, __func__);  \
+        fprintf(stderr, "%s: In function '%s': ", program_name, __func__);  \
     }
 
 int nfile = 0;       /* number of filename arguments on the command line */
