@@ -309,39 +309,42 @@ COUNT set_seq(int opcode, FILE* dvi, FILE* dtl) {
     if (!isprint(char_code)) {
         char_count = 1;
         fprintf(dtl, "%s%02X", SETCHAR, opcode);
-    } else {
-        /* start of sequence of font characters */
-        fprintf(dtl, BSEQ);
+        return char_count;
+    }
 
-        /* first character */
-        char_count = 1;
-        setpchar(char_code, dtl);
+    /*  @assert( isprint(char_code) )  */
 
-        /* subsequent characters */
-        while ((opcode = fgetc(dvi)) != EOF) {
-            if (opcode < 0 || opcode > 127) {
-                break; /* not a setchar command, so sequence has ended */
-            }
+    /* start of sequence of font characters */
+    fprintf(dtl, BSEQ);
 
-            char_code = opcode;      /* fortuitous */
-            if (!isprint(char_code)) { /* not printable ascii */
-                /* end of font character sequence, as for other commands */
-                break;
-            } else { /* printable ASCII */
-                char_count += 1;
-                setpchar(char_code, dtl);
-            }
-        } /* end for loop */
+    /* first character */
+    char_count = 1;
+    setpchar(char_code, dtl);
 
-        /* prepare to reread opcode of next DVI command */
-        if (ungetc(opcode, dvi) == EOF) {
-            fprintf(stderr, "set_seq:  cannot push back a byte\n");
-            exit(EXIT_FAILURE);
+    /* subsequent characters */
+    while ((opcode = fgetc(dvi)) != EOF) {
+        if (opcode < 0 || opcode > 127) {
+            break; /* not a setchar command, so sequence has ended */
         }
 
-        /* end of sequence of font characters */
-        fprintf(dtl, ESEQ);
+        char_code = opcode;      /* fortuitous */
+        if (!isprint(char_code)) { /* not printable ascii */
+            /* end of font character sequence, as for other commands */
+            break;
+        } else { /* printable ASCII */
+            char_count += 1;
+            setpchar(char_code, dtl);
+        }
+    } /* end for loop */
+
+    /* prepare to reread opcode of next DVI command */
+    if (ungetc(opcode, dvi) == EOF) {
+        fprintf(stderr, "set_seq:  cannot push back a byte\n");
+        exit(EXIT_FAILURE);
     }
+
+    /* end of sequence of font characters */
+    fprintf(dtl, ESEQ);
 
     return char_count;
 } /* set_seq */
