@@ -473,8 +473,9 @@ COUNT fontdef(int nBytes, FILE* dvi, FILE* dtl) {
     xref_unsigned(4, dvi, dtl);     /*   d[4] = design size */
     a = xref_unsigned(1, dvi, dtl); /*   a[1] = length of area (directory) name */
     l = xref_unsigned(1, dvi, dtl); /*   l[1] = length of font name */
-    xfer_string(a+l, dvi, dtl);     /* n[a+l] = font pathname string 
-                                                => area (directory) + font */
+    /* n[a+l] = font pathname string => area (directory) + font */
+    xfer_string(a, dvi, dtl);
+    xfer_string(l, dvi, dtl);
 
     return (1 + nBytes + 4 + 4 + 4 + 1 + 1 + a + l);
 } /* end fontdef */
