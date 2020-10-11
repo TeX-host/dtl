@@ -31,13 +31,12 @@
  *  @param[in] dvi_filename
  */
 int main(int argc, char* argv[]) {
-    void (*handler)(int); /* Previous signal handler */
     int i;
 
     program_name = argv[0]; /* name of this program */
 
     /* memory violation signal handler */
-    handler = (void (*)(int))signal(SIGSEGV, mem_viol);
+    signal(SIGSEGV, mem_viol);
 
     /* message about program and compiler */
     /* NB:  LTU EE's Sun/OS library is BSD, even though gcc 2.2.2 is ANSI */
@@ -70,8 +69,8 @@ int main(int argc, char* argv[]) {
  * @param[in] dtl_line
  */
 void mem_viol(int sig) {
-    void (*handler)(int);
-    handler = (void (*)(int))signal(SIGSEGV, mem_viol);
+    signal(SIGSEGV, mem_viol);
+
     MSG_SATRT;
     if (sig != SIGSEGV) {
         fprintf(stderr, "called with wrong signal!\n");
