@@ -532,7 +532,7 @@ COUNT postpost(FILE* dvi, FILE* dtl) {
     /* hope this way of obtaining b223 is 8-bit clean */
     for (n223 = 0; (b223 = fgetc(dvi)) == 223; n223++) {
         fputc(' ', dtl);
-        fputc(223, dtl);
+        fputs("223", dtl);
     }
     if (n223 < 4) {
         ERROR_SATRT;
