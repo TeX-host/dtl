@@ -103,8 +103,6 @@ int dv2dt(FILE* dvi, FILE* dtl) {
             exit(EXIT_FAILURE);
         } else if (opcode <= 127) {
             /* setchar commands */
-            /* count += 1; */
-            /* fprintf (dtl, "%s%d", SETCHAR_STR, opcode); */
             count += set_seq(opcode, dvi, dtl);
         } else if (opcode >= SET1 && opcode <= Z4) {
             count += write_table(op_128_170, opcode, dvi, dtl);
