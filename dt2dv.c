@@ -289,7 +289,6 @@ int put_byte(int byte, FILE* dvi) {
 int dt2dv(FILE* dtl, FILE* dvi) {
     int nprefixes = 0;         /* number of prefixes in cmd_prefixes[] list. */
     static Token dtl_cmd = ""; /* DTL command name */
-    COUNT nread = 0; /* number of bytes read by a function from dtl file. */
 
     nprefixes = sizeof(cmd_prefixes) / sizeof(CmdPrefix);
 
@@ -307,7 +306,7 @@ int dt2dv(FILE* dtl, FILE* dvi) {
     dtl_read = 0;
 
     /* The very first thing should be the "variety" signature */
-    nread = read_variety(dtl);
+    read_variety(dtl);
 
     /* while not end of dtl file or reading error, */
     /*   read, interpret, and write commands */
@@ -319,7 +318,7 @@ int dt2dv(FILE* dtl, FILE* dvi) {
         if (group) {
             /* BCOM check */
             static Token token = ""; /* DTL token */
-            nread = read_token(dtl, token);
+            read_token(dtl, token);
             /* test for end of input, or reading error */
             if (strlen(token) == 0) {
                 if (debug) {
@@ -342,7 +341,7 @@ int dt2dv(FILE* dtl, FILE* dvi) {
         }
 
         /* read the command name */
-        nread = read_token(dtl, dtl_cmd);
+        read_token(dtl, dtl_cmd);
         /* test for end of input, or reading error */
         if (strlen(dtl_cmd) == 0) {
             if (debug) {
@@ -382,7 +381,7 @@ int dt2dv(FILE* dtl, FILE* dvi) {
             /* seek ECOM after command's last argument and optional whitespace
              */
             static Token token = ""; /* DTL token */
-            nread = read_token(dtl, token);
+            read_token(dtl, token);
             /* test for end of input, or reading error */
             if (strlen(token) == 0) {
                 if (debug) {
@@ -1003,7 +1002,6 @@ int set_seq(FILE* dtl, FILE* dvi) {
 /* return value of hexadecimal number */
 U4 xfer_hex(int n, FILE* dtl, FILE* dvi) {
     U4 unum = 0;             /* at most this space needed */
-    COUNT nread = 0;         /* number of DTL bytes read by read_token */
     int nconv = 0;           /* number of arguments converted by sscanf */
     static Token token = ""; /* DTL token */
 
@@ -1016,8 +1014,7 @@ U4 xfer_hex(int n, FILE* dtl, FILE* dvi) {
         dexit(EXIT_FAILURE);
     }
 
-    nread = read_token(dtl, token);
-
+    read_token(dtl, token);
     nconv = sscanf(token, HEX_FMT, &unum);
 
     if (nconv < 1) {
@@ -1037,7 +1034,6 @@ U4 xfer_hex(int n, FILE* dtl, FILE* dvi) {
 /* return value of octal number */
 U4 xfer_oct(int n, FILE* dtl, FILE* dvi) {
     U4 unum = 0;             /* at most this space needed */
-    COUNT nread = 0;         /* number of DTL bytes read by read_token */
     int nconv = 0;           /* number of arguments converted by sscanf */
     static Token token = ""; /* DTL token */
 
@@ -1050,8 +1046,7 @@ U4 xfer_oct(int n, FILE* dtl, FILE* dvi) {
         dexit(EXIT_FAILURE);
     }
 
-    nread = read_token(dtl, token);
-
+    read_token(dtl, token);
     nconv = sscanf(token, OCT_FMT, &unum);
 
     if (nconv < 1) {
@@ -1095,12 +1090,10 @@ S4 xfer_signed(int n, FILE* dtl, FILE* dvi) {
 /* return value of unsigned number */
 U4 get_unsigned(FILE* dtl) {
     U4 unum = 0;             /* at most this space needed */
-    COUNT nread = 0;         /* number of DTL bytes read by read_token */
     int nconv = 0;           /* number of arguments converted by sscanf */
     static Token token = ""; /* DTL token */
 
-    nread = read_token(dtl, token);
-
+    read_token(dtl, token);
     nconv = sscanf(token, U4_FMT, &unum);
 
     if (nconv < 1) {
@@ -1118,12 +1111,10 @@ U4 get_unsigned(FILE* dtl) {
 /* return value of signed number */
 S4 get_signed(FILE* dtl) {
     S4 snum = 0;
-    COUNT nread = 0; /* number of DTL bytes read by read_token */
     int nconv = 0;   /* number of sscanf arguments converted and assigned */
     static Token token = "";
 
-    nread = read_token(dtl, token);
-
+    read_token(dtl, token);
     nconv = sscanf(token, S4_FMT, &snum);
 
     if (nconv < 1) {
