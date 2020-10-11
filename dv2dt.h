@@ -23,7 +23,7 @@
 #include <string.h>
 
 #define OP_INFO_BOP \
-    { 139, BOP, 11, "-4 -4 -4 -4 -4 -4 -4 -4 -4 -4 -4" }
+    { 139, BOP_STR, 11, "-4 -4 -4 -4 -4 -4 -4 -4 -4 -4 -4" }
 
 #include "dtl.h"
 

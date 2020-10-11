@@ -104,13 +104,13 @@ int dv2dt(FILE* dvi, FILE* dtl) {
         } else if (opcode <= 127) {
             /* setchar commands */
             /* count += 1; */
-            /* fprintf (dtl, "%s%d", SETCHAR, opcode); */
+            /* fprintf (dtl, "%s%d", SETCHAR_STR, opcode); */
             count += set_seq(opcode, dvi, dtl);
         } else if (opcode >= 128 && opcode <= 170) {
             count += write_table(op_128_170, opcode, dvi, dtl);
         } else if (opcode >= 171 && opcode <= 234) {
             count += 1;
-            fprintf(dtl, "%s%d", FONTNUM, opcode - 171);
+            fprintf(dtl, "%s%d", FONT_NUM_STR, opcode - 171);
         } else if (opcode >= 235 && opcode <= 238) {
             count += write_table(fnt, opcode, dvi, dtl);
         } else if (opcode >= 239 && opcode <= 242) {
@@ -314,7 +314,7 @@ COUNT set_seq(int opcode, FILE* dvi, FILE* dtl) {
     int char_count = 0;
 
     if (!isprint(char_code)) {
-        fprintf(dtl, "%s%02X", SETCHAR, opcode);
+        fprintf(dtl, "%s%02X", SETCHAR_STR, opcode);
         char_count++;
         return char_count;
     }
@@ -425,7 +425,7 @@ COUNT special(int nBytes, FILE* dvi, FILE* dtl) {
         exit(EXIT_FAILURE);
     }
 
-    fprintf(dtl, "%s%d", SPECIAL, nBytes);
+    fprintf(dtl, "%s%d", SPECIAL_STR, nBytes);
     k = xref_unsigned(nBytes, dvi, dtl); /* k[n] = length of special string */
     xfer_string(k, dvi, dtl);            /* x[k] = special string */
 
@@ -449,7 +449,7 @@ COUNT fontdef(int nBytes, FILE* dvi, FILE* dtl) {
         exit(EXIT_FAILURE);
     }
 
-    fprintf(dtl, "%s%d", FONTDEF, nBytes);
+    fprintf(dtl, "%s%d", FONT_DEF_STR, nBytes);
 
     /* k[n] = font number */
     if (nBytes == 4) {
