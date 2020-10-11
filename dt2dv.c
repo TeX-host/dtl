@@ -87,16 +87,14 @@ void mem_viol(int sig) {
  * @param[in] opts[]
  */
 void give_help(void) {
-    char* keyword;
-
     fprintf(stderr, "usage:   ");
     MSG_SATRT;
     fprintf(stderr, "[options]  dtl_file  dvi_file");
     fprintf(stderr, "\n");
 
-    for (int i = 0; (keyword = opts[i].keyword) != NULL; i++) {
+    for (int i = 0; opts[i].keyword != NULL; i++) {
         fprintf(stderr, "    ");
-        fprintf(stderr, "[%s]", keyword);
+        fprintf(stderr, "[%s]", opts[i].keyword);
         fprintf(stderr, "    ");
         fprintf(stderr, "%s", opts[i].desc);
         fprintf(stderr, "\n");
@@ -142,11 +140,12 @@ void dvi_stdout(void) {
  *  @param[in] opts[]
  */
 int parse(char* s) {
-    int i;
-    char* keyword;
+    int i, kw_len;
+    const char* kw;
 
-    for (i = 0; (keyword = opts[i].keyword) != NULL; i++) {
-        if (strncmp(s, keyword, strlen(keyword)) == 0) {
+    for (i = 0; (kw = opts[i].keyword) != NULL; i++) {
+        kw_len = strlen(kw);
+        if (strncmp(s, kw, kw_len) == 0) {
             void (*pfn)(void);
 
             (*(opts[i].p_var)) = 1; /* turn option on */
