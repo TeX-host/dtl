@@ -121,6 +121,84 @@ void dtl_msg_start(char* level, const char* _file, int _ln, const char* _func) {
 
 /** command names in DTL 
  */
+enum DVICmd {
+    SET1 = 128,
+    SET2,
+    SET3,
+    SET4,
+    SET_RULE,
+
+    PUT1 = 133,
+    PUT2,
+    PUT3,
+    PUT4,
+    PUT_RULE,
+
+    NOP = 138,
+    BOP,
+    EOP,
+    PUSH,
+    POP,
+
+    RIGHT1 = 143,
+    RIGHT2,
+    RIGHT3,
+    RIGHT4,
+
+    W0 = 147,
+    W1,
+    W2,
+    W3,
+    W4,
+
+    X0 = 152,
+    X1,
+    X2,
+    X3,
+    X4,
+
+    DOWN1 = 157,
+    DOWN2,
+    DOWN3,
+    DOWN4,
+
+    Y0 = 161,
+    Y1,
+    Y2,
+    Y3,
+    Y4,
+
+    Z0 = 166,
+    Z1,
+    Z2,
+    Z3,
+    Z4,
+
+    FNT_NUM_0 = 171,
+    /// [171, 234] fnt_num_N
+    FNT_NUM_63 = 234,
+
+    FONT1 = 235,
+    FONT2,
+    FONT3,
+    FONT4,
+
+    XXX1 = 239,
+    XXX2,
+    XXX3,
+    XXX4,
+
+    FNT_DEF1 = 243,
+    FNT_DEF2,
+    FNT_DEF3,
+    FNT_DEF4,
+
+    PRE = 247,
+    POST,
+    POSTPOST,
+
+    UNDEFINED = 250,
+}; /* enum DVICmd */
 
 #define SETCHAR_STR     "\\"
 #define SET_STR         "s"
@@ -203,65 +281,65 @@ typedef struct {
     op_info* list;
 } op_table;
 
-/* Table for opcodes 128 to 170 inclusive. */
 
+/* Table for opcodes 128 to 170 inclusive. */
 op_info op_info_128_170[] = {
-    {128, SET1_STR, 1, "1"},
-    {129, SET2_STR, 1, "2"},
-    {130, SET3_STR, 1, "3"},
-    {131, SET4_STR, 1, "-4"},
-    {132, SET_RULE_STR, 2, "-4 -4"},
-    {133, PUT1_STR, 1, "1"},
-    {134, PUT2_STR, 1, "2"},
-    {135, PUT3_STR, 1, "3"},
-    {136, PUT4_STR, 1, "-4"},
-    {137, PUT_RULE_STR, 2, "-4 -4"},
-    {138, NOP_STR, 0, ""},
+    {SET1, SET1_STR, 1, "1"},
+    {SET2, SET2_STR, 1, "2"},
+    {SET3, SET3_STR, 1, "3"},
+    {SET4, SET4_STR, 1, "-4"},
+    {SET_RULE, SET_RULE_STR, 2, "-4 -4"},
+    {PUT1, PUT1_STR, 1, "1"},
+    {PUT2, PUT2_STR, 1, "2"},
+    {PUT3, PUT3_STR, 1, "3"},
+    {PUT4, PUT4_STR, 1, "-4"},
+    {PUT_RULE, PUT_RULE_STR, 2, "-4 -4"},
+    {NOP, NOP_STR, 0, ""},
     OP_INFO_BOP,
-    {140, EOP_STR, 0, ""},
-    {141, PUSH_STR, 0, ""},
-    {142, POP_STR, 0, ""},
-    {143, RIGHT1_STR, 1, "-1"},
-    {144, RIGHT2_STR, 1, "-2"},
-    {145, RIGHT3_STR, 1, "-3"},
-    {146, RIGHT4_STR, 1, "-4"},
-    {147, W0_STR, 0, ""},
-    {148, W1_STR, 1, "-1"},
-    {149, W2_STR, 1, "-2"},
-    {150, W3_STR, 1, "-3"},
-    {151, W4_STR, 1, "-4"},
-    {152, X0_STR, 0, ""},
-    {153, X1_STR, 1, "-1"},
-    {154, X2_STR, 1, "-2"},
-    {155, X3_STR, 1, "-3"},
-    {156, X4_STR, 1, "-4"},
-    {157, DOWN1_STR, 1, "-1"},
-    {158, DOWN2_STR, 1, "-2"},
-    {159, DOWN3_STR, 1, "-3"},
-    {160, DOWN4_STR, 1, "-4"},
-    {161, Y0_STR, 0, ""},
-    {162, Y1_STR, 1, "-1"},
-    {163, Y2_STR, 1, "-2"},
-    {164, Y3_STR, 1, "-3"},
-    {165, Y4_STR, 1, "-4"},
-    {166, Z0_STR, 0, ""},
-    {167, Z1_STR, 1, "-1"},
-    {168, Z2_STR, 1, "-2"},
-    {169, Z3_STR, 1, "-3"},
-    {170, Z4_STR, 1, "-4"}
+    {EOP, EOP_STR, 0, ""},
+    {PUSH, PUSH_STR, 0, ""},
+    {POP, POP_STR, 0, ""},
+    {RIGHT1, RIGHT1_STR, 1, "-1"},
+    {RIGHT2, RIGHT2_STR, 1, "-2"},
+    {RIGHT3, RIGHT3_STR, 1, "-3"},
+    {RIGHT4, RIGHT4_STR, 1, "-4"},
+    {W0, W0_STR, 0, ""},
+    {W1, W1_STR, 1, "-1"},
+    {W2, W2_STR, 1, "-2"},
+    {W3, W3_STR, 1, "-3"},
+    {W4, W4_STR, 1, "-4"},
+    {X0, X0_STR, 0, ""},
+    {X1, X1_STR, 1, "-1"},
+    {X2, X2_STR, 1, "-2"},
+    {X3, X3_STR, 1, "-3"},
+    {X4, X4_STR, 1, "-4"},
+    {DOWN1, DOWN1_STR, 1, "-1"},
+    {DOWN2, DOWN2_STR, 1, "-2"},
+    {DOWN3, DOWN3_STR, 1, "-3"},
+    {DOWN4, DOWN4_STR, 1, "-4"},
+    {Y0, Y0_STR, 0, ""},
+    {Y1, Y1_STR, 1, "-1"},
+    {Y2, Y2_STR, 1, "-2"},
+    {Y3, Y3_STR, 1, "-3"},
+    {Y4, Y4_STR, 1, "-4"},
+    {Z0, Z0_STR, 0, ""},
+    {Z1, Z1_STR, 1, "-1"},
+    {Z2, Z2_STR, 1, "-2"},
+    {Z3, Z3_STR, 1, "-3"},
+    {Z4, Z4_STR, 1, "-4"}
 }; /* op_info  op_info_128_170 [] */
 
-op_table op_128_170 = {"op_128_170", 128, 170, op_info_128_170};
+op_table op_128_170 = {"op_128_170", SET1, Z4, op_info_128_170};
+
 
 /* Table for fnt1 to fnt4 (opcodes 235 to 238) inclusive. */
-
 op_info fnt_n[] = {
-    {235, FONT1_STR, 1, "1"},
-    {236, FONT2_STR, 1, "2"},
-    {237, FONT3_STR, 1, "3"},
-    {238, FONT4_STR, 1, "-4"}
+    {FONT1, FONT1_STR, 1, "1"},
+    {FONT2, FONT2_STR, 1, "2"},
+    {FONT3, FONT3_STR, 1, "3"},
+    {FONT4, FONT4_STR, 1, "-4"}
 }; /* op_info  fnt_n [] */
 
-op_table fnt = {FONT_STR, 235, 238, fnt_n};
+op_table fnt = {FONT_STR, FONT1, FONT4, fnt_n};
 
 #endif /* INC_DTL_H */

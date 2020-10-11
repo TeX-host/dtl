@@ -30,7 +30,7 @@
 
 /// bop:  not counting last argument, a signed address:
 #define OP_INFO_BOP \
-    { 139, BOP_STR, 10, "-4 -4 -4 -4 -4 -4 -4 -4 -4 -4" }
+    { BOP, BOP_STR, 10, "-4 -4 -4 -4 -4 -4 -4 -4 -4 -4" }
 
 #include "dtl.h"
 
@@ -127,14 +127,14 @@ typedef struct {
 
 CmdPrefix cmd_prefixes[] = {
     {0, SETCHAR_STR, true, 0, 127},   {128, SET_STR, true, 1, 4},
-    {132, SET_RULE_STR, false, 0, 0},  {133, PUT_STR, true, 1, 4},
-    {137, PUT_RULE_STR, false, 0, 0},  {138, NOP_STR, false, 0, 0},
+    {132, SET_RULE_STR, false, 0, 0}, {133, PUT_STR, true, 1, 4},
+    {137, PUT_RULE_STR, false, 0, 0}, {138, NOP_STR, false, 0, 0},
     {139, BOP_STR, false, 0, 0},      {140, EOP_STR, false, 0, 0},
     {141, PUSH_STR, false, 0, 0},     {142, POP_STR, false, 0, 0},
     {143, RIGHT_STR, true, 1, 4},     {147, W_STR, true, 0, 4},
     {152, X_STR, true, 0, 4},         {157, DOWN_STR, true, 1, 4},
     {161, Y_STR, true, 0, 4},         {166, Z_STR, true, 0, 4},
-    {171, FONT_NUM_STR, true, 0, 63},  {235, FONT_STR, true, 1, 4},
+    {171, FONT_NUM_STR, true, 0, 63}, {235, FONT_STR, true, 1, 4},
     {239, SPECIAL_STR, true, 1, 4},   {243, FONT_DEF_STR, true, 1, 4},
     {247, PRE_STR, false, 0, 0},      {248, POST_STR, false, 0, 0},
     {249, POSTPOST_STR, false, 0, 0}, {250, OPCODE_STR, true, 250, 255}};

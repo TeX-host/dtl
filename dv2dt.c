@@ -106,24 +106,24 @@ int dv2dt(FILE* dvi, FILE* dtl) {
             /* count += 1; */
             /* fprintf (dtl, "%s%d", SETCHAR_STR, opcode); */
             count += set_seq(opcode, dvi, dtl);
-        } else if (opcode >= 128 && opcode <= 170) {
+        } else if (opcode >= SET1 && opcode <= Z4) {
             count += write_table(op_128_170, opcode, dvi, dtl);
-        } else if (opcode >= 171 && opcode <= 234) {
+        } else if (opcode >= FNT_NUM_0 && opcode <= FNT_NUM_63) {
             count += 1;
-            fprintf(dtl, "%s%d", FONT_NUM_STR, opcode - 171);
-        } else if (opcode >= 235 && opcode <= 238) {
+            fprintf(dtl, "%s%d", FONT_NUM_STR, opcode - FNT_NUM_0);
+        } else if (opcode >= FONT1 && opcode <= FONT4) {
             count += write_table(fnt, opcode, dvi, dtl);
-        } else if (opcode >= 239 && opcode <= 242) {
-            count += special(opcode - 238, dvi, dtl);
-        } else if (opcode >= 243 && opcode <= 246) {
-            count += fontdef(opcode - 242, dvi, dtl);
-        } else if (opcode == 247) {
+        } else if (opcode >= XXX1 && opcode <= XXX4) {
+            count += special(opcode - XXX1 + 1, dvi, dtl);
+        } else if (opcode >= FNT_DEF1 && opcode <= FNT_DEF4) {
+            count += fontdef(opcode - FNT_DEF1 + 1, dvi, dtl);
+        } else if (opcode == PRE) {
             count += preamble(dvi, dtl);
-        } else if (opcode == 248) {
+        } else if (opcode == POST) {
             count += postamble(dvi, dtl);
-        } else if (opcode == 249) {
+        } else if (opcode == POSTPOST) {
             count += postpost(dvi, dtl);
-        } else if (opcode >= 250 && opcode <= 255) {
+        } else if (opcode >= UNDEFINED && opcode <= 255) {
             count += 1;
             fprintf(dtl, "opcode%d", opcode);
         } else {
