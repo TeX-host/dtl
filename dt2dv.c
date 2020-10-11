@@ -670,9 +670,11 @@ COUNT read_variety(FILE* dtl) {
 } /* read_variety */
 
 /** Skip whitespace characters in file fp.
+ * 
  * Write in *ch the last character read from fp,
  *  or < 0 if fp could not be read.
- * Return number of characters read from fp.
+ * 
+ *  @return number of characters read from fp.
  *
  * ## global var
  *  + dtl_line
@@ -688,7 +690,7 @@ COUNT skip_space(FILE* fp, int* ch) {
         if (debug) {
             /* report when each DTL end of line is reached */
             if (c == '\n') {
-                MSG_SATRT;
+                DEBUG_SATRT;
                 fprintf(stderr, "end of DTL line (at least) ");
                 fprintf(stderr, COUNT_FMT, dtl_line.num);
                 fprintf(stderr, "\n");
@@ -700,23 +702,23 @@ COUNT skip_space(FILE* fp, int* ch) {
         c = -1;
     }
 
-    *ch = c; /* c will be < 0 if read_char could not read fp */
+    (*ch) = c; /* c will be < 0 if read_char could not read fp */
     return (count + nchar);
 } /* skip_space */
 
-/* read next token from dtl file. */
-/* return number of DTL bytes read. */
-/* A token is one of:
-     a string from BMES_CHAR to the next unescaped EMES_CHAR, inclusive;
-     BCOM or ECOM, unless these are empty strings;
-     BSEQ or ESEQ;
-     any other sequence of non-whitespace characters.
-*/
+/** Read next token from dtl file.
+ * 
+ * A token is one of:
+ *  + a string from BMES_CHAR to the next unescaped EMES_CHAR, inclusive;
+ *  + BCOM or ECOM, unless these are empty strings;
+ *  + BSEQ or ESEQ;
+ *  + any other sequence of non-whitespace characters.
+ * 
+ *  @return number of DTL bytes read.
+ */
 COUNT read_token(FILE* dtl, char* token) {
-    COUNT nread; /* number of DTL bytes read by read_token */
-    int ch;      /* most recent character read */
-
-    nread = 0;
+    COUNT nread = 0; /* number of DTL bytes read by read_token */
+    int ch; /* most recent character read */
 
     /* obtain first non-space character */
     /* add to nread the number of characters read from dtl by skip_space */
@@ -727,7 +729,7 @@ COUNT read_token(FILE* dtl, char* token) {
         /* write an empty token */
         strcpy(token, "");
         if (debug) {
-            MSG_SATRT;
+            DEBUG_SATRT;
             fprintf(stderr, "end of dtl file.\n");
         }
     } else if (group && ch == BCOM_CHAR) {
@@ -737,25 +739,25 @@ COUNT read_token(FILE* dtl, char* token) {
     } else {
         token[0] = ch;
         token[1] = '\0';
-        if (ch == BMES_CHAR) /* string token; read until unescaped EMES_CHAR */
-        {
+
+        /* string token; read until unescaped EMES_CHAR */
+        if (ch == BMES_CHAR) {
             nread += read_mes(dtl, token + 1);
         } else if (ch == BSEQ_CHAR || ch == ESEQ_CHAR) {
             /* token is complete */
-        } else /* any other string not containing (ECOM_CHAR or) whitespace */
-        {
+        } else {
+            /* any other string not containing (ECOM_CHAR or) whitespace */
             nread += read_misc(dtl, token + 1);
         }
     }
 
     if (debug) {
-        MSG_SATRT;
+        DEBUG_SATRT;
         fprintf(stderr, "token = \"%s\"\n", token);
     }
 
-    return (nread); /* number of bytes read from dtl file */
-}
-/* read_token */
+    return nread; /* number of bytes read from dtl file */
+} /* read_token */
 
 
 CharStatus read_string_char(FILE* fp, int* ch) {
@@ -781,6 +783,7 @@ CharStatus read_string_char(FILE* fp, int* ch) {
 COUNT read_misc(FILE* fp, Token token) {
     int c;
     int count;
+
     /* loop ends at:  end of fp file, or reading error, or a space */
     for (count = 0; count <= MAXTOKLEN; ++count) {
         if (read_char(fp, &c) == 0 || isspace(c)) break;
@@ -791,16 +794,19 @@ COUNT read_misc(FILE* fp, Token token) {
 
         token[count] = c;
     }
+
     token[count] = '\0';
     return count;
-}
-/* read_misc */
+} /* read_misc */
 
-/* called **AFTER** a BMES_CHAR has been read */
-/* read file fp for characters up to next unescaped EMES_CHAR */
-/* this is called a "string token" */
-/* write string, including EMES_CHAR, into token[] */
-/* return number of characters read from fp */
+/** Called **AFTER** a BMES_CHAR has been read.
+ * 
+ * read file fp for characters up to next unescaped EMES_CHAR
+ *  this is called a "string token"
+ *  write string, including EMES_CHAR, into token[]
+ * 
+ *  @return number of characters read from fp
+ */
 COUNT read_mes(FILE* fp, char* token) {
     COUNT dtl_count; /* number of DTL characters read by read_mes from fp */
     int more;        /* flag more == 0 to terminate loop */
@@ -814,11 +820,10 @@ COUNT read_mes(FILE* fp, char* token) {
         if (read_char(fp, &ch) == 0) {
             /* end of fp file, or reading error */
             more = 0;
-        } else /* error checking passed */
-        {
+        } else {
+            /* error checking passed */
             ++dtl_count;
-            if (ch == EMES_CHAR && escape == 0) /* end of string */
-            {
+            if (ch == EMES_CHAR && escape == 0) { /* end of string */
                 /* include final EMES_CHAR */
                 *token++ = ch;
                 more = 0;
@@ -833,10 +838,10 @@ COUNT read_mes(FILE* fp, char* token) {
             }
         }
     }
+
     *token = '\0';
     return dtl_count;
-}
-/* read_mes */
+} /* read_mes */
 
 /** wind input back, to allow rereading of one character.
  * return 1 if this works, 0 on error.
