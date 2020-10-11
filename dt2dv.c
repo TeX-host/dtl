@@ -630,47 +630,44 @@ int read_char(FILE* fp, int* ch) {
 }
 /* read_char */
 
-/* read and check DTL variety signature */
-/* return number of DTL bytes written */
-/* DTL variety is _NEVER_ grouped by BCOM and ECOM. */
-/* Uniformity here enables the program easily to modify its behavior. */
+/** Read and check DTL variety signature.
+ * 
+ * DTL variety is _NEVER_ grouped by BCOM and ECOM.
+ * Uniformity here enables the program easily to modify its behavior.
+ * 
+ *  @return number of DTL bytes written
+ */
 COUNT read_variety(FILE* dtl) {
-    COUNT vread = 0; /* number of DTL bytes read by read_variety */
     COUNT nread = 0; /* number of DTL bytes read by read_token */
     static Token token = "";
 
     /* read the DTL VARIETY keyword */
-    nread = read_token(dtl, token);
-    vread += nread;
+    nread += read_token(dtl, token);
     /* test whether signature begins correctly */
     if (strcmp(token, "variety") != 0) {
-        MSG_SATRT;
-        fprintf(stderr,
-                "DTL FILE ERROR (%s) : ", dtl_filename);
+        ERROR_SATRT;
+        fprintf(stderr, "DTL FILE ERROR (%s) : ", dtl_filename);
         fprintf(stderr, "DTL signature must begin with \"%s\", not \"%s\".\n",
                 "variety", token);
         dexit(EXIT_FAILURE);
     }
 
     /* read the DTL variety */
-    nread = read_token(dtl, token);
-    vread += nread;
+    nread += read_token(dtl, token);
     /* test whether variety is correct */
     if (strcmp(token, VARIETY) != 0) {
-        MSG_SATRT;
-        fprintf(stderr,
-                "DTL FILE ERROR (%s) : ", dtl_filename);
-        fprintf(stderr, "DTL variety must be \"%s\", not \"%s\".\n", VARIETY,
-                token);
+        ERROR_SATRT;
+        fprintf(stderr, "DTL FILE ERROR (%s) : ", dtl_filename);
+        fprintf(stderr, "DTL variety must be \"%s\", not \"%s\".\n", 
+                VARIETY, token);
         dexit(EXIT_FAILURE);
     }
 
-    MSG_SATRT;
-    fprintf(stderr, "DTL variety %s is OK.\n", VARIETY);
+    INFO_SATRT;
+    fprintf(stderr, "DTL variety '%s' is OK.\n", VARIETY);
 
-    return vread; /* OK */
-}
-/* read_variety */
+    return nread; /* OK */
+} /* read_variety */
 
 /** Skip whitespace characters in file fp.
  * Write in *ch the last character read from fp,

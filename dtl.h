@@ -76,10 +76,10 @@ void dtl_msg_start(char* level, const char* _file, int _ln, const char* _func) {
 }
 #define _MSG_SATRT(level) dtl_msg_start(level, __FILE__, __LINE__, __func__)
 
-#define MSG_SATRT _MSG_SATRT("")
+#define MSG_SATRT   _MSG_SATRT("")
 #define ERROR_SATRT _MSG_SATRT("[error] ")
-#define WARN_SATRT _MSG_SATRT("[warning] ")
-#define INFO_SATRT _MSG_SATRT("[info] ")
+#define WARN_SATRT  _MSG_SATRT("[warning] ")
+#define INFO_SATRT  _MSG_SATRT("[info] ")
 
 /** signals of beginning and end of a command and its arguments 
  * these apply only if group is nonzero 
